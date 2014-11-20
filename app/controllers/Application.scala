@@ -1,5 +1,6 @@
 package controllers
 
+import models.Viewer
 import play.api._
 import play.api.mvc._
 
@@ -9,6 +10,8 @@ object Application extends Controller {
     Redirect(routes.Application.viewer)
   }
 
-  def viewer = TODO
+  def viewer =  Action {
+    Ok(views.html.index("CrowdWeaver: Visually Managing Complex Crowd Work"))
+  }
 
 }

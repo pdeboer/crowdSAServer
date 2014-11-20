@@ -1,7 +1,26 @@
-@(message: String)
+@(document: String)
 
-@main("Welcome to Play") {
+@import helper._
 
-    @play20.welcome(message)
+@main("PDF Viewer") {
+
+    <h1>@document</h1>
+
+        <table style="width: 100%; height: 100%">
+            <tr>
+                <td style="width : 25%; vertical-align: top; border: 1px solid black;">
+                    <div id="selectedText">
+                        Highlighted text here
+                    </div>
+                </td>
+
+                <td style="border: 1px solid black;">
+                    <center>
+                        <div id="pdfContainer">
+                        </div>
+                    </center>
+                </td>
+            </tr>
+        </table>
 
 }
