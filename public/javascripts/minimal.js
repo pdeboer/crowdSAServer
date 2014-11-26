@@ -15,6 +15,8 @@
 //
 // NOTE: The original example was changed to remove jQuery usage, re-structure and add more comments.
 
+var numPages;
+
 window.onload = function () {
     if (typeof PDFJS === 'undefined') {
         alert('Built version of pdf.js is not found\nPlease run `node make generic`');
@@ -30,16 +32,19 @@ window.onload = function () {
     }
 
     function renderPdf(pdf) {
+        numPages = pdf.numPages;
         for(var page = 1; page <= pdf.numPages; page++) {
             pdf.getPage(page).then(renderPage);
         }
     }
 
     function renderPage(page) {
+
         var viewport = page.getViewport(scale);
 
         // Create and append the 'pdf-page' div to the pdf container.
         var pdfPage = document.createElement('div');
+        pdfPage.id = 'page_'+page.pageIndex;
         pdfPage.className = 'pdfPage';
         var pdfContainer = document.getElementById('pdfContainer');
         pdfContainer.appendChild(pdfPage);
@@ -68,6 +73,10 @@ window.onload = function () {
         pdfPage.appendChild(canvas);
 
         var textLayerDiv = document.createElement('div');
+        textLayerDiv.id = 'textLayerPage_'+page.pageIndex;
+
+        textLayerDiv.setAttribute("onselect", "extractText()");
+
         textLayerDiv.className = 'textLayer';
         textLayerDiv.style.width = canvas.style.width;
         textLayerDiv.style.height = canvas.style.height;
@@ -85,7 +94,7 @@ window.onload = function () {
             var textLayerBuilder = new TextLayerBuilder({
                 textLayerDiv: textLayerDiv,
                 viewport: viewport,
-                pageIndex: 0
+                pageIndex: page.pageIndex
             });
             textLayerBuilder.setTextContent(textContent);
         });

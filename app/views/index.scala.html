@@ -8,9 +8,15 @@
 
         <table style="width: 100%; height: 100%">
             <tr>
+                <td></td>
+                <td>
+                    <button id="compute" onclick="extractText();">Search for statistic CSV</button>
+                    <br>
+                </td>
+            </tr>
+            <tr>
                 <td style="width : 25%; vertical-align: top; border: 1px solid black;">
-                    <div id="selectedText">
-                        Highlighted text here
+                    <div id="console">
                     </div>
                 </td>
 
@@ -22,5 +28,40 @@
                 </td>
             </tr>
         </table>
+
+
+    <script language="JavaScript">
+
+        // Convert CSV to JSON
+        var results;
+        Papa.parse ("http://localhost:9000/assets/csv/stat.csv", {
+            download: true,
+            worker: true,
+            complete: function(res) {
+                console.log("Remote file parsed! ", res.data.length);
+                results = res.data;
+            }
+        });
+
+        function extractText(){
+            var console = document.getElementById('console');
+            console.innerHTML = 'Start searching for statistic CSV words...<br><br>';
+            for(var i=1; i<=numPages;i++) {
+                var page = $ ( "#textLayerPage_" + i )[ 0 ] ;
+                if(page === undefined) {
+                console.innerHTML = console.innerHTML + '<br><br>End of document';
+                } else {
+                    var text = page.innerText;
+                    for ( var k = 0 ; k < results.length ; k ++ ) {
+                        var start = text.toLowerCase().indexOf(results[k][0]);
+                        if (start != -1 && (start+results[k][0]) != start){
+                            var end = start+results[k][0 ].length;
+                            console.innerHTML = console.innerHTML + 'Match: <b>' + results[k][0] + '</b>\tposition: [' + start + ', ' + end+ ']<br>';
+                        }
+                    }
+                }
+            }
+        }
+    </script>
 
 }
