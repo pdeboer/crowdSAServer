@@ -11,7 +11,6 @@ object Application extends Controller {
   }
 
   def viewer =  Action {
-    Ok(views.html.index("CrowdWeaver: Visually Managing Complex Crowd Work"))
+    Ok(views.html.index("Let’s Do It at My Place Instead? Attitudinal and Behavioral study of Privacy in Client-Side Personalization"))
   }
-
 }

@@ -75,7 +75,7 @@ window.onload = function () {
         var textLayerDiv = document.createElement('div');
         textLayerDiv.id = 'textLayerPage_'+page.pageIndex;
 
-        textLayerDiv.setAttribute("onselect", "extractText()");
+        // textLayerDiv.setAttribute("onselect", "extractText()");
 
         textLayerDiv.className = 'textLayer';
         textLayerDiv.style.width = canvas.style.width;
