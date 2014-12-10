@@ -1,18 +1,27 @@
 @(document: String)
 
 @main("PDF Viewer") {
-        <table style="width: 100%; height: 100%">
+        <table style="width: 100%; height: 100%; padding: 10px;">
             <tr>
                 <td style="width : 25%; vertical-align: top; border: 0px;">
                     <b>@document</b>
                     <center>
                         <hr style="width: 75%"><br>
                     </center>
-                        <span>Separate values with a "," without extra spaces!<br>The search is case sensitive</span><br>
+                        <ul style="padding: 20px">
+                            <li>Separate values with a "," without extra spaces!<br>The search is case sensitive</span><br></li>
+                        </ul>
                     <center>
-                        <input type="text" id="csvTerms">
+                        <input type="text" id="csvTerms" placeholder="Insert words to highlight...">
                         <button id="compute" onclick="highlight();">Highlight</button>
                         <br>
+                    </center>
+                        <br>
+                        <ul style="padding: 20px">
+                            <li><span>Jump to: <i>document.getElementsByClassName('textLayer')[0].childNodes[175]</i> element. (Page1 - INTRODUCTION div)</span></li>
+                        </ul>
+                    <center>
+                        <button id="jump" onclick="jumpToParagraph();">Jump to a paragraph</button>
                         <br>
                         <hr style="width: 75%"><br>
                     </center>
@@ -412,9 +421,13 @@
             }else {
                 cons.innerHTML = '<b><div style="color: red">Invalid input!</div></b>';
             }
-
-
         }
+
+        function jumpToParagraph(){
+            var elem = document.getElementsByClassName('textLayer')[0].childNodes[175];
+            scrollIntoView(elem);
+        }
+
     </script>
 
 }
