@@ -1,12 +1,21 @@
 package controllers
 
-import java.io.FileOutputStream
+import java.io.{FileInputStream, BufferedWriter, OutputStreamWriter, FileOutputStream}
 import java.util
+import java.util.regex.Pattern
 
-import com.lowagie.text.pdf.parser.{TextRenderInfo, RenderListener, PdfContentStreamProcessor ,PdfTextExtractor}
-import com.lowagie.text.{Paragraph, Document}
-import com.lowagie.text.pdf.{PdfContentByte, PdfName, PdfReader, PdfWriter}
+
+import com.itextpdf.text.pdf.{PdfName, PdfStamper, PdfReader}
+import com.itextpdf.text.pdf.parser.LocationTextExtractionStrategy.{TextChunk, TextChunkFilter}
+import com.itextpdf.text.pdf.parser._
+import org.apache.pdfbox.pdfparser.PDFParser
+import org.apache.pdfbox.pdmodel.{PDPage, PDDocument}
+import org.apache.pdfbox.pdmodel.common.PDRectangle
+import org.apache.pdfbox.pdmodel.interactive.annotation.PDAnnotationTextMarkup
+
 import play.api.mvc._
+
+import scala.io.Source
 
 object Application extends Controller {
 
@@ -16,46 +25,46 @@ object Application extends Controller {
 
   def viewer =  Action {
 
-    //highlight
+    val contentCsv = readCsv
+
+    highlight(contentCsv)
 
     Ok(views.html.index("Let’s Do It at My Place Instead? Attitudinal and Behavioral study of Privacy in Client-Side Personalization"))
   }
 
-  def highlight: Unit = {
-    // ***** Java iText Library *****
+  def highlight(contentCsv: List[String]) : Unit = {
+    val file = "./public/pdfs/test.pdf"
+    val parser: PDFParser = new PDFParser(new FileInputStream(file))
+    parser.parse()
+    val pdDoc: PDDocument = new PDDocument(parser.getDocument)
 
-    val reader = new PdfReader("./public/pdfs/test.pdf")
+    val pdfHighlight: TextHighlight = new TextHighlight("UTF-8")
+    // depends on what you want to match, but this creates a long string without newlines
+    pdfHighlight.setLineSeparator(" ")
+    pdfHighlight.initialize(pdDoc)
 
-    val processor = new PdfContentStreamProcessor(new RenderListener {
-
-      override def renderText(textRenderInfo: TextRenderInfo): Unit = {
-        println("<"+textRenderInfo.getText+">")
+    for(textRegEx <- contentCsv) {
+      pdfHighlight.highlightDefault(textRegEx)
+    }
+    pdDoc.save("./public/pdfs/demo.pdf")
+    try {
+      if (parser.getDocument != null) {
+        parser.getDocument.close
       }
-
-      override def reset(): Unit = {
-        println(">")
+      if (pdDoc != null) {
+        pdDoc.close
       }
-    })
+    }
+    catch {
+      case e: Exception => {
+        e.printStackTrace
+      }
+    }
 
-    val pageDic = reader.getPageN(1)
-    //val resourcesDic = pageDic.getAsDict(PdfName.RESOURCES)
-    processor.processContent(reader.getPageContent(1), pageDic)
-
-    /*var parser = new PdfReaderContentParser(reader)
-    for(i <- 1 to reader.getNumberOfPages){
-      val strategy = parser.processContent(i, new SimpleTextExtractionStrategy())
-      println(strategy.getResultantText())
-    }*/
-
-    /*val page1 = util.Arrays.toString(reader.getPageContent(1))
-    val readable = new String(reader.getPageContent(1))
-    println(readable)*/
-
-    /*val doc = new Document()
-    PdfWriter.getInstance(doc, new FileOutputStream("./public/pdfs/result.pdf"))
-    doc.open()
-    doc.add(new Paragraph("Hello result"))
-    doc.close()*/
-    // ***** End Java code *****
   }
+
+  def readCsv: List[String] = {
+    return Source.fromFile("./public/csv/statTest.csv").getLines().toList
+  }
+
 }
