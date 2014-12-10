@@ -7,8 +7,13 @@
                     <b>@document</b>
                     <center>
                         <hr style="width: 75%"><br>
-                        <button id="compute" onclick="searchCSV();">Search for statistic CSV</button>
-                        <br><br>
+                    </center>
+                        <span>Separate values with a "," without extra spaces!<br>The search is case sensitive</span><br>
+                    <center>
+                        <input type="text" id="csvTerms">
+                        <button id="compute" onclick="highlight();">Highlight</button>
+                        <br>
+                        <br>
                         <hr style="width: 75%"><br>
                     </center>
                     <div id="console">
@@ -397,34 +402,18 @@
             }
         });
 
-        function searchCSV(){
+        function highlight(){
             var cons = document.getElementById('console');
-            cons.innerHTML = 'Start searching for CSV words...<br><br>';
-
-            var pdfContainer = document.getElementById("pdfContainer");
-
-            for(var i=0;i<numPages;i++) {
-                cons.innerHTML = cons.innerHTML + 'Analyzing page: ' + i + '...<br>';
-                // get all div nodes in the actual page
-                var pageStructure = $("#textLayerPage_"+i)[0 ].children;
-                //for each child search for matches
-                for(var j=0; j<pageStructure.length; j++){
-                    for(var k=0; k<results.length; k++){
-                        var str = results[k];
-
-                        if(typeof str === 'undefined'){
-                            console.log("undefined STR");
-                        } else {
-                            var text =  pageStructure[j ].innerText;
-                            var regex = new RegExp("\\b"+results[k]+"\\b", "gi");
-
-                            var replace = '<span style="background-color: #FFFF00; color: black">' + results[k] + '</span>';
-                            pageStructure[j ].innerHTML = pageStructure[j ].innerHTML.replace(regex, replace);
-                        }
-                    }
-                }
+            var csv = document.getElementById('csvTerms');
+            if(csv.value != "") {
+                cons.innerHTML = 'Highlighting ' + csv.innerText + '...<br>';
+                window.location = '../viewer/' + csv.value ;
+                cons.innerHTML = cons.innerHTML + 'Loading...';
+            }else {
+                cons.innerHTML = '<b><div style="color: red">Invalid input!</div></b>';
             }
-            cons.innerHTML = cons.innerHTML + '<br><br>Finish!';
+
+
         }
     </script>
 

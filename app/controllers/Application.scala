@@ -1,17 +1,10 @@
 package controllers
 
-import java.io.{FileInputStream, BufferedWriter, OutputStreamWriter, FileOutputStream}
-import java.util
-import java.util.regex.Pattern
+import java.io.{FileInputStream}
 
 
-import com.itextpdf.text.pdf.{PdfName, PdfStamper, PdfReader}
-import com.itextpdf.text.pdf.parser.LocationTextExtractionStrategy.{TextChunk, TextChunkFilter}
-import com.itextpdf.text.pdf.parser._
 import org.apache.pdfbox.pdfparser.PDFParser
-import org.apache.pdfbox.pdmodel.{PDPage, PDDocument}
-import org.apache.pdfbox.pdmodel.common.PDRectangle
-import org.apache.pdfbox.pdmodel.interactive.annotation.PDAnnotationTextMarkup
+import org.apache.pdfbox.pdmodel.{PDDocument}
 
 import play.api.mvc._
 
@@ -20,18 +13,24 @@ import scala.io.Source
 object Application extends Controller {
 
   def index = Action {
-    Redirect(routes.Application.viewer)
+    Redirect(routes.Application.viewer(""))
   }
 
-  def viewer =  Action {
+  def viewer(toHighlight: String) =  Action {
 
-    val contentCsv = readCsv
+    val contentCsv = readCsv(toHighlight)
 
-    highlight(contentCsv)
+    if(!contentCsv.isEmpty) {
+      highlight(contentCsv)
+    }
 
     Ok(views.html.index("Let’s Do It at My Place Instead? Attitudinal and Behavioral study of Privacy in Client-Side Personalization"))
   }
 
+  /**
+   * Highlight all the words contained in the contentCsv variable
+   * @param contentCsv a List of strings containing all the words/phrases to highlight in the PDF
+   */
   def highlight(contentCsv: List[String]) : Unit = {
     val file = "./public/pdfs/test.pdf"
     val parser: PDFParser = new PDFParser(new FileInputStream(file))
@@ -63,8 +62,19 @@ object Application extends Controller {
 
   }
 
-  def readCsv: List[String] = {
-    return Source.fromFile("./public/csv/statTest.csv").getLines().toList
+  /**
+   * Read the CSV file
+   * @return
+   */
+  def readCsv(csv: String) : List[String] = {
+    if(csv != ""){
+      val res = csv.split(",")
+      return res.toList
+    } else {
+      return List[String]()
+    }
+
+    //return Source.fromFile("./public/csv/statTest.csv").getLines().toList
   }
 
 }
