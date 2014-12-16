@@ -26,6 +26,8 @@ package controllers;
         import java.util.regex.Matcher;
         import java.util.regex.Pattern;
 
+        import org.apache.commons.logging.Log;
+        import org.apache.commons.logging.LogFactory;
         import org.apache.pdfbox.cos.COSDocument;
         import org.apache.pdfbox.pdmodel.PDDocument;
         import org.apache.pdfbox.pdmodel.PDPage;
