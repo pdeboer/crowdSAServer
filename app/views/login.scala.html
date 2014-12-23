@@ -1,0 +1,18 @@
+
+
+@main("Login") {
+
+  <table style="left:50%; top:50%; transform:translate(-50%,-50%); -webkit-transform:translate(-50%,-50%); position: absolute;">
+    <tr>
+      <td>
+        <h1>Login:</h1>
+        <br><br>
+        <form action="@routes.Application.login()" method="post">
+          <input type="text" name="turkerId" placeholder="turkerID">
+          <input type="submit" class="btn btn-success" value="Enter">
+        </form>
+      </td>
+    </tr>
+  </table>
+
+}

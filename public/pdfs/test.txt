@@ -1,0 +1,104 @@
+ Let’s Do It at My Place Instead?  Attitudinal and Behavioral 
+Study of Privacy in Client-Side Personalization 
+Alfred Kobsa, Bart P. Knijnenburg 
+Department of Informatics 
+University of California, Irvine 
+{kobsa, bart.k}@uci.edu 
+Benjamin Livshits 
+Microsoft Research 
+Redmond, WA 
+livshits@microsoft.com   
+ 
+ABSTRACT 
+Many users welcome personalized services, but are reluc-
+tant to provide the information about themselves that 
+personalization requires. Performing personalization exclu-
+sively at the client side (e.g., on one’s smartphone) may 
+conceptually increase privacy, because no data is sent to a 
+remote provider. But does client-side personalization (CSP) 
+also increase users’ perception of privacy?  
+We developed a causal model of privacy attitudes and be-
+havior in personalization, and validated it in an experiment 
+that contrasted CSP with personalization at three remote 
+providers: Amazon, a fictitious company, and the “Cloud”. 
+Participants gave roughly the same amount of personal data 
+and tracking permissions in all four conditions. A structural 
+equation modeling analysis reveals the reasons: CSP raises 
+the fewest privacy concerns, but does not lead in terms of 
+perceived protection nor in resulting self-anticipated satis-
+faction and thus privacy-related behavior. Encouragingly, 
+we found that adding certain security features to CSP is 
+likely to raise its perceived protection significantly. Our 
+model predicts that CSP will then also sharply improve on 
+all other privacy measures. 
+Author Keywords 
+Privacy; personalization; client-side; structural equation 
+modeling (SEM); attitudes; behaviors. 
+ACM Classification Keywords 
+H.5.2. Information interfaces and presentation: User 
+interfaces–evaluation/methodology, theory and methods, 
+K.4.1. Computers and society: Public policy issues–privacy. 
+General Terms 
+Human Factors; Design; Measurement; Verification. 
+INTRODUCTION 
+Personalized services are widely used. For instance, 20–
+30% of Amazon purchases and 60% of Netflix views are a 
+result of personalized recommendations [42]. At the same 
+time though, users are reluctant to disclose personal data or 
+allow their system usage to be tracked, which is a requisite 
+for personalization [7,48]. For instance, people often loathe 
+location tracking which enables location-based services [1], 
+recommendations and advertisements [51], or they are 
+unwilling to disclose their music preferences and person-
+ality traits to a music recommender [14]. The notions of 
+personalization-privacy “paradox”1 [3,51], “trade-off” [29] 
+and “dilemma” [7] have been used to refer to these seem-
+ingly conflicting user desires for both personalization and 
+privacy. 
+Several proposals have been made to allow users to enjoy 
+both a reasonable personalization quality and a higher 
+degree of privacy (see [28,49] for overviews). One techni-
+cal solution that became popular recently abandons the 
+assumption that personal data collected on users’ local 
+devices must be sent to a remote site for personalization to 
+take place. In the paradigm of “client-side personalization” 
+(CSP) [6,18,35,37], users’ personal data remains instead on 
+the user’s device, where all personalization is carried out. 
+Various forms of CSP have been explored so far, which we 
+will survey in the next section. 
+From a conceptual and technical point of view, preventing 
+others from accessing personal data enhances the privacy of 
+the data subjects [46]. It has, however, been argued that 
+CSP will also increase users’ perception of privacy. For 
+instance, the following claims can be found in the literature: 
+• “the user does not need to worry about [...] privacy 
+infringement” [43], 
+• “it is easy for a consumer to understand that their 
+personal information will stay under their control at all 
+times” [35], 
+• “the user may also find it desirable when they prefer that 
+their user model be kept only on their phone and under 
+their own control” [15], 
+• “client-side solutions […] instill a greater sense of user 
+trust” [35]. 
+                                                            
+1 The notion of “privacy-personalization paradox” is differ-
+ent from the “privacy paradox” [38], a conflict between 
+stated privacy attitudes and/or intended behavior and actual 
+behavior observed later on (see e.g. [47]). 
+Permission to make digital or hard copies of all or part of this work for 
+personal or classroom use is granted without fee provided that copies are 
+not made or distributed for profit or commercial advantage and that copies 
+bear this notice and the full citation on the first page. Copyrights for com-
+ponents of this work owned by others than the author(s) must be honored. 
+Abstracting with credit is permitted. To copy otherwise, or republish, to 
+post on servers or to redistribute to lists, requires prior specific permission 
+and/or a fee. Request permissions from Permissions@acm.org. 
+ 
+CHI 2014, April 26 - May 01 2014, Toronto, ON, Canada 
+Copyright is held by owner/author(s). Publication rights licensed to ACM. 
+ACM 978-1-4503-2473-1/14/04…$15.00. 
+http://dx.doi.org/10.1145/2556288.2557102  
+ 
+Session: Social Local Mobile CHI 2014, One of a CHInd, Toronto, ON, Canada
+81

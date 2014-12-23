@@ -3,13 +3,20 @@
 # ~~~~
 
 # Home page
-GET        /                    controllers.Application.index
+GET         /                    controllers.Application.index
+
+# Login
+POST        /login               controllers.Application.login
+POST        /logout              controllers.Application.logout
+
+# Waiting
+GET         /waiting             controllers.Application.waiting
 
 # PDF Viewer
-GET        /viewer              controllers.Application.viewer(csv = "")
-GET        /viewer/:csv         controllers.Application.viewer(csv: String)
+GET         /viewer/:title       controllers.Application.viewer(title: String, csv = "")
+GET         /viewer/:title/:csv  controllers.Application.viewer(title: String, csv: String)
 
 # Map static resources from the /public folder to the /assets URL path
-GET        /assets/*file        controllers.Assets.at(path="/public", file)
+GET         /assets/*file        controllers.Assets.at(path="/public", file)
 
     

@@ -1,30 +1,75 @@
 package controllers
 
-import java.io.{FileInputStream}
+import java.io.FileInputStream
 
-
+import models.{User, Users}
 import org.apache.pdfbox.pdfparser.PDFParser
-import org.apache.pdfbox.pdmodel.{PDDocument}
-
+import org.apache.pdfbox.pdmodel.PDDocument
+import org.joda.time.{DateTimeZone, DateTime}
+import play.api.db.slick.DBAction
 import play.api.mvc._
 
-import scala.io.Source
 
 object Application extends Controller {
 
-  def index = Action {
-    Redirect(routes.Application.viewer(""))
+  def index = DBAction { implicit request =>
+    val session = request.dbSession
+    request.session.get("connected").map {
+      user => Ok("Hello " + user)
+        Ok(views.html.waiting(user, Users.list(session)))
+    }getOrElse{
+      Ok(views.html.login())
+    }
   }
 
-  def viewer(toHighlight: String) =  Action {
 
-    val contentCsv = readCsv(toHighlight)
+  def login = DBAction { implicit request =>
+    val session = request.dbSession
 
-    if(!contentCsv.isEmpty) {
-      highlight(contentCsv)
+    def turkerId = request.body.asFormUrlEncoded.get("turkerId")(0)
+    if(turkerId != ""){
+
+      Users.add(User(None, turkerId, DateTime.now(DateTimeZone.UTC)), session)
+      Redirect(routes.Application.waiting()).withSession(
+        "connected" -> turkerId)
+    } else {
+      Unauthorized("Incorrect login!")
     }
+  }
 
-    Ok(views.html.index("Let’s Do It at My Place Instead? Attitudinal and Behavioral study of Privacy in Client-Side Personalization"))
+  def logout = Action {
+    Redirect(routes.Application.index()).withNewSession.flashing(
+      "success" -> "You are now logged out."
+    )
+  }
+
+  def waiting = DBAction { implicit request =>
+    val session = request.dbSession
+    request.session.get("connected").map {
+      user => Ok("Hello " + user)
+        Ok(views.html.waiting(user, Users.list(session)))
+    }.getOrElse {
+      Unauthorized("Oops, you are not connected")
+    }
+  }
+
+
+  def viewer(title: String, toHighlight: String) =  Action { implicit request =>
+
+      request.session.get("connected").map {
+        user => Ok("Hello " + user)
+
+          val contentCsv = readCsv(toHighlight)
+
+          if (!contentCsv.isEmpty) {
+            highlight(contentCsv)
+          }
+
+          Ok(views.html.index(title, user))
+
+      }.getOrElse {
+        Unauthorized("Oops, you are not connected")
+      }
   }
 
   /**

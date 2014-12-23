@@ -1,0 +1,37 @@
+@(user: String, users: List[User])
+
+@main("Waiting for tasks...") {
+  <table style="left:50%; top:50%; transform:translate(-50%,-50%); -webkit-transform:translate(-50%,-50%); position: absolute;">
+    <tr>
+      <td>
+        <h2>Waiting for tasks...</h2>
+        <br>
+        <br>
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        <div>Hello @user!<br> Please wait for a task...</div>
+        <br>
+        <br>
+        <ul>
+          @users.map{ u =>
+            <li>
+              @u.turkerId
+              (@u.loginTime)
+            </li>
+          }
+        </ul>
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        <form action="/viewer/title">
+          <button class="btn btn-info">START</button>
+        </form>
+      </td>
+    </tr>
+  </table>
+}
