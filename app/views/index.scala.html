@@ -414,7 +414,7 @@
             var csv = document.getElementById('csvTerms');
             if(csv.value != "") {
                 cons.innerHTML = 'Highlighting ' + csv.innerText + '...<br>';
-                window.location = '../viewer/'+document.getElementById('title').innerHTML + '/' + csv.value ;
+                window.location = 'http://localhost:9000/viewer/'+document.getElementById('title').innerHTML + '/' + csv.value ;
                 cons.innerHTML = cons.innerHTML + 'Loading...';
             }else {
                 cons.innerHTML = '<b><div style="color: red">Invalid input!</div></b>';

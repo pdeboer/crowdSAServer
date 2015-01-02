@@ -1,4 +1,4 @@
-@(user: String, users: List[User])
+@(turker: String, hits: List[Hit], questions: List[Question])
 
 @main("Waiting for tasks...") {
   <table style="left:50%; top:50%; transform:translate(-50%,-50%); -webkit-transform:translate(-50%,-50%); position: absolute;">
@@ -12,17 +12,28 @@
 
     <tr>
       <td>
-        <div>Hello @user!<br> Please wait for a task...</div>
+        <div>Hello @turker!<br> Please wait for a task...</div>
         <br>
         <br>
-        <ul>
-          @users.map{ u =>
-            <li>
-              @u.turkerId
-              (@u.loginTime)
-            </li>
-          }
-        </ul>
+        @if(hits.size == 0){
+          <b>No available hits</b>
+        } else {
+          <ul>
+            @hits.map{ h =>
+              <li>Hit:</li><br>
+              @h.pdf
+                (@h.hitReceived)<br>
+            <li>Questions:</li><br>
+              @questions.map { q =>
+                @if(q.hit_fk == h.id.get){
+                  @q.question
+                    (@q.answerType)<br>
+                }
+              }
+              <br><br>
+            }
+          </ul>
+        }
       </td>
     </tr>
 

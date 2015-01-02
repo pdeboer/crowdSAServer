@@ -2,11 +2,12 @@ package controllers
 
 import java.io.FileInputStream
 
-import models.{User, Users}
+import models._
 import org.apache.pdfbox.pdfparser.PDFParser
 import org.apache.pdfbox.pdmodel.PDDocument
-import org.joda.time.{DateTimeZone, DateTime}
+import org.joda.time.{DateTime, DateTimeZone}
 import play.api.db.slick.DBAction
+import play.api.libs.json.JsValue
 import play.api.mvc._
 
 
@@ -15,9 +16,9 @@ object Application extends Controller {
   def index = DBAction { implicit request =>
     val session = request.dbSession
     request.session.get("connected").map {
-      user => Ok("Hello " + user)
-        Ok(views.html.waiting(user, Users.list(session)))
-    }getOrElse{
+      turker =>
+        Ok(views.html.waiting(turker, Hits.list(session), Questions.list(session)))
+    } getOrElse {
       Ok(views.html.login())
     }
   }
@@ -27,9 +28,8 @@ object Application extends Controller {
     val session = request.dbSession
 
     def turkerId = request.body.asFormUrlEncoded.get("turkerId")(0)
-    if(turkerId != ""){
-
-      Users.add(User(None, turkerId, DateTime.now(DateTimeZone.UTC)), session)
+    if (turkerId != "") {
+      Turkers.add(Turker(None, turkerId, DateTime.now(DateTimeZone.UTC)), session)
       Redirect(routes.Application.waiting()).withSession(
         "connected" -> turkerId)
     } else {
@@ -43,21 +43,94 @@ object Application extends Controller {
     )
   }
 
-  def waiting = DBAction { implicit request =>
+  // GET - get all questions
+  def questions = DBAction { implicit request =>
     val session = request.dbSession
+
     request.session.get("connected").map {
-      user => Ok("Hello " + user)
-        Ok(views.html.waiting(user, Users.list(session)))
+      turker =>
+        Ok(Questions.list(session).size.toString)
     }.getOrElse {
       Unauthorized("Oops, you are not connected")
     }
   }
 
+  def getQuestionWithHitId(id: Int) = DBAction { implicit request =>
+    val session = request.dbSession
+    val l : List[Question] = Questions.findByHitId(id, session)
+    Ok("")
+  }
 
+  // GET - get single question
+  def getQuestion(id: Int) = DBAction { implicit request =>
+    val session = request.dbSession
+
+    request.session.get("connected").map {
+      turker =>
+        val q: List[Question] = Questions.findByQuestionId(id, session)
+        Ok(q(0).question)
+    }.getOrElse {
+      Unauthorized("Oops, you are not connected")
+    }
+  }
+
+  // POST - stores a hit
+  def hit() = DBAction(parse.tolerantJson) { request =>
+    val session = request.dbSession
+
+    // Extract hit
+    val hitJson : JsValue = request.body \ "hit"
+    val hitId : Option[Int] = hitJson.asOpt[Int]
+    val pdf : String = (request.body \ "pdf").as[String]
+    val hitReceived : DateTime = DateTime.now(DateTimeZone.UTC)
+    val hit : Hit = Hit(hitId, pdf, hitReceived)
+
+    Hits.add(hit, session)
+
+    Ok("")
+
+    // TODO: Only HTTPS post allowed with certificate authentication
+
+  }
+
+  // POST - stores a question
+  def question() = DBAction(parse.tolerantJson) { request =>
+    val session = request.dbSession
+
+    // Extract all questions related to the hit
+    val questionsJson : JsValue = request.body \ "question"
+    val qId : Option[Int] = questionsJson.asOpt[Int]
+    val q : String = (request.body \ "question").as[String]
+    val answerType : String = (request.body \ "answerType").as[String]
+    val hitFk : Int = (request.body \ "hit_fk").as[Int]
+
+    val question: Question = Question(qId, q, answerType, hitFk)
+    Questions.add(question, session)
+
+    Ok("")
+    // TODO: Only HTTPS post allowed with certificate authentication
+  }
+
+  def waiting = DBAction { implicit request =>
+    val session = request.dbSession
+
+    // TODO: Check the database if new questions
+    // are available and if there are new
+    // questions reload the page
+
+    request.session.get("connected").map {
+      turker =>
+        Ok(views.html.waiting(turker, Hits.list(session), Questions.list(session)))
+    }.getOrElse {
+      Unauthorized("Oops, you are not connected")
+    }
+  }
+
+  // TODO: Add question parameter
   def viewer(title: String, toHighlight: String) =  Action { implicit request =>
 
       request.session.get("connected").map {
-        user => Ok("Hello " + user)
+        turker =>
 
           val contentCsv = readCsv(toHighlight)
 
@@ -65,7 +138,7 @@ object Application extends Controller {
             highlight(contentCsv)
           }
 
-          Ok(views.html.index(title, user))
+          Ok(views.html.index(title, turker))
 
       }.getOrElse {
         Unauthorized("Oops, you are not connected")

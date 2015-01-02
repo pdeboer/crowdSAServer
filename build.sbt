@@ -1,5 +1,3 @@
-import play.PlayScala
-
 name := "bachelor"
 
 version := "1.0"
