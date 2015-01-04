@@ -1,48 +1,64 @@
-@(turker: String, hits: List[Hit], questions: List[Question])
+@(turker: String, hits: List[Hit], questions: List[Question], answers: List[Answer])
 
-@main("Waiting for tasks...") {
-  <table style="left:50%; top:50%; transform:translate(-50%,-50%); -webkit-transform:translate(-50%,-50%); position: absolute;">
-    <tr>
-      <td>
-        <h2>Waiting for tasks...</h2>
-        <br>
-        <br>
-      </td>
-    </tr>
+    @main("Waiting for tasks...") {
+        <table style="left: 50%; top: 50%; transform: translate(-50%, -50%); -webkit-transform: translate(-50%, -50%); position: absolute;">
+            <tr>
+                <td>
+                    <h2>Waiting for tasks...</h2>
+                    <br>
+                    <br>
+                </td>
+            </tr>
 
-    <tr>
-      <td>
-        <div>Hello @turker!<br> Please wait for a task...</div>
-        <br>
-        <br>
-        @if(hits.size == 0){
-          <b>No available hits</b>
-        } else {
-          <ul>
-            @hits.map{ h =>
-              <li>Hit:</li><br>
-              @h.pdf
-                (@h.hitReceived)<br>
-            <li>Questions:</li><br>
-              @questions.map { q =>
-                @if(q.hit_fk == h.id.get){
-                  @q.question
-                    (@q.answerType)<br>
-                }
-              }
-              <br><br>
-            }
-          </ul>
-        }
-      </td>
-    </tr>
+            <tr>
+                <td>
+                    <div>Hello @turker!<br> Please wait for a task...</div>
+                    <br>
+                    <br>
+                    @if(hits.size == 0) {
+                        <b>No available hits</b>
+                    } else {
+                        <dl>
+                        @hits.map { h =>
+                            <dt>Hit:</dt>
+                            <dd>- <b>@h.pdf</b>
+                                (@h.hitReceived)</dd><br>
 
-    <tr>
-      <td>
-        <form action="/viewer/title">
-          <button class="btn btn-info">START</button>
-        </form>
-      </td>
-    </tr>
-  </table>
-}
+                            <dt>Questions:</dt>
+                        @questions.map { q =>
+                            @if(q.hit_fk == h.id.get) {
+                                <dd>-
+                                    <i>@q.question</i>
+                                    (@q.answerType)
+                                </dd>
+
+                                <dl>
+                                    <dt><b><i>Answers:</i></b></dt>
+                                    @answers.map { a =>
+                                        @if(q.id.get == a.qId) {
+                                            <dd>-
+                                                <b>@a.answer</b>
+                                                (@a.answerTime)
+                                            </dd>
+                                        }
+                                    }
+                                </dl>
+                                <br>
+                            }
+                        }
+                        }
+                            <br><br>
+                        </dl>
+                    }
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <form action="/viewer/title">
+                        <button class="btn btn-info">START</button>
+                    </form>
+                </td>
+            </tr>
+        </table>
+    }

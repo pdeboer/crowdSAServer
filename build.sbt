@@ -8,7 +8,7 @@ libraryDependencies ++= Seq( jdbc , anorm , cache , ws )
 
 libraryDependencies += "org.apache.pdfbox" % "pdfbox" % "1.8.7"
 
-libraryDependencies += "pdeboer" % "pplib_2.11" % "0.1-SNAPSHOT"
+//libraryDependencies += "pdeboer" % "pplib_2.11" % "0.1-SNAPSHOT"
 
 libraryDependencies ++= Seq(
   "com.typesafe.slick" %% "slick" % "2.1.0",

@@ -17,7 +17,7 @@ object Application extends Controller {
     val session = request.dbSession
     request.session.get("connected").map {
       turker =>
-        Ok(views.html.waiting(turker, Hits.list(session), Questions.list(session)))
+        Ok(views.html.waiting(turker, Hits.list(session), Questions.list(session), Answers.list(session)))
     } getOrElse {
       Ok(views.html.login())
     }
@@ -120,7 +120,7 @@ object Application extends Controller {
 
     request.session.get("connected").map {
       turker =>
-        Ok(views.html.waiting(turker, Hits.list(session), Questions.list(session)))
+        Ok(views.html.waiting(turker, Hits.list(session), Questions.list(session), Answers.list(session)))
     }.getOrElse {
       Unauthorized("Oops, you are not connected")
     }
