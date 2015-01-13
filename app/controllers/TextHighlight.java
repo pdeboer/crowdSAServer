@@ -16,26 +16,24 @@ package controllers;
  * limitations under the License.
  */
 
-        import java.awt.*;
-        import java.io.IOException;
-        import java.io.Writer;
-        import java.util.ArrayList;
-        import java.util.HashMap;
-        import java.util.List;
-        import java.util.Map;
-        import java.util.regex.Matcher;
-        import java.util.regex.Pattern;
+import org.apache.pdfbox.cos.COSDocument;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
+import org.apache.pdfbox.util.Matrix;
+import org.apache.pdfbox.util.PDFTextStripper;
+import org.apache.pdfbox.util.TextPosition;
 
-        import org.apache.commons.logging.Log;
-        import org.apache.commons.logging.LogFactory;
-        import org.apache.pdfbox.cos.COSDocument;
-        import org.apache.pdfbox.pdmodel.PDDocument;
-        import org.apache.pdfbox.pdmodel.PDPage;
-        import org.apache.pdfbox.pdmodel.common.PDRectangle;
-        import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
-        import org.apache.pdfbox.util.Matrix;
-        import org.apache.pdfbox.util.PDFTextStripper;
-        import org.apache.pdfbox.util.TextPosition;
+import java.awt.*;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * This class implements the methods highlight and highlightDefault which will add a highlight to the PDF based on a

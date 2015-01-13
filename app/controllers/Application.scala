@@ -1,40 +1,57 @@
 package controllers
 
 import java.io.FileInputStream
-
-import models._
+import java.text.DateFormat
+import java.util.Date
+import anorm.NotAssigned
+import models.{Question, Turker}
 import org.apache.pdfbox.pdfparser.PDFParser
 import org.apache.pdfbox.pdmodel.PDDocument
-import org.joda.time.{DateTime, DateTimeZone}
-import play.api.db.slick.DBAction
-import play.api.libs.json.JsValue
+import persistence.{PaperDAO, JobDAO, QuestionDAO, TurkerDAO}
+
+import play.api.db.DB
+import play.api.libs.json.{Json, JsValue}
 import play.api.mvc._
+
+import play.api.data.Form
+import play.api.data.Forms.{tuple, nonEmptyText}
 
 
 object Application extends Controller {
 
-  def index = DBAction { implicit request =>
-    val session = request.dbSession
-    request.session.get("connected").map {
+  def index = Action { implicit request =>
+    val session = request.session
+    request.session.get("turker").map {
       turker =>
-        Ok(views.html.waiting(turker, Hits.list(session), Questions.list(session), Answers.list(session)))
+        Redirect(routes.Application.waiting())
     } getOrElse {
       Ok(views.html.login())
     }
   }
 
-
-  def login = DBAction { implicit request =>
-    val session = request.dbSession
+  def login = Action { implicit request =>
 
     def turkerId = request.body.asFormUrlEncoded.get("turkerId")(0)
-    if (turkerId != "") {
-      Turkers.add(Turker(None, turkerId, DateTime.now(DateTimeZone.UTC)), session)
-      Redirect(routes.Application.waiting()).withSession(
-        "connected" -> turkerId)
-    } else {
-      Unauthorized("Incorrect login!")
-    }
+    def email = request.body.asFormUrlEncoded.get("email")(0)
+
+      val turker = TurkerDAO.findByTurkerId(turkerId).getOrElse(null)
+      if(turker != null){
+        //The turker exists in the database
+        if(turker.email.equals(email)) {
+          //Check if the email is the same
+          TurkerDAO.update(turker.id.get, new Date().getTime)
+        } else {
+          Redirect(routes.Application.index())
+        }
+      } else {
+        //Create new turker in database
+        val d = new Date()
+        val res = TurkerDAO.add(
+          Turker(NotAssigned, turkerId, email, d.getTime)
+        )
+      }
+
+    Redirect(routes.Application.waiting()).withSession(("turker" -> turkerId))
   }
 
   def logout = Action {
@@ -43,105 +60,137 @@ object Application extends Controller {
     )
   }
 
+  def account = Action { implicit request =>
+    val session = request.session
+
+    request.session.get("turker").map {
+      turker =>
+        Ok(views.html.account(TurkerDAO.findByTurkerId(turker).getOrElse(null)))
+    }.getOrElse {
+      Redirect(routes.Application.login())
+    }
+  }
   // GET - get all questions
-  def questions = DBAction { implicit request =>
-    val session = request.dbSession
+  def questions = Action { implicit request =>
+    val session = request.session
 
-    request.session.get("connected").map {
+    request.session.get("turker").map {
       turker =>
-        Ok(Questions.list(session).size.toString)
+        Ok(Json.toJson(QuestionDAO.getAll()))
     }.getOrElse {
-      Unauthorized("Oops, you are not connected")
+      Redirect(routes.Application.login())
     }
   }
 
-  def getQuestionWithHitId(id: Int) = DBAction { implicit request =>
-    val session = request.dbSession
-    val l : List[Question] = Questions.findByHitId(id, session)
-    Ok("")
-  }
+  // GET - get questions related to PDF
+  def jobs = Action { implicit request =>
+    val session = request.session
 
-  // GET - get single question
-  def getQuestion(id: Int) = DBAction { implicit request =>
-    val session = request.dbSession
-
-    request.session.get("connected").map {
+    request.session.get("turker").map {
       turker =>
-        val q: List[Question] = Questions.findByQuestionId(id, session)
-        Ok(q(0).question)
+        Ok(Json.toJson(JobDAO.getData()))
     }.getOrElse {
-      Unauthorized("Oops, you are not connected")
+      Redirect(routes.Application.login())
     }
   }
 
-  // POST - stores a hit
-  def hit() = DBAction(parse.tolerantJson) { request =>
-    val session = request.dbSession
+  /*
+    def getQuestionWithHitId(id: Int) = DBAction { implicit request =>
+      val session = request.dbSession
+      val l : List[Question] = Questions.findByHitId(id, session)
+      Ok("")
+    }
 
-    // Extract hit
-    val hitJson : JsValue = request.body \ "hit"
-    val hitId : Option[Int] = hitJson.asOpt[Int]
-    val pdf : String = (request.body \ "pdf").as[String]
-    val hitReceived : DateTime = DateTime.now(DateTimeZone.UTC)
-    val hit : Hit = Hit(hitId, pdf, hitReceived)
+    // GET - get single question
+    def getQuestion(id: Int) = DBAction { implicit request =>
+      val session = request.dbSession
 
-    Hits.add(hit, session)
+      request.session.get("turker").map {
+        turker =>
+          val q: List[Question] = Questions.findByQuestionId(id, session)
+          Ok(q(0).question)
+      }.getOrElse {
+        Ok(views.html.login())
+      }
+    }
 
-    Ok("")
+    // POST - stores a hit
+    def hit() = DBAction(parse.tolerantJson) { request =>
+      val session = request.dbSession
 
-    // TODO: Only HTTPS post allowed with certificate authentication
+      // Extract hit
+      val hitJson : JsValue = request.body \ "hit"
+      val hitId : Option[Int] = hitJson.asOpt[Int]
+      val pdf : String = (request.body \ "pdf").as[String]
+      val hitReceived : DateTime = DateTime.now(DateTimeZone.UTC)
+      val hit : Hit = Hit(hitId, pdf, hitReceived)
 
-  }
+      Hits.add(hit, session)
 
-  // POST - stores a question
-  def question() = DBAction(parse.tolerantJson) { request =>
-    val session = request.dbSession
+      Ok("")
 
-    // Extract all questions related to the hit
-    val questionsJson : JsValue = request.body \ "question"
-    val qId : Option[Int] = questionsJson.asOpt[Int]
-    val q : String = (request.body \ "question").as[String]
-    val answerType : String = (request.body \ "answerType").as[String]
-    val hitFk : Int = (request.body \ "hit_fk").as[Int]
+      // TODO: Only HTTPS post allowed with certificate authentication
 
-    val question: Question = Question(qId, q, answerType, hitFk)
-    Questions.add(question, session)
+    }
 
-    Ok("")
-    // TODO: Only HTTPS post allowed with certificate authentication
-  }
+    // POST - stores a question
+    def question() = DBAction(parse.tolerantJson) { request =>
+      val session = request.dbSession
 
-  def waiting = DBAction { implicit request =>
-    val session = request.dbSession
+      // Extract all questions related to the hit
+      val questionsJson : JsValue = request.body \ "question"
+      val qId : Option[Int] = questionsJson.asOpt[Int]
+      val q : String = (request.body \ "question").as[String]
+      val answerType : String = (request.body \ "answerType").as[String]
+      val hitFk : Int = (request.body \ "hit_fk").as[Int]
 
-    // TODO: Check the database if new questions
-    // are available and if there are new
-    // questions reload the page
+      val question: Question = Question(qId, q, answerType, hitFk)
+      Questions.add(question, session)
 
-    request.session.get("connected").map {
+      Ok("")
+      // TODO: Only HTTPS post allowed with certificate authentication
+    }
+  */
+
+  def waiting = Action { implicit request =>
+    val session = request.session
+
+    request.session.get("turker").map {
       turker =>
-        Ok(views.html.waiting(turker, Hits.list(session), Questions.list(session), Answers.list(session)))
+        Ok(views.html.waiting(
+          TurkerDAO.findByTurkerId(turker).getOrElse(null)
+        ))
     }.getOrElse {
-      Unauthorized("Oops, you are not connected")
+      Redirect(routes.Application.login())
     }
   }
 
-  // TODO: Add question parameter
-  def viewer(title: String, toHighlight: String) =  Action { implicit request =>
+  //GET - statistics for user
+  def statistics = Action { implicit request =>
+    request.session.get("turker").map {
+      turker =>
+        Ok(views.html.statistic(TurkerDAO.findByTurkerId(turker).getOrElse(null)))
+    }.getOrElse {
+      Redirect(routes.Application.login())
+    }
+  }
 
-      request.session.get("connected").map {
+  //GET - show pdf viewer and question
+  def viewer(questionId: Long) =  Action { implicit request =>
+
+      request.session.get("turker").map {
         turker =>
 
-          val contentCsv = readCsv(toHighlight)
-
+          val contentCsv = readCsv(request.session.get("toHighlight").getOrElse(""))
           if (!contentCsv.isEmpty) {
             highlight(contentCsv)
           }
 
-          Ok(views.html.index(title, turker))
+          val question = QuestionDAO.findById(questionId).getOrElse(null)
+          Ok(views.html.index(TurkerDAO.findByTurkerId(turker).getOrElse(null), question, PaperDAO.findById(question.paper_fk).getOrElse(null)))
 
       }.getOrElse {
-        Unauthorized("Oops, you are not connected")
+        Redirect(routes.Application.login())
       }
   }
 
@@ -194,5 +243,4 @@ object Application extends Controller {
 
     //return Source.fromFile("./public/csv/statTest.csv").getLines().toList
   }
-
 }

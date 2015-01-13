@@ -1,18 +1,60 @@
 
+@main("Login")(null) {
+<style>
+body {
+padding-top: 40px;
+padding-bottom: 40px;
+background-color: #eee;
+}
 
-@main("Login") {
+.form-signin {
+max-width: 330px;
+padding: 15px;
+margin: 0 auto;
+}
+.form-signin .form-signin-heading,
+.form-signin .checkbox {
+margin-bottom: 10px;
+}
+.form-signin .checkbox {
+font-weight: normal;
+}
+.form-signin .form-control {
+position: relative;
+height: auto;
+-webkit-box-sizing: border-box;
+-moz-box-sizing: border-box;
+box-sizing: border-box;
+padding: 10px;
+font-size: 16px;
+}
+.form-signin .form-control:focus {
+z-index: 2;
+}
+.form-signin input[type="email"] {
+margin-bottom: 10px;
+border-bottom-right-radius: 0;
+border-bottom-left-radius: 0;
+}
+.form-signin input[type="turkerId"] {
+margin-bottom: -1px;
+border-top-left-radius: 0;
+border-top-right-radius: 0;
+}
+</style>
 
-  <table style="left:50%; top:50%; transform:translate(-50%,-50%); -webkit-transform:translate(-50%,-50%); position: absolute;">
-    <tr>
-      <td>
-        <h1>Login:</h1>
-        <br><br>
-        <form action="@routes.Application.login()" method="post">
-          <input type="text" name="turkerId" placeholder="turkerID">
-          <input type="submit" class="btn btn-success" value="Enter">
-        </form>
-      </td>
-    </tr>
-  </table>
+  <div class="container">
+
+    <form class="form-signin" action="/login" method="post">
+      <h2 class="form-signin-heading">Please sign in</h2>
+      <label for="inputTurkerId" class="sr-only">TurkerID</label>
+      <input type="turkerId" name="turkerId" id="turkerId" class="form-control" placeholder="TurkerID" required autofocus>
+      <label for="inputEmail" class="sr-only">Password</label>
+      <input type="email" name="email" id="email" class="form-control" placeholder="Email address" required>
+
+      <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+    </form>
+
+  </div> <!-- /container -->
 
 }

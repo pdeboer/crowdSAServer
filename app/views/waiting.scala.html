@@ -1,64 +1,104 @@
-@(turker: String, hits: List[Hit], questions: List[Question], answers: List[Answer])
+@(turker: Turker)
 
-    @main("Waiting for tasks...") {
-        <table style="left: 50%; top: 50%; transform: translate(-50%, -50%); -webkit-transform: translate(-50%, -50%); position: absolute;">
-            <tr>
-                <td>
-                    <h2>Waiting for tasks...</h2>
-                    <br>
-                    <br>
-                </td>
-            </tr>
+@main("Available Questions")(turker) {
 
-            <tr>
-                <td>
-                    <div>Hello @turker!<br> Please wait for a task...</div>
-                    <br>
-                    <br>
-                    @if(hits.size == 0) {
-                        <b>No available hits</b>
-                    } else {
-                        <dl>
-                        @hits.map { h =>
-                            <dt>Hit:</dt>
-                            <dd>- <b>@h.pdf</b>
-                                (@h.hitReceived)</dd><br>
+    <table ng-app="myApp" style="height: 100%; width: 100%;">
+        <tr>
+            <td>
+                <script type="text/javascript">
+                    var app = angular.module('myApp', [])
+                    .controller('jobController', function JobController($scope, $http) {
+                    $scope.jobs =[ ] ;
+                    $scope.input = "" ;
 
-                            <dt>Questions:</dt>
-                        @questions.map { q =>
-                            @if(q.hit_fk == h.id.get) {
-                                <dd>-
-                                    <i>@q.question</i>
-                                    (@q.answerType)
-                                </dd>
+                    $scope.doGetJobs = function ( ) {
+                    var httpRequest = $http ( {
+                    method : 'GET',
+                    url : "/jobs",
+                    } ).success ( function ( data, status ) {
+                    $scope.jobs = data ;
+                    } ).error ( function ( arg ) {
+                    alert ( "error " ) ;
+                    } ) ;
+                    } ;
 
-                                <dl>
-                                    <dt><b><i>Answers:</i></b></dt>
-                                    @answers.map { a =>
-                                        @if(q.id.get == a.qId) {
-                                            <dd>-
-                                                <b>@a.answer</b>
-                                                (@a.answerTime)
-                                            </dd>
-                                        }
-                                    }
-                                </dl>
-                                <br>
-                            }
-                        }
-                        }
-                            <br><br>
-                        </dl>
-                    }
-                </td>
-            </tr>
+                    $scope.doSearch = function ( ) {
+                    var httpRequest = $http ( {
+                    method : 'GET',
+                    url : "/search/" + $scope.input,
+                    } ).success ( function ( data, status ) {
+                    $scope.jobs = data ;
+                    } ).error ( function ( arg ) {
+                    alert ( "error " ) ;
+                    } ) ;
+                    } ;
 
-            <tr>
-                <td>
-                    <form action="/viewer/title">
-                        <button class="btn btn-info">START</button>
+                    $scope.showViewer = function(questionId) {
+                      $location.path("/viewer/"+questionId);
+                    };
+
+                    // run the search when the page loads.
+                    $scope.doGetJobs() ;
+                    $scope.doSearch() ;
+
+                    $scope.setLocation = function(url) {
+                        window.location.href = url;
+                    };
+
+                    });
+                </script>
+
+                <h2>Welcome @turker.turkerId!</h2>
+                <br>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                <div class="container" ng-controller="jobController">
+                    <div>
+                        <h2>Available questions:</h2>
+                        Filter questions:
+                        <input ng-model="input" ng-change="doSearch(input)" autofocus>
+                    </div>
+                    <h3 ng-if="jobs.length == 0" style="color: red;">There are no available questions right now!</h3>
+                    <table class="table table-hover" ng-if="jobs.length >= 1">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Paper Title</th>
+                                <th>Question Type</th>
+                                <th>Reward per answer ($)</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="job in jobs">
+                                <th>
+                                    {{ job.questionId }}
+                                </th>
+                                <td>
+                                    {{ job.pdfTitle }}
+                                </td>
+                                <td>
+                                    {{ job.questionType }}
+                                </td>
+                                <td>
+                                    {{ job.rewardAnswer }}
+                                </td>
+                                <td>
+                                    <button class="btn btn-success" ng-click="setLocation('/viewer/'+job.questionId)" type="submit">Solve</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <br><br>
+                    <form action="/viewer/1">
+                       <button class="btn btn-primary">Get Random Question</button>
                     </form>
-                </td>
-            </tr>
-        </table>
+                </div>
+                <br>
+            </td>
+        </tr>
+    </table>
     }

@@ -3,28 +3,36 @@
 # ~~~~
 
 # Home page
-GET         /                               controllers.Application.index
+GET         /                          controllers.Application.index
 
 # Login
-POST        /login                          controllers.Application.login
-POST        /logout                         controllers.Application.logout
+POST        /login                     controllers.Application.login()
+GET         /logout                    controllers.Application.logout()
 
 # Hits
-POST        /hit                            controllers.Application.hit
+#POST        /hit                            controllers.Application.hit
 
 # Questions
-GET         /questions                      controllers.Application.questions
-GET         /getQuestion/:id                controllers.Application.getQuestion(id: Int)
-POST        /question                       controllers.Application.question
+GET         /questions                 controllers.Application.questions
+#GET         /getQuestion/:id                controllers.Application.getQuestion(id: Int)
+#POST        /question                       controllers.Application.question
 
 # Waiting
-GET         /waiting                        controllers.Application.waiting
+GET         /waiting                   controllers.Application.waiting
+GET         /jobs                      controllers.Application.jobs
+
+# Account
+GET         /account                   controllers.Application.account
+
+# Statistics
+GET         /statistics                controllers.Application.statistics
 
 # PDF Viewer
-GET         /viewer/:title                  controllers.Application.viewer(title: String, csv = "")
-GET         /viewer/:title/:csv             controllers.Application.viewer(title: String, csv: String)
+GET         /viewer/:questionId        controllers.Application.viewer(questionId: Long)
 
 # Map static resources from the /public folder to the /assets URL path
-GET         /assets/*file                   controllers.Assets.at(path="/public", file)
+GET         /assets/*file              controllers.Assets.at(path="/public", file)
 
-    
+# Testing AngularJS
+GET         /search/:term              controllers.Search.perform(term:String)
+GET         /search/                   controllers.Search.perform(term:String="")
