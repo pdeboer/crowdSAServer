@@ -62,7 +62,7 @@ object Application extends Controller {
     )
   }
 
-  def storePaper = Action(parse.urlFormEncoded(10*1024*1024)) { request =>
+  def storePaper = Action(parse.multipartFormData) { implicit request => //(parse.json(10*1024*1024))
     //val tmp = request.getQueryString("pdf").getOrElse("pdf file not defined!")
     /*request.body match {
       case Left(MaxSizeExceeded(length)) => BadRequest("Your file is too large, we accept just " + length + " bytes!")
@@ -70,12 +70,32 @@ object Application extends Controller {
         println(_)
       }
     }*/
-    val pdf: Array[Byte] = Base64.decodeBase64(request.getQueryString("pdf").getOrElse("RmlsZSBzdG9yZWQgbm90IGNvcnJlY3RseQ=="))
 
-    if(! pdf.equals("File stored not correctly".getBytes())){
-      val pdfTitle = request.getQueryString("pdfTitle").getOrElse("None")
-      val bud = request.getQueryString("budget").getOrElse(0).toString
-      val budget: Int = Integer.parseInt(bud).toInt
+    var filename = ""
+    request.body.file("source").map { source =>
+      filename = source.filename
+      val contentType = source.contentType
+      source.ref.moveTo(new File(s"./public/pdfs/$filename"))
+    }.getOrElse {
+      Redirect(routes.Application.index).flashing(
+      "error" -> "Missing file")
+    }
+    if(filename != "") {
+      val title = request.body.asFormUrlEncoded.get("pdfTitle").get(0)
+      val budget = request.body.asFormUrlEncoded.get("budget").get(0)
+
+      val paper: Paper = Paper(NotAssigned, "/pdfs/" + filename, title, new Date().getTime, new Integer(budget))
+      PaperDAO.add(paper)
+    }
+    Ok("File uploaded")
+    /*
+    val j = request.body.asJson.get
+    val pdf: Array[Byte] = Base64.decodeBase64(j.\("pdf").toString().getBytes)
+
+    if(pdf.length > 0){
+      val pdfTitle = j.\("pdfTitle").toString()
+      val bud = j.\("budget").toString()
+      val budget: Int = Integer.parseInt(bud)
       val paper: Paper = Paper(NotAssigned, "/pdfs/"+pdfTitle.hashCode().toString+".pdf", pdfTitle, new Date().getTime, budget)
       PaperDAO.add(paper)
       val f = new File("./public/pdfs/"+pdfTitle.hashCode.toString+".pdf")
@@ -87,7 +107,7 @@ object Application extends Controller {
       Ok("THANKS")
     } else {
       NotFound(pdf)
-    }
+    }*/
 
   }
 
