@@ -7,7 +7,7 @@ import play.api.libs.json.{Json, JsValue, Writes}
  * Created by Mattia on 24.12.2014.
  */
 
-case class Question(id: Pk[Long], question: String, answerType: String, reward: Int, highlight_fk: Long, paper_fk: Long)
+case class Question(id: Pk[Long], question: String, answerType: String, reward: Int, paper_fk: Long)
 
 object Question {
   implicit val questionWrites = new Writes[Question] {

@@ -1,12 +1,13 @@
 @(turker: Turker)
 
 @main("My account")(turker) {
+
   <br><br><br>
   <div class="container">
   <h2>My account</h2>
     TurkerID: @turker.turkerId<br>
     E-mail: @turker.email<br>
-    LoginTime: @turker.loginTime<br>
+    Last login: @turker.loginTime<br>
   </div>
 
 }

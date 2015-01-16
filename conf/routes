@@ -3,36 +3,40 @@
 # ~~~~
 
 # Home page
-GET         /                          controllers.Application.index
+GET         /                            controllers.Application.index
 
 # Login
-POST        /login                     controllers.Application.login()
-GET         /logout                    controllers.Application.logout()
+POST        /login                       controllers.Application.login()
+GET         /logout                      controllers.Application.logout()
 
-# Hits
-#POST        /hit                            controllers.Application.hit
+# Paper
+POST        /paper                       controllers.Application.storePaper
 
 # Questions
-GET         /questions                 controllers.Application.questions
-#GET         /getQuestion/:id                controllers.Application.getQuestion(id: Int)
+GET         /questions                   controllers.Application.questions
+#GET         /question/:id                controllers.Application.getQuestion(id: Int)
 #POST        /question                       controllers.Application.question
 
+# Answers
+#GET         /question/:id/answers       controllers.Application.getAllAnswersForQuestion(id: Int)
+#GET         /question/answer/:id         controllers.Application.getAnswerForQuestion(id: Int)
+#GET         /question/:id/answer/:type         controllers.Application.getAllAnswerForQuestionTypeInQuestionId(id: Int, type: String)
+
 # Waiting
-GET         /waiting                   controllers.Application.waiting
-GET         /jobs                      controllers.Application.jobs
+GET         /waiting                     controllers.Application.waiting
+GET         /jobs                        controllers.Application.jobs
+# Waiting - Search functionality
+GET         /search/:term                controllers.Search.perform(term:String)
+GET         /search/                     controllers.Search.perform(term:String="")
 
 # Account
-GET         /account                   controllers.Application.account
+GET         /account                     controllers.Application.account
 
 # Statistics
-GET         /statistics                controllers.Application.statistics
+GET         /statistics                  controllers.Application.statistics
 
 # PDF Viewer
-GET         /viewer/:questionId        controllers.Application.viewer(questionId: Long)
+GET         /viewer/:questionId          controllers.Application.viewer(questionId: Long)
 
 # Map static resources from the /public folder to the /assets URL path
-GET         /assets/*file              controllers.Assets.at(path="/public", file)
-
-# Testing AngularJS
-GET         /search/:term              controllers.Search.perform(term:String)
-GET         /search/                   controllers.Search.perform(term:String="")
+GET         /assets/*file                controllers.Assets.at(path="/public", file)

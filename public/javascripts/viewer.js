@@ -172,6 +172,7 @@ function scrollIntoView(element, spot) {
             parent.scrollLeft = offsetX;
         }
     }
+
     parent.scrollTop = offsetY;
 }
 

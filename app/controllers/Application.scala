@@ -1,12 +1,14 @@
 package controllers
 
-import java.io.FileInputStream
+import java.io.{File, FileInputStream}
 import java.text.DateFormat
 import java.util.Date
 import anorm.NotAssigned
-import models.{Question, Turker}
+import models.{Paper, Question, Turker}
+import org.apache.commons.codec.binary.Base64
 import org.apache.pdfbox.pdfparser.PDFParser
 import org.apache.pdfbox.pdmodel.PDDocument
+import org.apache.pdfbox.pdmodel.common.PDStream
 import persistence.{PaperDAO, JobDAO, QuestionDAO, TurkerDAO}
 
 import play.api.db.DB
@@ -60,6 +62,35 @@ object Application extends Controller {
     )
   }
 
+  def storePaper = Action(parse.urlFormEncoded(10*1024*1024)) { request =>
+    //val tmp = request.getQueryString("pdf").getOrElse("pdf file not defined!")
+    /*request.body match {
+      case Left(MaxSizeExceeded(length)) => BadRequest("Your file is too large, we accept just " + length + " bytes!")
+      case Right(AnyContentAsFormUrlEncoded) => {
+        println(_)
+      }
+    }*/
+    val pdf: Array[Byte] = Base64.decodeBase64(request.getQueryString("pdf").getOrElse("RmlsZSBzdG9yZWQgbm90IGNvcnJlY3RseQ=="))
+
+    if(! pdf.equals("File stored not correctly".getBytes())){
+      val pdfTitle = request.getQueryString("pdfTitle").getOrElse("None")
+      val bud = request.getQueryString("budget").getOrElse(0).toString
+      val budget: Int = Integer.parseInt(bud).toInt
+      val paper: Paper = Paper(NotAssigned, "/pdfs/"+pdfTitle.hashCode().toString+".pdf", pdfTitle, new Date().getTime, budget)
+      PaperDAO.add(paper)
+      val f = new File("./public/pdfs/"+pdfTitle.hashCode.toString+".pdf")
+      val doc = new PDDocument()
+      val streamDoc = new PDStream(doc)
+      val outputStreamDoc = streamDoc.createOutputStream()
+      outputStreamDoc.write(pdf)
+      doc.save("./public/pdfs/"+pdfTitle.hashCode.toString+".pdf")
+      Ok("THANKS")
+    } else {
+      NotFound(pdf)
+    }
+
+  }
+
   def account = Action { implicit request =>
     val session = request.session
 
@@ -70,6 +101,7 @@ object Application extends Controller {
       Redirect(routes.Application.login())
     }
   }
+
   // GET - get all questions
   def questions = Action { implicit request =>
     val session = request.session

@@ -17,9 +17,8 @@ object QuestionDAO {
       get[String]("question") ~
       get[String]("answerType") ~
       get[Int]("reward") ~
-      get[Long]("highlight_fk") ~
       get[Long]("paper_fk") map {
-      case id ~question ~answerType ~reward ~highlight_fk ~paper_fk => Question(id, question, answerType, reward, highlight_fk, paper_fk)
+      case id ~question ~answerType ~reward ~paper_fk => Question(id, question, answerType, reward, paper_fk)
     }
 
   def findById(id: Long): Option[Question] =
@@ -32,16 +31,14 @@ object QuestionDAO {
   def add(q: Question): Long = {
     val id: Option[Long] =
       DB.withConnection { implicit c =>
-        SQL("INSERT INTO questions(question, answerType, reward, highlight_fk, paper_fk) VALUES (" +
+        SQL("INSERT INTO questions(question, answerType, reward, paper_fk) VALUES (" +
           "{question}, " +
           "{answerType}, " +
           "{reward}, " +
-          "{highlight_fk}, " +
           "{paper_fk})").on(
               'question -> q.question,
               'answerType -> q.answerType,
               'reward -> q.reward,
-              'highlight_fk -> q.highlight_fk,
               'paper_fk -> q.paper_fk
           ).executeInsert()
       }

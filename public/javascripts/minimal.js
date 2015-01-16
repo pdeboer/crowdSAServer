@@ -26,6 +26,19 @@ window.onload = function () {
     var scale = 1.5; //Set this to whatever you want. This is basically the "zoom" factor for the PDF.
     PDFJS.workerSrc = '/assets/javascripts/pdf.worker.js';
 
+    /**
+     * Converts a base64 string into a Uint8Array
+     */
+    function base64ToUint8Array(base64) {
+        var raw = atob(base64); //This is a native function that decodes a base64-encoded string.
+        var uint8Array = new Uint8Array(new ArrayBuffer(raw.length));
+        for(var i = 0; i < raw.length; i++) {
+            uint8Array[i] = raw.charCodeAt(i);
+        }
+
+        return uint8Array;
+    }
+
     function loadPdf(pdfPath) {
         var pdf = PDFJS.getDocument(pdfPath);
         return pdf.then(renderPdf);
@@ -103,5 +116,6 @@ window.onload = function () {
         return Promise.all([renderTask.promise, textLayerPromise]);
     }
 
-    loadPdf('/assets/pdfs/test.pdf');
+    var pdfData = base64ToUint8Array(pdfBase64);
+    loadPdf('/assets/pdfs/test.pdf');// change to loadPdf(pdfData) where pdfData is base64 pdf!
 };
