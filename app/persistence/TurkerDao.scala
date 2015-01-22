@@ -17,11 +17,40 @@ object TurkerDAO {
 
   private val turkerParser: RowParser[Turker] =
     get[Pk[Long]]("id") ~
-    get[String]("turkerId") ~
-    get[String]("email") ~
-    get[Long]("loginTime") map {
-      case id ~turkerId ~email ~loginTime => Turker(id, turkerId, email, loginTime)
+      get[String]("turkerId") ~
+      get[String]("email") ~
+      get[Long]("loginTime") ~
+      get[String]("username") ~
+      get[String]("password") ~
+      get[Int]("layoutMode") map {
+      case id ~turkerId ~email ~loginTime ~username ~password ~layoutMode => Turker(id, turkerId, email, loginTime, username, password, layoutMode)
     }
+
+  def authenticate(username: String, password: String): String = {
+    DB.withConnection {
+      implicit c =>
+        val turker = SQL("SELECT * FROM turkers WHERE username = {username} AND password = {password}")
+          .on('username -> username, 'password -> password)
+          .as(turkerParser.singleOpt)
+        try {
+          val t = turker.get
+          t.turkerId
+        } catch {
+          case e: Exception => ""
+        }
+    }
+  }
+
+  def updateLoginTime(turkerId: String, loginTime: Long): String = {
+    DB.withConnection {
+      implicit c =>
+        SQL("UPDATE turkers SET loginTime = {loginTime} WHERE turkerId = {turkerId}").on(
+          'loginTime -> loginTime,
+          'turkerId -> turkerId
+        ).executeUpdate()
+        turkerId
+    }
+  }
 
   def findById(id: Long): Option[Turker] = {
     DB.withConnection {
@@ -30,33 +59,33 @@ object TurkerDAO {
     }
   }
 
-  def findByTurkerId(id: String): Option[Turker] = {
+  def findByUsername(username: String): Option[Turker] = {
     DB.withConnection {
       implicit c =>
-        SQL("SELECT * FROM turkers WHERE turkerId = {id}").on('id -> id).as(turkerParser.singleOpt)
+        SQL("SELECT * FROM turkers WHERE username = {username}").on('username -> username).as(turkerParser.singleOpt)
     }
   }
 
-  def update(id: Long, loginTime: Long): Long = {
+  def findByTurkerId(turkerId: String): Option[Turker] = {
     DB.withConnection {
       implicit c =>
-        SQL("UPDATE turkers SET loginTime = {loginTime} WHERE id = {id}").on(
-          'loginTime -> loginTime,
-          'id -> id
-        ).executeUpdate()
-        id
+        SQL("SELECT * FROM turkers WHERE turkerId = {turkerId}").on('turkerId -> turkerId).as(turkerParser.singleOpt)
     }
   }
 
-  def add(t: Turker): Long = {
+  def create(t: Turker): Long = {
     val id: Option[Long] =
       DB.withConnection {
         implicit c =>
-          SQL("INSERT INTO turkers(turkerId, email, loginTime) VALUES ({turkerId}, {email}, {loginTime})").on(
-            'turkerId -> t.turkerId,
-            'email -> t.email,
-            'loginTime -> t.loginTime
-          ).executeInsert()
+          SQL("INSERT INTO turkers(turkerId, email, loginTime, username, password, layoutMode) " +
+            "VALUES ({turkerId}, {email}, {loginTime}, {username}, {password}, {layoutMode})").on(
+              'turkerId -> t.turkerId,
+              'email -> t.email,
+              'loginTime -> t.loginTime,
+              'username -> t.username,
+              'password -> t.password,
+              'layoutMode -> t.layoutMode
+            ).executeInsert()
       }
     id.get
   }

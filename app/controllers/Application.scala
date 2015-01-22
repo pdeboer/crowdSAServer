@@ -3,9 +3,11 @@ package controllers
 import java.io.{File, FileInputStream}
 import java.text.DateFormat
 import java.util.Date
+import javassist.bytecode.stackmap.BasicBlock.Catch
 import anorm.NotAssigned
 import models.{Paper, Question, Turker}
 import org.apache.commons.codec.binary.Base64
+import org.apache.commons.codec.digest.DigestUtils
 import org.apache.pdfbox.pdfparser.PDFParser
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.pdmodel.common.PDStream
@@ -18,42 +20,19 @@ import play.api.mvc._
 import play.api.data.Form
 import play.api.data.Forms.{tuple, nonEmptyText}
 
+import scala.util.Try
+
 
 object Application extends Controller {
 
   def index = Action { implicit request =>
     val session = request.session
-    request.session.get("turker").map {
-      turker =>
+    request.session.get("turkerId").map {
+      turkerId =>
         Redirect(routes.Application.waiting())
     } getOrElse {
       Ok(views.html.login())
     }
-  }
-
-  def login = Action { implicit request =>
-
-    def turkerId = request.body.asFormUrlEncoded.get("turkerId")(0)
-    def email = request.body.asFormUrlEncoded.get("email")(0)
-
-      val turker = TurkerDAO.findByTurkerId(turkerId).getOrElse(null)
-      if(turker != null){
-        //The turker exists in the database
-        if(turker.email.equals(email)) {
-          //Check if the email is the same
-          TurkerDAO.update(turker.id.get, new Date().getTime)
-        } else {
-          Redirect(routes.Application.index())
-        }
-      } else {
-        //Create new turker in database
-        val d = new Date()
-        val res = TurkerDAO.add(
-          Turker(NotAssigned, turkerId, email, d.getTime)
-        )
-      }
-
-    Redirect(routes.Application.waiting()).withSession(("turker" -> turkerId))
   }
 
   def logout = Action {
@@ -62,63 +41,47 @@ object Application extends Controller {
     )
   }
 
-  def storePaper = Action(parse.multipartFormData) { implicit request => //(parse.json(10*1024*1024))
-    //val tmp = request.getQueryString("pdf").getOrElse("pdf file not defined!")
-    /*request.body match {
-      case Left(MaxSizeExceeded(length)) => BadRequest("Your file is too large, we accept just " + length + " bytes!")
-      case Right(AnyContentAsFormUrlEncoded) => {
-        println(_)
-      }
-    }*/
+  // POST - Stores a paper in the database, as well as the title, the budget and the uploaded time.
+  def storePaper = Action(parse.multipartFormData) { implicit request =>
 
-    var filename = ""
     request.body.file("source").map { source =>
-      filename = source.filename
-      val contentType = source.contentType
-      source.ref.moveTo(new File(s"./public/pdfs/$filename"))
+      val filename = source.filename
+      if(filename != "") {
+        var title = ""
+        var budget = ""
+        var contentType = ""
+        try {
+          title = request.body.asFormUrlEncoded.get("pdfTitle").get(0)
+          budget = request.body.asFormUrlEncoded.get("budget").get(0)
+          contentType = source.contentType.get
+        } catch {
+          case e: Exception => InternalServerError("Wrong request structure. pdfTitle, budget or contentType is missing in the request.")
+        }
+
+        source.ref.moveTo(new File(s"./public/pdfs/$filename"))
+        val paper: Paper = {
+          Paper(NotAssigned, "/pdfs/" + filename, title, new Date().getTime, new Integer(budget))
+        }
+        val id = PaperDAO.add(paper)
+
+        Ok(id.toString)
+      }else {
+        InternalServerError("Wrong request! Filename is not valid.")
+      }
     }.getOrElse {
-      Redirect(routes.Application.index).flashing(
-      "error" -> "Missing file")
+      InternalServerError("Wrong request! The source file is missing.")
     }
-    if(filename != "") {
-      val title = request.body.asFormUrlEncoded.get("pdfTitle").get(0)
-      val budget = request.body.asFormUrlEncoded.get("budget").get(0)
-
-      val paper: Paper = Paper(NotAssigned, "/pdfs/" + filename, title, new Date().getTime, new Integer(budget))
-      PaperDAO.add(paper)
-    }
-    Ok("File uploaded")
-    /*
-    val j = request.body.asJson.get
-    val pdf: Array[Byte] = Base64.decodeBase64(j.\("pdf").toString().getBytes)
-
-    if(pdf.length > 0){
-      val pdfTitle = j.\("pdfTitle").toString()
-      val bud = j.\("budget").toString()
-      val budget: Int = Integer.parseInt(bud)
-      val paper: Paper = Paper(NotAssigned, "/pdfs/"+pdfTitle.hashCode().toString+".pdf", pdfTitle, new Date().getTime, budget)
-      PaperDAO.add(paper)
-      val f = new File("./public/pdfs/"+pdfTitle.hashCode.toString+".pdf")
-      val doc = new PDDocument()
-      val streamDoc = new PDStream(doc)
-      val outputStreamDoc = streamDoc.createOutputStream()
-      outputStreamDoc.write(pdf)
-      doc.save("./public/pdfs/"+pdfTitle.hashCode.toString+".pdf")
-      Ok("THANKS")
-    } else {
-      NotFound(pdf)
-    }*/
 
   }
 
   def account = Action { implicit request =>
     val session = request.session
 
-    request.session.get("turker").map {
-      turker =>
-        Ok(views.html.account(TurkerDAO.findByTurkerId(turker).getOrElse(null)))
+    request.session.get("turkerId").map {
+      turkerId =>
+        Ok(views.html.account(TurkerDAO.findByTurkerId(turkerId).getOrElse(null)))
     }.getOrElse {
-      Redirect(routes.Application.login())
+      Redirect(routes.Application.index())
     }
   }
 
@@ -126,11 +89,11 @@ object Application extends Controller {
   def questions = Action { implicit request =>
     val session = request.session
 
-    request.session.get("turker").map {
-      turker =>
+    request.session.get("turkerId").map {
+      turkerId =>
         Ok(Json.toJson(QuestionDAO.getAll()))
     }.getOrElse {
-      Redirect(routes.Application.login())
+      Redirect(routes.Application.index())
     }
   }
 
@@ -138,11 +101,11 @@ object Application extends Controller {
   def jobs = Action { implicit request =>
     val session = request.session
 
-    request.session.get("turker").map {
-      turker =>
+    request.session.get("turkerId").map {
+      turkerId =>
         Ok(Json.toJson(JobDAO.getData()))
     }.getOrElse {
-      Redirect(routes.Application.login())
+      Redirect(routes.Application.index())
     }
   }
 
@@ -162,7 +125,7 @@ object Application extends Controller {
           val q: List[Question] = Questions.findByQuestionId(id, session)
           Ok(q(0).question)
       }.getOrElse {
-        Ok(views.html.login())
+        Ok(views.html.index())
       }
     }
 
@@ -207,43 +170,43 @@ object Application extends Controller {
   def waiting = Action { implicit request =>
     val session = request.session
 
-    request.session.get("turker").map {
-      turker =>
+    request.session.get("turkerId").map {
+      turkerId =>
         Ok(views.html.waiting(
-          TurkerDAO.findByTurkerId(turker).getOrElse(null)
+          TurkerDAO.findByTurkerId(turkerId).getOrElse(null)
         ))
     }.getOrElse {
-      Redirect(routes.Application.login())
+      Redirect(routes.Application.index())
     }
   }
 
   //GET - statistics for user
   def statistics = Action { implicit request =>
-    request.session.get("turker").map {
-      turker =>
-        Ok(views.html.statistic(TurkerDAO.findByTurkerId(turker).getOrElse(null)))
+    request.session.get("turkerId").map {
+      turkerId =>
+        Ok(views.html.statistic(TurkerDAO.findByTurkerId(turkerId).getOrElse(null)))
     }.getOrElse {
-      Redirect(routes.Application.login())
+      Redirect(routes.Application.index())
     }
   }
 
   //GET - show pdf viewer and question
   def viewer(questionId: Long) =  Action { implicit request =>
 
-      request.session.get("turker").map {
-        turker =>
+    request.session.get("turkerId").map {
+      turkerId =>
 
-          val contentCsv = readCsv(request.session.get("toHighlight").getOrElse(""))
-          if (!contentCsv.isEmpty) {
-            highlight(contentCsv)
-          }
+        val contentCsv = readCsv(request.session.get("toHighlight").getOrElse(""))
+        if (!contentCsv.isEmpty) {
+          highlight(contentCsv)
+        }
 
-          val question = QuestionDAO.findById(questionId).getOrElse(null)
-          Ok(views.html.index(TurkerDAO.findByTurkerId(turker).getOrElse(null), question, PaperDAO.findById(question.paper_fk).getOrElse(null)))
+        val question = QuestionDAO.findById(questionId).getOrElse(null)
+        Ok(views.html.index(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), question, PaperDAO.findById(question.paper_fk).getOrElse(null)))
 
-      }.getOrElse {
-        Redirect(routes.Application.login())
-      }
+    }.getOrElse {
+      Redirect(routes.Application.index())
+    }
   }
 
   /**

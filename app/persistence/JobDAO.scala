@@ -31,7 +31,7 @@ object JobDAO {
             q.paper_fk == p.id.get
         ).foreach(
             qq =>
-              a += Job(qq.id.get, p.pdfTitle, qq.answerType, qq.reward)
+              a += Job(qq.id.get, p.pdfTitle, qq.questionType, qq.reward)
           )
       }
     )

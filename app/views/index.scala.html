@@ -16,7 +16,7 @@
                         <h2>"@question.question"</h2>
                         <form action="/storeAnswer">
 
-                            @if(question.answerType=="Boolean"){
+                            @if(question.questionType=="Boolean"){
                                 <div class="radio">
                                     <label class="radio-inline">
                                         <input type="radio" name="optionsRadios" id="optionsRadios1" value="Yes">
@@ -30,7 +30,7 @@
                                     <button class="btn btn-danger" type="button"onclick="window.location.href = '/waiting';" style="margin-right: 20px;">Skip</button>
                                 </div>
                             }
-                            @if(question.answerType!="Boolean"){
+                            @if(question.questionType!="Boolean"){
                                 <div class="input-group">
                                     <input id="answer" type="text" class="form-control" placeholder="Answer the question here">
                                     <span class="input-group-btn">

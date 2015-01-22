@@ -1,7 +1,9 @@
 package models
 
+import anorm.Pk
+
 /**
  * Created by Mattia on 14.01.2015.
  */
 
-case class Dataset(id: Option[Long], statMethod: String, domChildren: String, question_fk: Long)
+case class Dataset(id: Pk[Long], statMethod: String, domChildren: String, paper_fk: Long)

@@ -1,5 +1,7 @@
 package persistence
 
+import java.util.Date
+
 import anorm._
 import anorm.SqlParser._
 import models.{Question, Paper}
@@ -15,10 +17,11 @@ object QuestionDAO {
   private val questionParser: RowParser[Question] =
     get[Pk[Long]]("id") ~
       get[String]("question") ~
-      get[String]("answerType") ~
+      get[String]("questionType") ~
       get[Int]("reward") ~
+      get[Long]("createdAt") ~
       get[Long]("paper_fk") map {
-      case id ~question ~answerType ~reward ~paper_fk => Question(id, question, answerType, reward, paper_fk)
+      case id ~question ~questionType ~reward ~createdAt ~paper_fk => Question(id, question, questionType, reward, createdAt, paper_fk)
     }
 
   def findById(id: Long): Option[Question] =
@@ -31,14 +34,16 @@ object QuestionDAO {
   def add(q: Question): Long = {
     val id: Option[Long] =
       DB.withConnection { implicit c =>
-        SQL("INSERT INTO questions(question, answerType, reward, paper_fk) VALUES (" +
+        SQL("INSERT INTO questions(question, questionType, reward, createdAt, paper_fk) VALUES (" +
           "{question}, " +
-          "{answerType}, " +
+          "{questionType}, " +
           "{reward}, " +
+          "{cretedAt}, " +
           "{paper_fk})").on(
               'question -> q.question,
-              'answerType -> q.answerType,
+              'questionType -> q.questionType,
               'reward -> q.reward,
+              'createdAt -> (new Date()).getTime,
               'paper_fk -> q.paper_fk
           ).executeInsert()
       }

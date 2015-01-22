@@ -3,59 +3,52 @@
 @main("Available Questions")(turker) {
 
     <table ng-app="myApp" style="height: 100%; width: 100%;">
-        <tr>
-            <td>
-                <script type="text/javascript">
-                    var app = angular.module('myApp', [])
-                    .controller('jobController', function JobController($scope, $http) {
-                    $scope.jobs =[ ] ;
-                    $scope.input = "" ;
+        <script type="text/javascript">
+            var app = angular.module('myApp', [])
+            .controller('jobController', function JobController($scope, $http) {
+            $scope.jobs =[ ] ;
+            $scope.input = "" ;
 
-                    $scope.doGetJobs = function ( ) {
-                    var httpRequest = $http ( {
-                    method : 'GET',
-                    url : "/jobs",
-                    } ).success ( function ( data, status ) {
-                    $scope.jobs = data ;
-                    } ).error ( function ( arg ) {
-                    alert ( "error " ) ;
-                    } ) ;
-                    } ;
+            $scope.doGetJobs = function ( ) {
+            var httpRequest = $http ( {
+            method : 'GET',
+            url : "/jobs"
+            } ).success ( function ( data, status ) {
+            $scope.jobs = data ;
+            } ).error ( function ( arg ) {
+            alert ( "error " ) ;
+            } ) ;
+            } ;
 
-                    $scope.doSearch = function ( ) {
-                    var httpRequest = $http ( {
-                    method : 'GET',
-                    url : "/search/" + $scope.input,
-                    } ).success ( function ( data, status ) {
-                    $scope.jobs = data ;
-                    } ).error ( function ( arg ) {
-                    alert ( "error " ) ;
-                    } ) ;
-                    } ;
+            $scope.doSearch = function ( ) {
+            var httpRequest = $http ( {
+            method : 'GET',
+            url : "/search/" + $scope.input
+            } ).success ( function ( data, status ) {
+            $scope.jobs = data ;
+            } ).error ( function ( arg ) {
+            alert ( "error " ) ;
+            } ) ;
+            } ;
 
-                    $scope.showViewer = function(questionId) {
-                      $location.path("/viewer/"+questionId);
-                    };
+            $scope.showViewer = function(questionId) {
+            $location.path("/viewer/"+questionId);
+            };
 
-                    // run the search when the page loads.
-                    $scope.doGetJobs() ;
-                    $scope.doSearch() ;
+            // run the search when the page loads.
+            $scope.doGetJobs() ;
+            $scope.doSearch() ;
 
-                    $scope.setLocation = function(url) {
-                        window.location.href = url;
-                    };
+            $scope.setLocation = function(url) {
+            window.location.href = url;
+            };
 
-                    });
-                </script>
-
-                <h2>Welcome @turker.turkerId!</h2>
-                <br>
-            </td>
-        </tr>
+            });
+        </script>
 
         <tr>
             <td>
-                <div class="container" ng-controller="jobController">
+                <div class="container" style="margin-top: 60px;" ng-controller="jobController">
                     <div>
                         <h2>Available questions:</h2>
                         Filter questions:
