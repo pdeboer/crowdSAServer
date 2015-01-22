@@ -3,17 +3,17 @@
 # ~~~~
 
 # Home page
-GET         /                            controllers.Application.index
+GET         /                          controllers.Application.index
 
 # Login
-POST        /login                       controllers.Login.login()
-GET         /logout                      controllers.Application.logout()
+POST        /login                     controllers.Login.login()
+GET         /logout                    controllers.Login.logout()
 
 # Paper
-POST        /paper                       controllers.Application.storePaper
+POST        /paper                     controllers.Application.storePaper
 
 # Questions
-GET         /questions                   controllers.Application.questions
+GET         /questions                 controllers.Waiting.questions
 #GET         /question/:id                controllers.Application.getQuestion(id: Int)
 #POST        /question                       controllers.Application.question
 
@@ -23,20 +23,21 @@ GET         /questions                   controllers.Application.questions
 #GET         /question/:id/answer/:type         controllers.Application.getAllAnswerForQuestionTypeInQuestionId(id: Int, type: String)
 
 # Waiting
-GET         /waiting                     controllers.Application.waiting
-GET         /jobs                        controllers.Application.jobs
+GET         /waiting                   controllers.Waiting.waiting
+GET         /jobs                      controllers.Waiting.jobs
+
 # Waiting - Search functionality
-GET         /search/:term                controllers.Search.perform(term:String)
-GET         /search/                     controllers.Search.perform(term:String="")
+GET         /search/:term              controllers.Search.perform(term:String)
+GET         /search/                   controllers.Search.perform(term:String="")
 
 # Account
-GET         /account                     controllers.Application.account
+GET         /account                   controllers.Application.account
 
 # Statistics
-GET         /statistics                  controllers.Application.statistics
+GET         /statistics                controllers.Application.statistics
 
 # PDF Viewer
-GET         /viewer/:questionId          controllers.Application.viewer(questionId: Long)
+GET         /viewer/:questionId        controllers.Application.viewer(questionId: Long)
 
 # Map static resources from the /public folder to the /assets URL path
-GET         /assets/*file                controllers.Assets.at(path="/public", file)
+GET         /assets/*file              controllers.Assets.at(path="/public", file)

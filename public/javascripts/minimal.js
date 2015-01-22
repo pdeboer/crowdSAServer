@@ -116,6 +116,6 @@ window.onload = function () {
         return Promise.all([renderTask.promise, textLayerPromise]);
     }
 
-    var pdfData = base64ToUint8Array(pdfBase64);
-    loadPdf('/assets/pdfs/test.pdf');// change to loadPdf(pdfData) where pdfData is base64 pdf!
+    //var pdfData = base64ToUint8Array(pdfBase64);
+    //loadPdf('/assets/pdfs/test.pdf');// change to loadPdf(pdfData) where pdfData is base64 pdf!
 };

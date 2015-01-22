@@ -26,6 +26,12 @@ object Login extends Controller {
       Redirect(routes.Application.index())
     }
 
-    Redirect(routes.Application.waiting()).withSession("turkerId" -> turkerId.toString)
+    Redirect(routes.Waiting.waiting()).withSession("turkerId" -> turkerId.toString)
+  }
+
+  def logout = Action {
+    Redirect(routes.Application.index()).withNewSession.flashing(
+      "success" -> "You are now logged out."
+    )
   }
 }

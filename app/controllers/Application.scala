@@ -11,7 +11,8 @@ import org.apache.commons.codec.digest.DigestUtils
 import org.apache.pdfbox.pdfparser.PDFParser
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.pdmodel.common.PDStream
-import persistence.{PaperDAO, JobDAO, QuestionDAO, TurkerDAO}
+import persistence._
+import play.api.Logger
 
 import play.api.db.DB
 import play.api.libs.json.{Json, JsValue}
@@ -19,6 +20,7 @@ import play.api.mvc._
 
 import play.api.data.Form
 import play.api.data.Forms.{tuple, nonEmptyText}
+import util.{CSVParser, HighlightPdf}
 
 import scala.util.Try
 
@@ -29,16 +31,10 @@ object Application extends Controller {
     val session = request.session
     request.session.get("turkerId").map {
       turkerId =>
-        Redirect(routes.Application.waiting())
+        Redirect(routes.Waiting.waiting())
     } getOrElse {
       Ok(views.html.login())
     }
-  }
-
-  def logout = Action {
-    Redirect(routes.Application.index()).withNewSession.flashing(
-      "success" -> "You are now logged out."
-    )
   }
 
   // POST - Stores a paper in the database, as well as the title, the budget and the uploaded time.
@@ -50,9 +46,11 @@ object Application extends Controller {
         var title = ""
         var budget = ""
         var contentType = ""
+        var highlight = false
         try {
           title = request.body.asFormUrlEncoded.get("pdfTitle").get(0)
           budget = request.body.asFormUrlEncoded.get("budget").get(0)
+          highlight = request.body.asFormUrlEncoded.get("highlight").get(0).toBoolean
           contentType = source.contentType.get
         } catch {
           case e: Exception => InternalServerError("Wrong request structure. pdfTitle, budget or contentType is missing in the request.")
@@ -60,7 +58,7 @@ object Application extends Controller {
 
         source.ref.moveTo(new File(s"./public/pdfs/$filename"))
         val paper: Paper = {
-          Paper(NotAssigned, "/pdfs/" + filename, title, new Date().getTime, new Integer(budget))
+          Paper(NotAssigned, "/pdfs/" + filename, title, new Date().getTime, new Integer(budget), highlight)
         }
         val id = PaperDAO.add(paper)
 
@@ -85,29 +83,7 @@ object Application extends Controller {
     }
   }
 
-  // GET - get all questions
-  def questions = Action { implicit request =>
-    val session = request.session
 
-    request.session.get("turkerId").map {
-      turkerId =>
-        Ok(Json.toJson(QuestionDAO.getAll()))
-    }.getOrElse {
-      Redirect(routes.Application.index())
-    }
-  }
-
-  // GET - get questions related to PDF
-  def jobs = Action { implicit request =>
-    val session = request.session
-
-    request.session.get("turkerId").map {
-      turkerId =>
-        Ok(Json.toJson(JobDAO.getData()))
-    }.getOrElse {
-      Redirect(routes.Application.index())
-    }
-  }
 
   /*
     def getQuestionWithHitId(id: Int) = DBAction { implicit request =>
@@ -167,19 +143,6 @@ object Application extends Controller {
     }
   */
 
-  def waiting = Action { implicit request =>
-    val session = request.session
-
-    request.session.get("turkerId").map {
-      turkerId =>
-        Ok(views.html.waiting(
-          TurkerDAO.findByTurkerId(turkerId).getOrElse(null)
-        ))
-    }.getOrElse {
-      Redirect(routes.Application.index())
-    }
-  }
-
   //GET - statistics for user
   def statistics = Action { implicit request =>
     request.session.get("turkerId").map {
@@ -195,67 +158,38 @@ object Application extends Controller {
 
     request.session.get("turkerId").map {
       turkerId =>
+        try {
+          val paperId = QuestionDAO.findById(questionId).get.paper_fk
+          val paper = PaperDAO.findById(paperId).get
+          val pdfPath = paper.pdfPath
+          val question = QuestionDAO.findById(questionId).getOrElse(null)
 
-        val contentCsv = readCsv(request.session.get("toHighlight").getOrElse(""))
-        if (!contentCsv.isEmpty) {
-          highlight(contentCsv)
+          // Highlight paper only is requested by job creator
+          if (paper.highlight) {
+            var highlights: String = ""
+            HighlightDAO.filterByQuestionId(questionId).map(h => highlights= highlights+(h.terms + ","))
+
+            //val contentCsv = CSVParser.readCsv(request.session.get("toHighlight").getOrElse(""))
+            val contentCsv = CSVParser.readCsv(highlights)
+
+            //var pdfArrayByte = new Array[Byte](0)
+            if (!contentCsv.isEmpty) {
+              Ok(views.html.index(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), question, Base64.encodeBase64String(HighlightPdf.highlight(pdfPath, contentCsv))))
+            } else {
+              Ok(views.html.index(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), question, Base64.encodeBase64String(HighlightPdf.getPdfAsArrayByte(pdfPath))))
+            }
+
+          } else {
+            Ok(views.html.index(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), question,  Base64.encodeBase64String(HighlightPdf.getPdfAsArrayByte(pdfPath))))
+          }
+        } catch {
+          case e: Exception => {
+            e.printStackTrace()
+            Redirect(routes.Waiting.waiting())
+          }
         }
-
-        val question = QuestionDAO.findById(questionId).getOrElse(null)
-        Ok(views.html.index(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), question, PaperDAO.findById(question.paper_fk).getOrElse(null)))
-
     }.getOrElse {
       Redirect(routes.Application.index())
     }
-  }
-
-  /**
-   * Highlight all the words contained in the contentCsv variable
-   * @param contentCsv a List of strings containing all the words/phrases to highlight in the PDF
-   */
-  def highlight(contentCsv: List[String]) : Unit = {
-    val file = "./public/pdfs/test.pdf"
-    val parser: PDFParser = new PDFParser(new FileInputStream(file))
-    parser.parse()
-    val pdDoc: PDDocument = new PDDocument(parser.getDocument)
-
-    val pdfHighlight: TextHighlight = new TextHighlight("UTF-8")
-    // depends on what you want to match, but this creates a long string without newlines
-    pdfHighlight.setLineSeparator(" ")
-    pdfHighlight.initialize(pdDoc)
-
-    for(textRegEx <- contentCsv) {
-      pdfHighlight.highlightDefault(textRegEx)
-    }
-    pdDoc.save("./public/pdfs/demo.pdf")
-    try {
-      if (parser.getDocument != null) {
-        parser.getDocument.close
-      }
-      if (pdDoc != null) {
-        pdDoc.close
-      }
-    }
-    catch {
-      case e: Exception => {
-        e.printStackTrace
-      }
-    }
-
-  }
-
-  /**
-   * Read the CSV file
-   * @return
-   */
-  def readCsv(csv: String) : List[String] = {
-    if(csv != ""){
-      val res = csv.split(",")
-      return res.toList
-    } else {
-      return List[String]()
-    }
-
-    //return Source.fromFile("./public/csv/statTest.csv").getLines().toList
   }
 }

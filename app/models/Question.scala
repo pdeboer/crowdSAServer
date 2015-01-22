@@ -16,8 +16,9 @@ object Question {
         "id" -> q.id.get,
         "question" -> q.question,
         "questionType" -> q.questionType,
+        "reward" -> q.reward,
         "createdAt" -> q.createdAt,
-        "reward" -> q.reward
+        "paper_fk" -> q.paper_fk
       )
     }
   }

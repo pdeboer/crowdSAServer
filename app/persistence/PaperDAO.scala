@@ -17,8 +17,9 @@ object PaperDAO {
       get[String]("pdfPath") ~
       get[String]("pdfTitle") ~
       get[Long]("createdAt") ~
-      get[Int]("budget") map {
-      case id ~pdfPath ~pdfTitle ~createdAt ~budget => Paper(id, pdfPath, pdfTitle, createdAt, budget)
+      get[Int]("budget")~
+      get[Boolean] ("highlight") map {
+      case id ~pdfPath ~pdfTitle ~createdAt ~budget ~highlight => Paper(id, pdfPath, pdfTitle, createdAt, budget, highlight)
     }
 
   def findById(id: Long): Option[Paper] =
@@ -31,11 +32,12 @@ object PaperDAO {
   def add(p: Paper): Long = {
     val id: Option[Long] =
       DB.withConnection { implicit c =>
-        SQL("INSERT INTO papers(pdfPath, pdfTitle, createdAt, budget) VALUES ({pdfPath}, {pdfTitle}, {createdAt}, {budget})").on(
+        SQL("INSERT INTO papers(pdfPath, pdfTitle, createdAt, budget, highlighted) VALUES ({pdfPath}, {pdfTitle}, {createdAt}, {budget}, {highlight})").on(
           'pdfPath -> p.pdfPath,
           'pdfTitle -> p.pdfTitle,
           'createdAt -> p.createdAt,
-          'budget -> p.budget
+          'budget -> p.budget,
+          'highlight -> p.highlight
         ).executeInsert()
       }
     id.get
