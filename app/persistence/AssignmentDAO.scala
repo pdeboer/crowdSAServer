@@ -28,15 +28,15 @@ object AssignmentDAO {
       ).as(assignmentParser.singleOpt)
     }
 
-  def add(a: Assignment, q: Long, t: Long): Long = {
+  def add(a: Assignment): Long = {
     val id: Option[Long] =
       DB.withConnection { implicit c =>
         SQL("INSERT INTO assignments(assignedFrom, assignedTo, acceptedTime, question_fk, team_fk) VALUES ({assignedFrom}, {assignedTo}, {acceptedTime}, {question_fk}, {team_fk})").on(
           'assignedFrom -> a.assignedFrom,
           'assignedTo -> a.assignedTo,
           'acceptedTime -> a.acceptedTime,
-          'question_fk -> q,
-          'team_fk -> t
+          'question_fk -> a.question_fk,
+          'team_fk -> a.team_fk
         ).executeInsert()
       }
     id.get

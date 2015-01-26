@@ -1,55 +1,34 @@
-@(turker: Turker)
+@(turker: Turker, flash: Flash)
 
 @main("Available Questions")(turker) {
 
-    <table ng-app="myApp" style="height: 100%; width: 100%;">
-        <script type="text/javascript">
-            var app = angular.module('myApp', [])
-            .controller('jobController', function JobController($scope, $http) {
-            $scope.jobs =[ ] ;
-            $scope.input = "" ;
+    <script src="@routes.Assets.at("/js/app.js")" type="text/javascript"></script>
+    <script src="@routes.Assets.at("/js/controllers.js")" type="text/javascript"></script>
 
-            $scope.doGetJobs = function ( ) {
-            var httpRequest = $http ( {
-            method : 'GET',
-            url : "/jobs"
-            } ).success ( function ( data, status ) {
-            $scope.jobs = data ;
-            } ).error ( function ( arg ) {
-            alert ( "error " ) ;
-            } ) ;
-            } ;
-
-            $scope.doSearch = function ( ) {
-            var httpRequest = $http ( {
-            method : 'GET',
-            url : "/search/" + $scope.input
-            } ).success ( function ( data, status ) {
-            $scope.jobs = data ;
-            } ).error ( function ( arg ) {
-            alert ( "error " ) ;
-            } ) ;
-            } ;
-
-            $scope.showViewer = function(questionId) {
-            $location.path("/viewer/"+questionId);
-            };
-
-            // run the search when the page loads.
-            $scope.doGetJobs() ;
-            $scope.doSearch() ;
-
-            $scope.setLocation = function(url) {
-            window.location.href = url;
-            };
-
-            });
-        </script>
+    <table ng-app="myApp" style="height: 100%; width: 100%; margin-top: 60px;">
 
         <tr>
             <td>
-                <div class="container" style="margin-top: 60px;" ng-controller="jobController">
+                <div class="container" ng-controller="jobController">
+                    @if(flash.get("success")) {
+                        <div class="alert alert-success" role="alert">
+                            <strong>Well Done!</strong>
+                            @flash.get("success")
+                        </div>
+                    }
+                    @if(flash.get("error")) {
+                        <div class="alert alert-danger" role="alert">
+                            <strong>Error:</strong>
+                            @flash.get("error")
+                        </div>
+                    }
                     <div>
+                        <h2>Welcome @turker.username</h2>
+                        <br>
+                        <p>
+                            Hello!<br>
+                            You can now choose a question from the list. Feel free to choose different papers and different question types
+                        </p>
                         <h2>Available questions:</h2>
                         Filter questions:
                         <input ng-model="input" ng-change="doSearch(input)" autofocus>
@@ -79,8 +58,8 @@
                                 <td>
                                     {{ job.rewardAnswer }}
                                 </td>
-                                <td>
-                                    <button class="btn btn-success" ng-click="setLocation('/viewer/'+job.questionId)" type="submit">Solve</button>
+                                <td ng-controller="jobController">
+                                    <button class="btn btn-success" ng-click="showViewer(job.questionId)" type="submit">Solve</button>
                                 </td>
                             </tr>
                         </tbody>

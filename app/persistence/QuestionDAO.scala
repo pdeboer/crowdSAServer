@@ -31,6 +31,14 @@ object QuestionDAO {
       ).as(questionParser.singleOpt)
     }
 
+  def getRandomQuestionRandomPaper: Long = {
+    DB.withConnection { implicit c =>
+      val randomQuestion = SQL("SELECT * FROM questions GROUP BY RAND() LIMIT 1")
+        .as(questionParser.singleOpt)
+      randomQuestion.get.id.get
+    }
+  }
+
   def add(q: Question): Long = {
     val id: Option[Long] =
       DB.withConnection { implicit c =>
@@ -54,5 +62,27 @@ object QuestionDAO {
     DB.withConnection { implicit c =>
       SQL("SELECT * FROM questions").as(questionParser*)
     }
+
+  def getRandomQuestionSamePaper(paperId: Long): Long =
+    DB.withConnection { implicit c =>
+      SQL("SELECT * FROM questions WHERE paper_fk = {paperId} GROUP BY RAND() LIMIT 1")
+        .on('paperId -> paperId)
+        .as(questionParser.single).id.get
+    }
+
+  def getSameQuestionTypeRandomPaper(questionType: String): Long = {
+    DB.withConnection { implicit c =>
+      SQL("SELECT * FROM questions WHERE questionType = {questionType} GROUP BY RAND() LIMIT 1")
+        .on('questionType -> questionType)
+        .as(questionParser.single).id.get
+    }
+  }
+
+  def getRandomQuestionType(): String = {
+    DB.withConnection { implicit c =>
+      SQL("SELECT * FROM questions GROUP BY RAND() LIMIT 1")
+        .as(questionParser.single).questionType
+    }
+  }
 
 }

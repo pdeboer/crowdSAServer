@@ -1,0 +1,44 @@
+@(turker: Turker, flash: Flash)
+
+@main("Random question and Same paper")(turker) {
+
+    <script src="@routes.Assets.at("/js/app.js")" type="text/javascript"></script>
+    <script src="@routes.Assets.at("/js/controllers.js")" type="text/javascript"></script>
+
+    <table style="height: 100%; width: 100%; margin-top: 60px;">
+        <tr>
+            <td>
+                <div class="container" ng-app="myApp">
+                    @if(flash.get("success")) {
+                        <div class="alert alert-success" role="alert">
+                            <strong>Well Done!</strong>
+                            @flash.get("success")
+                        </div>
+                    }
+                    @if(flash.get("error")) {
+                        <div class="alert alert-danger" role="alert">
+                            <strong>Error:</strong>
+                            @flash.get("error")
+                        </div>
+                    }
+                    <div ng-controller="QuestionCtrl">
+                        <h2>Welcome @turker.username</h2>
+                        <br>
+                        <p>
+                            Hello!<br>
+                                To start solving some awesome questions just click the start button and wait
+                                until a question is assigned to you.
+                                <b>All the questions are related to only one paper.</b>
+                                In the meantime you can play this awesome game!<br>
+                        </p>
+                        <button id="startBtn" class="btn btn-success" ng-click="getQuestion()" ng-init="question='Not yet ready!'">Start!</button>
+                        <div>{{question}}</div>
+                        <br>
+                        <h3>Insert Tetris Here</h3>
+                    </div>
+                </div>
+
+            </td>
+        </tr>
+    </table>
+}

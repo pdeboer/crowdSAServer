@@ -43,7 +43,6 @@ CREATE TABLE teams (
 
 CREATE TABLE assignments (
   id           INT PRIMARY KEY NOT NULL auto_increment,
-  assumption   VARCHAR(255)    NOT NULL,
   assignedFrom BIGINT          NOT NULL,
   assignedTo   BIGINT          NOT NULL,
   acceptedTime BIGINT          NOT NULL,
@@ -98,7 +97,7 @@ CREATE TABLE turkers2teams (
 
 INSERT INTO turkers (id, turkerId, email, loginTime, username, password, layoutMode)
 VALUES (1, "mattia", "mattia.amato@gmail.com", 1421183695322, "mamato", "737eb8871f2ade70fea17fc8df76e691", 1);
-INSERT INTO teams (id, createdAt, name) VALUES (1, 1421183695324, "mamato");
+INSERT INTO teams (id, createdAt, name) VALUES (1, 1421183695324, "mattia");
 INSERT INTO turkers2teams (id, turker_fk, team_fk) VALUES (1, 1, 1);
 
 INSERT INTO papers (id, pdfPath, pdfTitle, createdAt, budget, highlight) VALUES (1, "/pdfs/test.pdf",

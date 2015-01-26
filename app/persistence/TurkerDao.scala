@@ -29,15 +29,37 @@ object TurkerDAO {
   def authenticate(username: String, password: String): String = {
     DB.withConnection {
       implicit c =>
-        val turker = SQL("SELECT * FROM turkers WHERE username = {username} AND password = {password}")
-          .on('username -> username, 'password -> password)
+        val turker = SQL("SELECT * FROM turkers WHERE username = {username} AND password = {password} LIMIT 1")
+          .on('username -> username,
+            'password -> password)
           .as(turkerParser.singleOpt)
         try {
           val t = turker.get
-          t.turkerId
+          return t.turkerId
         } catch {
-          case e: Exception => ""
+          case e: Exception => "Cannot find turker with the corresponding credentials."
         }
+        return null
+    }
+    return null
+  }
+
+  /**
+   * Returns true if the registration can take place with these variables, otherwise false
+   * @param username
+   * @param turkerId
+   * @return
+   */
+  def checkRegistration(username: String, turkerId: String): Boolean ={
+    val tUsername = findByUsername(username)
+    val tTurkerId = findByTurkerId(turkerId)
+    try {
+      if (tUsername.get != null || tTurkerId.get != null) {
+        return false
+      }
+      return true
+    } catch {
+      case e: Exception => return true
     }
   }
 
@@ -48,6 +70,7 @@ object TurkerDAO {
           'loginTime -> loginTime,
           'turkerId -> turkerId
         ).executeUpdate()
+        println("LoginTime updated for turker: " + turkerId)
         turkerId
     }
   }
@@ -73,7 +96,7 @@ object TurkerDAO {
     }
   }
 
-  def create(t: Turker): Long = {
+  def create(t: Turker): Option[Long] = {
     val id: Option[Long] =
       DB.withConnection {
         implicit c =>
@@ -87,7 +110,7 @@ object TurkerDAO {
               'layoutMode -> t.layoutMode
             ).executeInsert()
       }
-    id.get
+    id
   }
 
 /*

@@ -14,12 +14,11 @@ object AnswerDAO {
     get[Pk[Long]]("id") ~
       get[String]("answer") ~
       get[Long]("completedTime") ~
-      get[Boolean]("accepted") ~
-      get[Boolean]("acceptedAndBonus") ~
-      get[Boolean]("rejected") ~
-      get[Long]("question_fk") ~
-      get[Long]("team_fk") map {
-      case id ~answer ~completedTime ~accepted ~acceptedAndBonus ~rejected ~question_fk ~team_fk => Answer(id, answer, completedTime, accepted, acceptedAndBonus, rejected, question_fk, team_fk)
+      get[Option[Boolean]]("accepted") ~
+      get[Option[Boolean]]("acceptedAndBonus") ~
+      get[Option[Boolean]]("rejected") ~
+      get[Long]("assignment_fk") map {
+      case id ~answer ~completedTime ~accepted ~acceptedAndBonus ~rejected ~assignment_fk => Answer(id, answer, completedTime, accepted, acceptedAndBonus, rejected, assignment_fk)
     }
 
   def findById(id: Long): Option[Answer] =
@@ -29,17 +28,13 @@ object AnswerDAO {
       ).as(answerParser.singleOpt)
     }
 
-  def add(a: Answer, q: Long, t: Long): Long = {
+  def add(a: Answer): Long = {
     val id: Option[Long] =
       DB.withConnection { implicit c =>
-        SQL("INSERT INTO answers(answer, completedTime, accepted, acceptedAndBonus, rejected, question_fk, team_fk) VALUES ({answer}, {completedTime}, {accepted}, {acceptedAndBonus}, {rejected}, {question_fk}, {team_fk})").on(
+        SQL("INSERT INTO answers(answer, completedTime, assignment_fk) VALUES ({answer}, {completedTime}, {assignment_fk})").on(
           'answer -> a.answer,
-          'completedTime -> (new Date()).getTime,
-          'accepted -> null,
-          'acceptedAndBonus -> null,
-          'rejected -> null,
-          'question_fk -> q,
-          'team_fk -> t
+          'completedTime -> a.completedTime,
+          'assignment_fk -> a.assignment_fk
         ).executeInsert()
       }
     id.get

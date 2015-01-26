@@ -33,7 +33,7 @@ object Application extends Controller {
       turkerId =>
         Redirect(routes.Waiting.waiting())
     } getOrElse {
-      Ok(views.html.login())
+      Ok(views.html.login(request.flash))
     }
   }
 
@@ -153,43 +153,5 @@ object Application extends Controller {
     }
   }
 
-  //GET - show pdf viewer and question
-  def viewer(questionId: Long) =  Action { implicit request =>
 
-    request.session.get("turkerId").map {
-      turkerId =>
-        try {
-          val paperId = QuestionDAO.findById(questionId).get.paper_fk
-          val paper = PaperDAO.findById(paperId).get
-          val pdfPath = paper.pdfPath
-          val question = QuestionDAO.findById(questionId).getOrElse(null)
-
-          // Highlight paper only is requested by job creator
-          if (paper.highlight) {
-            var highlights: String = ""
-            HighlightDAO.filterByQuestionId(questionId).map(h => highlights= highlights+(h.terms + ","))
-
-            //val contentCsv = CSVParser.readCsv(request.session.get("toHighlight").getOrElse(""))
-            val contentCsv = CSVParser.readCsv(highlights)
-
-            //var pdfArrayByte = new Array[Byte](0)
-            if (!contentCsv.isEmpty) {
-              Ok(views.html.index(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), question, Base64.encodeBase64String(HighlightPdf.highlight(pdfPath, contentCsv))))
-            } else {
-              Ok(views.html.index(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), question, Base64.encodeBase64String(HighlightPdf.getPdfAsArrayByte(pdfPath))))
-            }
-
-          } else {
-            Ok(views.html.index(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), question,  Base64.encodeBase64String(HighlightPdf.getPdfAsArrayByte(pdfPath))))
-          }
-        } catch {
-          case e: Exception => {
-            e.printStackTrace()
-            Redirect(routes.Waiting.waiting())
-          }
-        }
-    }.getOrElse {
-      Redirect(routes.Application.index())
-    }
-  }
 }

@@ -48,4 +48,8 @@ object PaperDAO {
       SQL("SELECT * FROM papers").as(paperParser*).toList
     }
 
+  def getRandomPaperId(): Long =
+    DB.withConnection { implicit c =>
+      SQL("SELECT * FROM papers GROUP BY RAND() LIMIT 1").as(paperParser.single).id.get
+    }
 }

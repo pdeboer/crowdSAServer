@@ -1,4 +1,4 @@
-@(turker: Turker, question: Question, paperBase64: String)
+@(turker: Turker, question: Question, paperBase64: String, teamId: Long, assignmentId: Long)
 @import play.api.libs.json.Json
 
 @main("Solving question")(turker) {
@@ -10,16 +10,17 @@
                     <div>
                         <h2>Please answer this question:</h2>
                         <h2>"@question.question"</h2>
-                        <form action="/storeAnswer">
-
+                        <form action="/storeAnswer" method="post">
+                            <input type="hidden" id="assignmentId" name="assignmentId" value=@assignmentId>
+                            <input type="hidden" id="questionType" name="questionType" value=@question.questionType>
                             @if(question.questionType=="Boolean"){
                                 <div class="radio">
                                     <label class="radio-inline">
-                                        <input type="radio" name="optionsRadios" id="optionsRadios1" value="Yes">
+                                        <input type="radio" name="true" id="true" value="true">
                                         Yes
                                     </label>
                                     <label class="radio-inline">
-                                        <input type="radio" name="optionsRadios" id="optionsRadios1" value="No">
+                                        <input type="radio" name="false" id="false" value="false">
                                         No
                                     </label>
                                     <button class="btn btn-success" type="submit" style="margin-left: 30px;">Send</button>
@@ -28,7 +29,7 @@
                             }
                             @if(question.questionType!="Boolean"){
                                 <div class="input-group">
-                                    <input id="answer" type="text" class="form-control" placeholder="Answer the question here">
+                                    <input id="textAnswer" name="textAnswer" type="text" class="form-control" placeholder="Answer the question here">
                                     <span class="input-group-btn">
                                         <button class="btn btn-success" type="submit">Send</button>
                                         <button class="btn btn-danger" type="button"onclick="window.location.href = '/waiting';" style="margin-right: 20px;">Skip</button>

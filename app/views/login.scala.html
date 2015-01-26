@@ -1,10 +1,10 @@
-
+@(flash: Flash)
 @main("Login")(null) {
 <style>
 body {
 padding-top: 40px;
 padding-bottom: 40px;
-background-color: #eee;
+background-color: #FFFFFF;
 }
 
 .form-signin {
@@ -42,9 +42,19 @@ border-top-left-radius: 0;
 border-top-right-radius: 0;
 }
 </style>
-
+<div style="margin-top: 60px;">
   <div class="container">
-
+    @if(flash.get("success")) {
+      <div class="alert alert-info" role="alert">
+        @flash.get("success")
+      </div>
+    }
+    @if(flash.get("error")) {
+      <div class="alert alert-danger" role="alert">
+        <strong>Error:</strong>
+        @flash.get("error")
+      </div>
+    }
     <form class="form-signin" action="/login" method="post">
       <h2 class="form-signin-heading">Please sign in</h2>
       <label for="inputUsername" class="sr-only">Username</label>
@@ -53,8 +63,10 @@ border-top-right-radius: 0;
       <input type="password" name="password" id="password" class="form-control" placeholder="Password" required>
 
       <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+      <p>Or <a href="/registration">register a new user</a>.</p>
     </form>
 
   </div> <!-- /container -->
+</div>
 
 }
