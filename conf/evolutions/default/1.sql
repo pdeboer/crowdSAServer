@@ -23,6 +23,7 @@ CREATE TABLE questions (
   questionType VARCHAR(100)    NOT NULL,
   reward       INT             NOT NULL,
   createdAt    BIGINT          NOT NULL,
+  disabled     BIT             NOT NULL,
   paper_fk     INT             NOT NULL,
   FOREIGN KEY (paper_fk) REFERENCES papers (id)
 ) ENGINE = InnoDB CHARSET = utf8;
@@ -104,10 +105,10 @@ INSERT INTO papers (id, pdfPath, pdfTitle, createdAt, budget, highlight) VALUES 
                                                                                  "Let’s Do It at My Place Instead? Attitudinal and Behavioral Study of Privacy in Client-Side Personalization",
                                                                                  1421182061982, 10, 1);
 
-INSERT INTO questions (id, question, questionType, reward, createdAt, paper_fk)
-VALUES (1, "Is the D'Agostino's K-squared test used to test the normality assumption?", "Integer", 1, 1421182063982, 1);
-INSERT INTO questions (id, question, questionType, reward, createdAt, paper_fk)
-VALUES (2, "Is the Jarque–Bera test used to test the normality?", "String", 2, 1421182064982, 1);
+INSERT INTO questions (id, question, questionType, reward, createdAt, disabled, paper_fk)
+VALUES (1, "Is the D'Agostino's K-squared test used to test the normality assumption?", "Integer", 1, 1421182063982, false, 1);
+INSERT INTO questions (id, question, questionType, reward, createdAt, disabled, paper_fk)
+VALUES (2, "Is the Jarque–Bera test used to test the normality?", "String", 2, 1421182064982, false, 1);
 
 INSERT INTO highlights (id, assumption, terms, question_fk)
 VALUES (1, "Normality", "D’Agostino’s K-squared,D’Agostino’s K2,D’Agostino’s K test,kurtosis,skewness", 1);

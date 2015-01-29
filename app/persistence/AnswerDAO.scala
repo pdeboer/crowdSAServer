@@ -3,13 +3,17 @@ package persistence
 import java.util.Date
 import anorm._
 import anorm.SqlParser._
-import models.{Answer, Paper}
+import models.{Assignment, Answer, Paper}
 import play.api.db.DB
 import play.api.Play.current
+
+import scala.collection.mutable
+
 /**
  * Created by Mattia on 22.01.2015.
  */
 object AnswerDAO {
+
   private val answerParser: RowParser[Answer] =
     get[Pk[Long]]("id") ~
       get[String]("answer") ~
@@ -28,6 +32,25 @@ object AnswerDAO {
       ).as(answerParser.singleOpt)
     }
 
+  def evaluateAnswer(aId: Long, accepted: Boolean, bonus: Boolean): Int = {
+    if (accepted && bonus) {
+      DB.withConnection { implicit c =>
+        SQL("UPDATE answers SET accepted = true, acceptedAndBonus = true, rejected = false WHERE id = {aId}")
+          .on('aId -> aId).executeUpdate()
+      }
+    } else if (accepted && !bonus) {
+      DB.withConnection { implicit c =>
+        SQL("UPDATE answers SET accepted = true, acceptedAndBonus = false, rejected = false WHERE id = {aId}")
+          .on('aId -> aId).executeUpdate()
+      }
+    } else {
+      DB.withConnection { implicit c =>
+        SQL("UPDATE answers SET accepted = false, acceptedAndBonus = false, rejected = true WHERE id = {aId}")
+          .on('aId -> aId).executeUpdate()
+      }
+    }
+  }
+
   def add(a: Answer): Long = {
     val id: Option[Long] =
       DB.withConnection { implicit c =>
@@ -44,4 +67,21 @@ object AnswerDAO {
     DB.withConnection { implicit c =>
       SQL("SELECT * FROM answers").as(answerParser*).toList
     }
+
+  def getAllByAssignmentsIds(assignments: List[Assignment]) : List[Answer] = {
+    var answers = new mutable.MutableList[Answer]
+    for (assignment <- assignments) {
+      DB.withConnection { implicit c =>
+        val tmpAnswers = SQL("SELECT * FROM answers WHERE assignment_fk = {assignmentId}")
+          .on('assignmentId -> assignment.id.get)
+          .as(answerParser*).toList
+
+        for (ans <- tmpAnswers) {
+          answers += ans
+        }
+      }
+    }
+    answers.toList
+  }
+
 }

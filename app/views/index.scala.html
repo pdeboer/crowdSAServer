@@ -10,7 +10,7 @@
                     <div>
                         <h2>Please answer this question:</h2>
                         <h2>"@question.question"</h2>
-                        <form action="/storeAnswer" method="post">
+                        <form action="/add" method="post">
                             <input type="hidden" id="assignmentId" name="assignmentId" value=@assignmentId>
                             <input type="hidden" id="questionType" name="questionType" value=@question.questionType>
                             @if(question.questionType=="Boolean"){

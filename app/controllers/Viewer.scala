@@ -16,53 +16,6 @@ import java.util.Date
  */
 object Viewer extends Controller{
 
-  def storeAnswer = Action { implicit request =>
-    val session = request.session
-
-    request.session.get("turkerId").map {
-      turkerId =>
-        val questionType = request.body.asFormUrlEncoded.get("questionType")(0)
-        val assignmentId = request.body.asFormUrlEncoded.get("assignmentId")(0).toLong
-
-        var answer = ""
-        if(questionType.equals("Boolean")) {
-          try {
-            val yes = request.body.asFormUrlEncoded.get("true")(0).toBoolean
-            answer = "true"
-          } catch {
-            case e: Exception => {
-              // Try to get no
-              try {
-                val no = request.body.asFormUrlEncoded.get("false")(0).toBoolean
-                answer= "false"
-              } catch {
-                case e1: Exception => {
-                  println("No answer is given for the Boolean question")
-                  answer = ""
-                }
-              }
-            }
-          }
-        } else {
-          // If not a boolean is expected
-          try {
-            answer = request.body.asFormUrlEncoded.get("textAnswer")(0)
-          } catch {
-            case e: Exception => {
-              println("Cannot get the answer from the textbox")
-              answer = ""
-            }
-          }
-        }
-        val answerId = AnswerDAO.add(new Answer(NotAssigned, answer, (new Date()).getTime, null, null, null, assignmentId))
-        Redirect(routes.Waiting.waiting()).flashing(
-          "success" -> "Answer correctly stored."
-        )
-    }.getOrElse {
-      Redirect(routes.Application.index())
-    }
-  }
-
   //GET - show pdf viewer and question
   def viewer(questionId: Long, assignmentId: Long) =  Action { implicit request =>
 

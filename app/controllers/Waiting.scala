@@ -16,15 +16,20 @@ object Waiting extends Controller{
   val layoutMode = config.getInt("layoutMode")
 
   def getWaitingLayout(turkerId: String, flash: Flash): Result = {
-    val mode = layoutMode match {
-      case 1 => Ok(views.html.waiting_1(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), flash))
-      case 2 => Ok(views.html.waiting_2(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), flash))
-      case 3 => Ok(views.html.waiting_3(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), flash))
-      case 4 => Ok(views.html.waiting_4(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), flash))
-      case 5 => Ok(views.html.waiting_5(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), flash))
-      case _ => Ok("LayoutMode is not yes defined")
+    try {
+      val mode = layoutMode match {
+        case 1 => Ok(views.html.waiting_1(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), flash))
+        case 2 => Ok(views.html.waiting_2(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), flash))
+        case 3 => Ok(views.html.waiting_3(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), flash))
+        case 4 => Ok(views.html.waiting_4(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), flash))
+        case 5 => Ok(views.html.waiting_5(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), flash))
+        case _ => Ok("LayoutMode is not yes defined")
+      }
+      return mode
+    } catch {
+      case e: Exception => e.printStackTrace()
     }
-    mode
+    return InternalServerError("Something went wrong!")
   }
 
   // GET - waiting page
@@ -165,18 +170,6 @@ object Waiting extends Controller{
     val assignment = new Assignment(NotAssigned, date, date + timeout, date, questionId, Turkers2TeamsDAO.findSingleTeamByTurkerId(turkerId).id.get)
     val assignmentId = AssignmentDAO.add(assignment)
     assignmentId
-  }
-
-  // GET - get all questions
-  def questions = Action { implicit request =>
-    val session = request.session
-
-    request.session.get("turkerId").map {
-      turkerId =>
-        Ok(Json.toJson(QuestionDAO.getAll()))
-    }.getOrElse {
-      Redirect(routes.Application.index())
-    }
   }
 
   // GET - get questions related to PDF

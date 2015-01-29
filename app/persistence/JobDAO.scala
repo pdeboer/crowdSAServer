@@ -22,7 +22,7 @@ object JobDAO {
 
   def getData(): List[Job] = {
     val papers: List[Paper] = PaperDAO.getAll()
-    val questions: List[Question] = QuestionDAO.getAll()
+    val questions: List[Question] = QuestionDAO.getAllEnabled()
     val a: ArrayBuffer[Job] = new ArrayBuffer[Job]()
     papers.foreach(
       p => {

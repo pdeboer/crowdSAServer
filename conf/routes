@@ -3,43 +3,48 @@
 # ~~~~
 
 # Home page
-GET         /                                        controllers.Application.index
+GET         /                                              controllers.Application.index
 
 # Login
-POST        /login                                   controllers.Login.login
-GET         /logout                                  controllers.Login.logout
+POST        /login                                         controllers.Login.login
+GET         /logout                                        controllers.Login.logout
 
 # Registration
-GET         /registration                            controllers.Login.registration
-POST        /registration                            controllers.Login.addTurker
+GET         /registration                                  controllers.Login.registration
+POST        /registration                                  controllers.Login.addTurker
 
 # Paper
-POST        /paper                                   controllers.Application.storePaper
+GET         /checkPaper/:paperId                           controllers.Paper.checkPaper(paperId: Long)
+POST        /paper                                         controllers.Paper.storePaper
 
 # Questions
-GET         /questions                               controllers.Waiting.questions
+GET         /questions                                     controllers.Question.questions
+POST        /addQuestion                                   controllers.Question.addQuestion
+POST        /disablequestion                               controllers.Question.disableQuestion
 
 # Waiting
-GET         /waiting                                 controllers.Waiting.waiting
-GET         /waiting/getQuestion                     controllers.Waiting.getQuestion
-GET         /waiting/getDefinedQuestion/:questionId  controllers.Waiting.getDefinedQuestion(questionId: Long)
-GET         /jobs                                    controllers.Waiting.jobs
+GET         /waiting                                       controllers.Waiting.waiting
+GET         /waiting/getQuestion                           controllers.Waiting.getQuestion
+GET         /waiting/getDefinedQuestion/:questionId        controllers.Waiting.getDefinedQuestion(questionId: Long)
+GET         /jobs                                          controllers.Waiting.jobs
 
 # Waiting - Search functionality
-GET         /search/:term                            controllers.Search.perform(term:String)
-GET         /search/                                 controllers.Search.perform(term:String="")
+GET         /search/:term                                  controllers.Search.perform(term:String)
+GET         /search/                                       controllers.Search.perform(term:String="")
 
-# Viewer
-POST        /storeAnswer                             controllers.Viewer.storeAnswer
+# Answer
+GET         /answers/:qId                                  controllers.Answer.answers(qId: Long)
+POST        /add                                           controllers.Answer.addAnswer
+POST        /evaluateanswer                                controllers.Answer.evaluateAnswer
 
 # Account
-GET         /account                                 controllers.Application.account
+GET         /account                                       controllers.Application.account
 
 # Statistics
-GET         /statistics                              controllers.Application.statistics
+GET         /statistics                                    controllers.Application.statistics
 
 # PDF Viewer
-GET         /viewer/:questionId/:assignmentId        controllers.Viewer.viewer(questionId: Long, assignmentId: Long)
+GET         /viewer/:questionId/:assignmentId              controllers.Viewer.viewer(questionId: Long, assignmentId: Long)
 
 # Map static resources from the /public folder to the /assets URL path
-GET         /assets/*file                            controllers.Assets.at(path="/public", file)
+GET         /assets/*file                                  controllers.Assets.at(path="/public", file)

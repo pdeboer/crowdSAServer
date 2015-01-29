@@ -32,7 +32,7 @@ object PaperDAO {
   def add(p: Paper): Long = {
     val id: Option[Long] =
       DB.withConnection { implicit c =>
-        SQL("INSERT INTO papers(pdfPath, pdfTitle, createdAt, budget, highlighted) VALUES ({pdfPath}, {pdfTitle}, {createdAt}, {budget}, {highlight})").on(
+        SQL("INSERT INTO papers(pdfPath, pdfTitle, createdAt, budget, highlight) VALUES ({pdfPath}, {pdfTitle}, {createdAt}, {budget}, {highlight})").on(
           'pdfPath -> p.pdfPath,
           'pdfTitle -> p.pdfTitle,
           'createdAt -> p.createdAt,
