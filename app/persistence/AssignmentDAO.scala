@@ -11,6 +11,7 @@ import play.api.db.DB
  * Created by Mattia on 22.01.2015.
  */
 object AssignmentDAO {
+
   private val assignmentParser: RowParser[Assignment] =
     get[Pk[Long]]("id") ~
       get[Long]("assignedFrom") ~
@@ -47,6 +48,14 @@ object AssignmentDAO {
         ).executeInsert()
       }
     id.get
+  }
+
+  def remove(assignmendId: Long) = {
+    DB.withConnection { implicit c =>
+      SQL("DELETE FROM assignments WHERE id = {id}").on(
+        'id -> assignmendId
+      ).execute()
+    }
   }
 
   def getAll(): List[Assignment] =

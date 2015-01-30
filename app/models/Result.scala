@@ -10,14 +10,10 @@ import persistence.{JobDAO, QuestionDAO}
 
 case class Result(text: String)
 
-// Finds files in the current dir. matching the given search term
 object Result {
 
-  // Simple list of files in the current directory
-  def all = JobDAO.getData()
-
   // Simple case-sensitive filter
-  def find(term: String) = Result.all.filter(
+  def find(turkerId: String, term: String) = JobDAO.getData(turkerId).filter(
     j => (
       j.pdfTitle.toLowerCase.contains(term.toLowerCase)
         || j.questionType.toLowerCase.contains(term.toLowerCase)

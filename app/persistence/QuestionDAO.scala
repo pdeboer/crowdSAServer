@@ -32,9 +32,11 @@ object QuestionDAO {
       ).as(questionParser.singleOpt)
     }
 
-  def getRandomQuestionRandomPaper: Long = {
+  def getRandomQuestionRandomPaper(turkerId: String): Long = {
+    val teamId = Turkers2TeamsDAO.findSingleTeamByTurkerId(turkerId).id.get.toString
     DB.withConnection { implicit c =>
-      val randomQuestion = SQL("SELECT * FROM questions WHERE disabled=false GROUP BY RAND() LIMIT 1")
+      val randomQuestion = SQL("SELECT * FROM questions AS q WHERE disabled=false AND NOT EXISTS (SELECT * FROM assignments WHERE ( (assignedTo)/1000 > UNIX_TIMESTAMP() or team_fk = {teamId}) AND question_fk = q.id) GROUP BY RAND() LIMIT 1")
+        .on('teamId -> teamId)
         .as(questionParser.singleOpt)
       randomQuestion.get.id.get
     }
@@ -61,36 +63,48 @@ object QuestionDAO {
     id.get
   }
 
-  def cancel(id: Long) =
+  def disable(id: Long) =
     DB.withConnection { implicit c =>
-      SQL("UPDATE questions SET disabled = 1 WHERE id = {id}").on(
+      SQL("UPDATE questions SET disabled=true WHERE id = {id}").on(
         'id -> id
       ).executeUpdate()
     }
 
-  def getAllEnabled(): List[Question] =
-    DB.withConnection { implicit c =>
-      SQL("SELECT * FROM questions WHERE disabled=false").as(questionParser*)
-    }
 
-  def getRandomQuestionSamePaper(paperId: Long): Long =
+  def getAllEnabled(turkerId: String): List[Question] = {
+    val teamId = Turkers2TeamsDAO.findSingleTeamByTurkerId(turkerId).id.get.toString
     DB.withConnection { implicit c =>
-      SQL("SELECT * FROM questions WHERE paper_fk = {paperId} AND disabled=false GROUP BY RAND() LIMIT 1")
-        .on('paperId -> paperId)
-        .as(questionParser.single).id.get
+      SQL("SELECT * FROM questions AS q WHERE disabled=false AND NOT EXISTS (SELECT * FROM assignments WHERE ( (assignedTo)/1000 > UNIX_TIMESTAMP() or team_fk = {teamId}) AND question_fk = q.id)")
+        .on('teamId -> teamId.toString)
+        .as(questionParser *)
     }
+  }
 
-  def getSameQuestionTypeRandomPaper(questionType: String): Long = {
+  def getRandomQuestionSamePaper(turkerId: String, paperId: Long): Long = {
+    val teamId = Turkers2TeamsDAO.findSingleTeamByTurkerId(turkerId).id.get.toString
     DB.withConnection { implicit c =>
-      SQL("SELECT * FROM questions WHERE questionType = {questionType}  AND disabled=false GROUP BY RAND() LIMIT 1")
-        .on('questionType -> questionType)
+      SQL("SELECT * FROM questions AS q WHERE paper_fk = {paperId} AND disabled=false AND NOT EXISTS (SELECT * FROM assignments WHERE ( (assignedTo)/1000 > UNIX_TIMESTAMP() or team_fk = {teamId}) AND question_fk = q.id) GROUP BY RAND() LIMIT 1")
+        .on('paperId -> paperId,
+        'teamId -> teamId)
         .as(questionParser.single).id.get
     }
   }
 
-  def getRandomQuestionType(): String = {
+  def getSameQuestionTypeRandomPaper(turkerId: String, questionType: String): Long = {
+    val teamId = Turkers2TeamsDAO.findSingleTeamByTurkerId(turkerId).id.get.toString
     DB.withConnection { implicit c =>
-      SQL("SELECT * FROM questions AND disabled=false GROUP BY RAND() LIMIT 1")
+      SQL("SELECT * FROM questions AS q WHERE questionType = {questionType} AND NOT EXISTS (SELECT * FROM assignments WHERE ( (assignedTo)/1000 > UNIX_TIMESTAMP() or team_fk = {teamId}) AND question_fk = q.id) AND disabled=false GROUP BY RAND() LIMIT 1")
+        .on('questionType -> questionType,
+        'teamId -> teamId)
+        .as(questionParser.single).id.get
+    }
+  }
+
+  def getRandomQuestionType(turkerId: String): String = {
+    val teamId = Turkers2TeamsDAO.findSingleTeamByTurkerId(turkerId).id.get.toString
+    DB.withConnection { implicit c =>
+      SQL("SELECT * FROM questions AS q WHERE disabled=false AND NOT EXISTS (SELECT * FROM assignments WHERE team_fk = {teamId} AND question_fk = q.id) GROUP BY RAND() LIMIT 1")
+        .on('teamId -> teamId)
         .as(questionParser.single).questionType
     }
   }

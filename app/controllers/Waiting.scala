@@ -65,6 +65,11 @@ object Waiting extends Controller{
     }
   }
 
+  /**
+   * Ony used for layout 5
+   * @param questionId
+   * @return
+   */
   def getDefinedQuestion(questionId: Long) = Action { implicit request =>
     val session = request.session
 
@@ -94,19 +99,25 @@ object Waiting extends Controller{
     }
     if(session.get("questionType").getOrElse("") == ""){
       // If no question type is yet selected, select a random one
-      questionType = QuestionDAO.getRandomQuestionType()
+      questionType = QuestionDAO.getRandomQuestionType(turkerId)
     } else {
       questionType = session.get("questionType").get
     }
+    try {
+      val questionId = QuestionDAO.getSameQuestionTypeRandomPaper(turkerId, questionType)
+      val assignmentId = assignQuestion(questionId, turkerId)
 
-    val questionId = QuestionDAO.getSameQuestionTypeRandomPaper(questionType)
-    val assignmentId = assignQuestion(questionId, turkerId)
-
-    Ok(questionId.toString+"/"+assignmentId.toString).withSession(
-      session +
-        ("paperId" -> paperId.toString) +
-        ("questionType" -> questionType)
-    )
+      Ok(questionId.toString+"/"+assignmentId.toString).withSession(
+        session +
+          ("paperId" -> paperId.toString) +
+          ("questionType" -> questionType)
+      )
+    } catch {
+      case e: Exception => {
+        Thread.sleep(5000)
+        getSameQuestionTypeSamePaper(turkerId, session)
+      }
+    }
   }
 
 
@@ -120,14 +131,21 @@ object Waiting extends Controller{
     var questionType: String = ""
     if(session.get("questionType").getOrElse("") == ""){
       // If no question type is yet selected, select a random one
-      questionType = QuestionDAO.getRandomQuestionType()
+      questionType = QuestionDAO.getRandomQuestionType(turkerId)
     } else {
       questionType = session.get("questionType").get
     }
-    val questionId = QuestionDAO.getSameQuestionTypeRandomPaper(questionType)
-    val assignmentId = assignQuestion(questionId, turkerId)
-    Ok(questionId.toString+"/"+assignmentId.toString).withSession(
-      session + ("questionType" -> questionType))
+    try {
+      val questionId = QuestionDAO.getSameQuestionTypeRandomPaper(turkerId, questionType)
+      val assignmentId = assignQuestion(questionId, turkerId)
+      Ok(questionId.toString + "/" + assignmentId.toString).withSession(
+        session + ("questionType" -> questionType))
+    } catch {
+    case e: Exception => {
+      Thread.sleep(5000)
+      getSameQuestionTypeRandomPaper(turkerId, session)
+    }
+  }
   }
 
   /**
@@ -143,10 +161,17 @@ object Waiting extends Controller{
     } else {
       paperId = session.get("paperId").get.toLong
     }
-    val questionId = QuestionDAO.getRandomQuestionSamePaper(paperId)
-    val assignmentId = assignQuestion(questionId, turkerId)
-    Ok(questionId.toString+"/"+assignmentId.toString).withSession(
-      session + ("paperId" -> paperId.toString))
+    try {
+      val questionId = QuestionDAO.getRandomQuestionSamePaper(turkerId, paperId)
+      val assignmentId = assignQuestion(questionId, turkerId)
+      Ok(questionId.toString + "/" + assignmentId.toString).withSession(
+        session + ("paperId" -> paperId.toString))
+    } catch {
+      case e: Exception => {
+        Thread.sleep(5000)
+        getRandomQuestionSamePaper(turkerId, session)
+      }
+    }
   }
 
   /**
@@ -154,9 +179,16 @@ object Waiting extends Controller{
    * @return
    */
   def getRandomQuestionRandomPaper(turkerId: String) : Result = {
-    val questionId = QuestionDAO.getRandomQuestionRandomPaper
-    val assignmentId = assignQuestion(questionId, turkerId)
-    Ok(questionId.toString+"/"+assignmentId.toString)
+    try {
+      val questionId = QuestionDAO.getRandomQuestionRandomPaper(turkerId)
+      val assignmentId = assignQuestion(questionId, turkerId)
+      Ok(questionId.toString+"/"+assignmentId.toString)
+    } catch {
+      case e: Exception => {
+        Thread.sleep(5000)
+        getRandomQuestionRandomPaper(turkerId)
+      }
+    }
   }
 
   /**
@@ -178,7 +210,20 @@ object Waiting extends Controller{
 
     request.session.get("turkerId").map {
       turkerId =>
-        Ok(Json.toJson(JobDAO.getData()))
+        Ok(Json.toJson(JobDAO.getData(turkerId)))
+    }.getOrElse {
+      Redirect(routes.Application.index())
+    }
+  }
+
+  def rejectAssignment = Action { implicit request =>
+    val session = request.session
+
+    request.session.get("turkerId").map {
+      turkerId =>
+        val assignmentId = request.body.asJson.get \ "assignmentId"
+        AssignmentDAO.remove(assignmentId.toString().replace("\"", "").toLong)
+        Ok("")
     }.getOrElse {
       Redirect(routes.Application.index())
     }

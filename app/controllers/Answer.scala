@@ -50,20 +50,20 @@ object Answer extends Controller {
    * POST - stores an answer in the database
    * @return
    */
-  def addAnswer = Action(parse.multipartFormData) { implicit request =>
-    val questionType = request.body.asFormUrlEncoded.get("questionType").get.head
-    val assignmentId = request.body.asFormUrlEncoded.get("assignmentId").get.head.toLong
+  def addAnswer = Action { implicit request =>
+    val questionType = request.body.asFormUrlEncoded.get("questionType")(0)
+    val assignmentId = request.body.asFormUrlEncoded.get("assignmentId")(0).toLong
 
     var answer = ""
     if (questionType.equals("Boolean")) {
       try {
-        val yes = request.body.asFormUrlEncoded.get("true").get.head.toBoolean
+        val yes = request.body.asFormUrlEncoded.get("true")(0).toBoolean
         answer = "true"
       } catch {
         case e: Exception => {
           // Try to get no
           try {
-            val no = request.body.asFormUrlEncoded.get("false").get.head.toBoolean
+            val no = request.body.asFormUrlEncoded.get("false")(0).toBoolean
             answer = "false"
           } catch {
             case e1: Exception => {
@@ -76,7 +76,7 @@ object Answer extends Controller {
     } else {
       // If not a boolean is expected
       try {
-        answer = request.body.asFormUrlEncoded.get("textAnswer").get.head
+        answer = request.body.asFormUrlEncoded.get("textAnswer")(0)
       } catch {
         case e: Exception => {
           println("Cannot get the answer from the textbox")

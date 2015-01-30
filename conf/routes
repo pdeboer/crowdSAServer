@@ -22,11 +22,15 @@ GET         /questions                                     controllers.Question.
 POST        /addQuestion                                   controllers.Question.addQuestion
 POST        /disablequestion                               controllers.Question.disableQuestion
 
+# Highlight
+POST        /highlight                                     controllers.Question.addHighlight
+
 # Waiting
 GET         /waiting                                       controllers.Waiting.waiting
 GET         /waiting/getQuestion                           controllers.Waiting.getQuestion
 GET         /waiting/getDefinedQuestion/:questionId        controllers.Waiting.getDefinedQuestion(questionId: Long)
 GET         /jobs                                          controllers.Waiting.jobs
+POST        /rejectAssignment                              controllers.Waiting.rejectAssignment
 
 # Waiting - Search functionality
 GET         /search/:term                                  controllers.Search.perform(term:String)
@@ -34,7 +38,7 @@ GET         /search/                                       controllers.Search.pe
 
 # Answer
 GET         /answers/:qId                                  controllers.Answer.answers(qId: Long)
-POST        /add                                           controllers.Answer.addAnswer
+POST        /answer/add                                    controllers.Answer.addAnswer
 POST        /evaluateanswer                                controllers.Answer.evaluateAnswer
 
 # Account

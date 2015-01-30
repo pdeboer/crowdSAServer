@@ -2,7 +2,7 @@ package controllers
 
 
 import anorm.NotAssigned
-import models.Question
+import models.{Highlight, Question}
 import persistence._
 import play.api.libs.json.Json
 import play.api.mvc.{Action, Controller}
@@ -18,7 +18,7 @@ object Question extends Controller {
 
     request.session.get("turkerId").map {
       turkerId =>
-        Ok(Json.toJson(QuestionDAO.getAllEnabled()))
+        Ok(Json.toJson(QuestionDAO.getAllEnabled(turkerId)))
     }.getOrElse {
       Redirect(routes.Application.index())
     }
@@ -44,8 +44,21 @@ object Question extends Controller {
   def disableQuestion = Action(parse.multipartFormData) { implicit request =>
     try {
       val questionId = request.body.asFormUrlEncoded.get("questionId").get.head.toLong
-      QuestionDAO.cancel(questionId)
+      QuestionDAO.disable(questionId)
       Ok("Question successfully disabled!")
+    } catch {
+      case e: Exception => InternalServerError("Wrong request format.")
+    }
+  }
+
+  def addHighlight() = Action(parse.multipartFormData) { implicit request =>
+    try {
+      val questionId = request.body.asFormUrlEncoded.get("questionId").get.head.toLong
+      val assumption = request.body.asFormUrlEncoded.get("assumption").get.head
+      val terms = request.body.asFormUrlEncoded.get("terms").get.head
+      val h = new Highlight(NotAssigned, assumption, terms, questionId)
+      HighlightDAO.add(h)
+      Ok("Highlight terms successfully added!")
     } catch {
       case e: Exception => InternalServerError("Wrong request format.")
     }

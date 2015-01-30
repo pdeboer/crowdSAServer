@@ -6,27 +6,30 @@ myApp.controller('QuestionCtrl', function($scope, $http){
 
     $scope.getQuestion = function() {
         var el = document.getElementById("startBtn");
-        el.className = "btn btn-warning";
-        el.innerText = "Waiting...";
-        $('startBtn').prop('disabled', true);
+        el.className = "btn btn-info";
+        el.innerText = "Looking for a really good question...";
+        $('#startBtn').prop('disabled', true);
+        $scope.question = ""
         $http.get("/waiting/getQuestion")
             .success(function(data) {
                 //TODO: pause the game
+                // From now on the turker has 1 minute time to accept the assignment or reject it
                 if (window.confirm('A question is ready for you! Do you want to answer?'))
                 {
                     // Accepted
                     //TODO: Extend the assignment
                     window.location = '/viewer/' + data;
-                    $scope.question = data;
+                    $scope.question = "The question is loading! Please wait a moment.";
                 }
                 else
                 {
                     // Rejected
                     el.className = "btn btn-success";
                     el.innerText = "Start!";
-                    $('startBtn').prop('disabled', false);
-                    $scope.question = "You refused to answer the question " + data;
-                    //TODO: delete the assignment and allow other turker to answer this question
+                    $('#startBtn').prop('disabled', false);
+                    $scope.question = "Don't want to answer any other question? Make a quick break and get some fresh air.";
+                    //Delete the assignment and allow other turker to answer this question
+                    $http.post("/rejectAssignment", {assignmentId: data.split("/",2)[1]})
                 }
 
             })

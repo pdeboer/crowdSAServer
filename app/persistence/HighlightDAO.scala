@@ -33,13 +33,13 @@ object HighlightDAO {
       ).as(highlightParser*).toList
     }
 
-  def add(h: Highlight, questionId: Long): Long = {
+  def add(h: Highlight): Long = {
     val id: Option[Long] =
       DB.withConnection { implicit c =>
         SQL("INSERT INTO highlights(assumption, terms, question_fk) VALUES ({assumption}, {terms}, {question_fk})").on(
           'assumption-> h.assumption,
           'terms-> h.terms,
-          'question_fk -> questionId
+          'question_fk -> h.question_fk
         ).executeInsert()
       }
     id.get

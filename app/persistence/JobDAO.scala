@@ -20,9 +20,9 @@ object JobDAO {
       case questionId ~pdfTitle ~questionType ~rewardAnswer => Job(questionId, pdfTitle, questionType, rewardAnswer)
     }
 
-  def getData(): List[Job] = {
+  def getData(turkerId: String): List[Job] = {
     val papers: List[Paper] = PaperDAO.getAll()
-    val questions: List[Question] = QuestionDAO.getAllEnabled()
+    val questions: List[Question] = QuestionDAO.getAllEnabled(turkerId)
     val a: ArrayBuffer[Job] = new ArrayBuffer[Job]()
     papers.foreach(
       p => {
