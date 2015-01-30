@@ -52,7 +52,16 @@ object Application extends Controller {
   def statistics = Action { implicit request =>
     request.session.get("turkerId").map {
       turkerId =>
-        Ok(views.html.statistic(TurkerDAO.findByTurkerId(turkerId).getOrElse(null)))
+
+        val avgTimeToAns = 0
+        val totQuestionAns = QuestionDAO.getTotalQuestionAnswered(turkerId)
+        val totEarned = QuestionDAO.getTotalEarned(turkerId)
+        val totAcceptedAndBonus = QuestionDAO.getTotalAcceptedAndBonus(turkerId)
+        val totAccepted = QuestionDAO.getTotalAccepted(turkerId)
+        val totPending = QuestionDAO.getTotalPending(turkerId)
+        val totRejected = QuestionDAO.getTotalRejected(turkerId)
+
+        Ok(views.html.statistic(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), avgTimeToAns, totQuestionAns, totEarned, totAcceptedAndBonus, totAccepted, totPending, totRejected))
     }.getOrElse {
       Redirect(routes.Application.index())
     }

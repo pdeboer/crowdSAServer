@@ -1,15 +1,16 @@
-@(turker: Turker)
+@(turker: Turker, avgTimeToAns: Double, totQuestionAns: Int, totEarned: Double ,totAcceptedAndBonus: Int, totAccepted: Int, totPending: Int, totRejected: Int)
 
 @main("Statistics")(turker) {
   <br><br><br>
   <div class="container">
     <h1>Statistics</h1>
-    Average time to answer: <b>0s</b><br>
-    Total Questions answered: <b>0</b><br>
-    Total earned: <b>0.00$</b><br>
+    Average time to answer: <b>@avgTimeToAns s</b><br>
+    Total Questions answered: <b>@totQuestionAns</b><br>
+    Total earned: <b>@(totEarned/100) $</b><br>
     <br>
-    Answers accepted: <b style="color: green;">0</b><br>
-    Answers pending: <b style="color: yellow;">0</b><br>
-    Answer rejected: <b style="color: red;">0</b><br>
+    Answers accepted with bonus: <b>@totAcceptedAndBonus</b><br>
+    Answers accepted: <b style="color: green;">@totAccepted</b><br>
+    Answers pending: <b style="color: orange;">@totPending</b><br>
+    Answer rejected: <b style="color: red;">@totRejected</b><br>
   </div>
 }
