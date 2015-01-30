@@ -116,8 +116,12 @@ object QuestionDAO {
         SQL("SELECT COUNT(*) FROM questions AS q WHERE EXISTS (SELECT * FROM assignments WHERE team_fk = {teamId} AND question_fk = q.id)")
           .on('teamId -> teamId)
           .apply().head
-      val res = count[Long]("COUNT(*)")
-      res.toInt
+      try {
+        val res = count[Long]("COUNT(*)")
+        res.toInt
+      } catch {
+        case e: Exception => return 0
+      }
     }
   }
 
@@ -128,8 +132,12 @@ object QuestionDAO {
         SQL("SELECT SUM(q.reward) as res FROM questions AS q WHERE EXISTS (SELECT * FROM assignments AS a WHERE team_fk = {teamId} AND question_fk = q.id AND EXISTS( SELECT * FROM answers WHERE accepted=true AND a.id = assignment_fk ))")
           .on('teamId -> teamId)
           .apply().head
-      val res = count[BigDecimal]("res")
-      res.toInt
+      try{
+        val res = count[BigDecimal]("res")
+        res.toInt
+      } catch {
+        case e: Exception => return 0
+      }
     }
   }
 
@@ -140,8 +148,12 @@ object QuestionDAO {
         SQL("SELECT COUNT(*) FROM questions AS q WHERE EXISTS (SELECT * FROM assignments AS a WHERE team_fk = {teamId} AND question_fk = q.id AND EXISTS( SELECT * FROM answers WHERE accepted=true AND rejected=FALSE AND a.id = assignment_fk ) )")
           .on('teamId -> teamId)
           .apply().head
-      val res = count[Long]("COUNT(*)")
-      res.toInt
+      try {
+        val res = count[Long]("COUNT(*)")
+        res.toInt
+      } catch {
+        case e: Exception => return 0
+      }
     }
   }
 
@@ -152,32 +164,44 @@ object QuestionDAO {
         SQL("SELECT COUNT(*) FROM questions AS q WHERE EXISTS (SELECT * FROM assignments AS a WHERE team_fk = {teamId} AND question_fk = q.id AND EXISTS( SELECT * FROM answers WHERE accepted=true AND rejected=false AND acceptedAndBonus=true AND a.id = assignment_fk ) )")
           .on('teamId -> teamId)
           .apply().head
-      val res = count[Long]("COUNT(*)")
-      res.toInt
+      try {
+        val res = count[Long]("COUNT(*)")
+        res.toInt
+      } catch {
+      case e: Exception => return 0
+      }
     }
   }
 
-  def getTotalRejected(turkerId: String) = {
+  def getTotalRejected(turkerId: String): Int = {
     val teamId = Turkers2TeamsDAO.findSingleTeamByTurkerId(turkerId).id.get.toString
     DB.withConnection { implicit c =>
       val count =
         SQL("SELECT COUNT(*) FROM questions AS q WHERE EXISTS (SELECT * FROM assignments AS a WHERE team_fk = {teamId} AND question_fk = q.id AND EXISTS( SELECT * FROM answers WHERE rejected=true AND accepted=false AND acceptedAndBonus=false AND a.id = assignment_fk ) )")
           .on('teamId -> teamId)
           .apply().head
-      val res = count[Long]("COUNT(*)")
-      res.toInt
+      try {
+        val res = count[Long]("COUNT(*)")
+        res.toInt
+      } catch {
+        case e: Exception => return 0
+      }
     }
   }
 
-  def getTotalPending(turkerId: String) = {
+  def getTotalPending(turkerId: String) : Int = {
     val teamId = Turkers2TeamsDAO.findSingleTeamByTurkerId(turkerId).id.get.toString
     DB.withConnection { implicit c =>
       val count =
         SQL("SELECT COUNT(*) FROM questions AS q WHERE EXISTS (SELECT * FROM assignments AS a WHERE team_fk = {teamId} AND question_fk = q.id AND EXISTS( SELECT * FROM answers WHERE rejected IS NULL AND accepted IS NULL and acceptedAndBonus IS NULL AND a.id = assignment_fk ) )")
           .on('teamId -> teamId)
           .apply().head
-      val res = count[Long]("COUNT(*)")
-      res.toInt
+      try {
+        val res = count[Long]("COUNT(*)")
+        res.toInt
+      } catch {
+        case e: Exception => return 0
+      }
     }
   }
 }

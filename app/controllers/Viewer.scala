@@ -37,13 +37,13 @@ object Viewer extends Controller{
 
             //var pdfArrayByte = new Array[Byte](0)
             if (!contentCsv.isEmpty) {
-              Ok(views.html.index(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), question, Base64.encodeBase64String(HighlightPdf.highlight(pdfPath, contentCsv)), AssignmentDAO.findById(assignmentId).get.team_fk, assignmentId))
+              Ok(views.html.viewer(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), question, Base64.encodeBase64String(HighlightPdf.highlight(pdfPath, contentCsv)), AssignmentDAO.findById(assignmentId).get.team_fk, assignmentId))
             } else {
-              Ok(views.html.index(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), question, Base64.encodeBase64String(HighlightPdf.getPdfAsArrayByte(pdfPath)),AssignmentDAO.findById(assignmentId).get.team_fk, assignmentId))
+              Ok(views.html.viewer(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), question, Base64.encodeBase64String(HighlightPdf.getPdfAsArrayByte(pdfPath)),AssignmentDAO.findById(assignmentId).get.team_fk, assignmentId))
             }
 
           } else {
-            Ok(views.html.index(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), question,  Base64.encodeBase64String(HighlightPdf.getPdfAsArrayByte(pdfPath)),AssignmentDAO.findById(assignmentId).get.team_fk, assignmentId))
+            Ok(views.html.viewer(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), question,  Base64.encodeBase64String(HighlightPdf.getPdfAsArrayByte(pdfPath)),AssignmentDAO.findById(assignmentId).get.team_fk, assignmentId))
           }
         } catch {
           case e: Exception => {

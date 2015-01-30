@@ -641,7 +641,6 @@ html[dir='rtl'] #toolbarViewerRight {
 
 html[dir='ltr'] #toolbarViewerLeft,
 html[dir='rtl'] #toolbarViewerRight {
-  position: absolute;
   top: 0;
   left: 0;
 }
@@ -675,6 +674,7 @@ html[dir='rtl'] .splitToolbarButton {
   display: inline-block;
 }
 html[dir='ltr'] .splitToolbarButton > .toolbarButton {
+  margin: 0;
   border-radius: 0;
   float: left;
 }
