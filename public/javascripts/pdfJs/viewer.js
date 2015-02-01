@@ -27,6 +27,8 @@
 
 'use strict';
 
+var QUESTION_TYPE = '';
+var domChildren = [];
 var DEFAULT_URL = '';
 var DEFAULT_SCALE_DELTA = 1.1;
 var MIN_SCALE = 0.25;
@@ -3369,6 +3371,7 @@ var PageView = function pageView(container, id, scale, defaultViewport,
         var textLayer = null;
         if (!PDFJS.disableTextLayer) {
             textLayerDiv = document.createElement('div');
+
             textLayerDiv.className = 'textLayer';
             textLayerDiv.style.width = canvas.style.width;
             textLayerDiv.style.height = canvas.style.height;
@@ -3641,6 +3644,25 @@ var TextLayerBuilder = (function TextLayerBuilderClosure() {
             }
 
             this.textLayerDiv.appendChild(textLayerFrag);
+
+            /**
+             * Add functionality only for questions of type DISCOVERY!
+             */
+            if(QUESTION_TYPE.toUpperCase() === 'DISCOVERY') {
+                $('#pageContainer' + (this.pageIdx + 1)).find('.textLayer').children()
+                    .click(function () {
+                        domChildren.push(this);
+                        $('#datasetChildren ul').append("<li><i>'" + this.innerText+ "'</i></li>");
+                        this.style.border = "3px solid #FF0000";
+                    });
+                    $('#pageContainer' + (this.pageIdx + 1)).find('.textLayer').children()
+                    .mouseover(function () {
+                        $(this).addClass('hover');
+                    }).mouseleave(function(){
+                        $(this).removeClass('hover');
+                    });
+            }
+
             this.renderingDone = true;
             this.updateMatches();
         },

@@ -1993,3 +1993,8 @@ html[dir='rtl'] #documentPropertiesOverlay .row > * {
     display: none;
   }
 }
+
+.hover
+{
+    background-color: #ffff00;
+}

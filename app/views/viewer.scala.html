@@ -7,6 +7,9 @@
 
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("/images/favicon.png")">
 
+            <!-- Bootstrap -->
+        <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet">
+
         <!-- CSV reader -->
         <script src="@routes.Assets.at("/javascripts/papaparser.js")" type="text/javascript"></script>
 
@@ -14,6 +17,7 @@
         <script src="@routes.Assets.at("javascripts/pdfJs/pdf.worker.js")" type="text/javascript"></script>
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
 
         <script src="@routes.Assets.at("javascripts/pdfJs/compatibility.js")" type="text/javascript"></script>
         <link rel="resource" type="application/l10n" href="@routes.Assets.at("/locale/locale.properties")"/>
@@ -22,15 +26,15 @@
         <link rel="stylesheet" media="screen" href="@routes.Assets.at("/stylesheets/viewer.css")">
         <script src="@routes.Assets.at("javascripts/pdfJs/viewer.js")" type="text/javascript"></script>
 
-            <!-- Bootstrap -->
-        <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet">
 
         <script type="text/javascript">
-        $(document).ready(
-            function() {
-                DEFAULT_URL = "data:application/pdf;base64," + @Html(Json.toJson(paperBase64).toString) ;
-            }
-        );
+            QUESTION_TYPE = @Html(Json.toJson(question.questionType).toString) ;
+
+            $(document).ready(
+                function() {
+                    DEFAULT_URL = "data:application/pdf;base64," + @Html(Json.toJson(paperBase64).toString) ;
+                }
+            );
         </script>
 
     </head>
@@ -46,7 +50,7 @@
                             <form action="/answer/add" method="post">
                                 <input type="hidden" id="assignmentId" name="assignmentId" value=@assignmentId>
                                 <input type="hidden" id="questionType" name="questionType" value=@question.questionType>
-                                @if(question.questionType=="Boolean"){
+                                @if(question.questionType.equalsIgnoreCase("Boolean")){
                                     <div class="radio">
                                         <label class="radio-inline">
                                             <input type="radio" name="true" id="true" value="true">
@@ -60,7 +64,16 @@
                                         <button class="btn btn-danger" type="button"onclick="window.location.href = '/waiting';" style="margin-right: 20px;">Skip</button>
                                     </div>
                                 }
-                                @if(question.questionType!="Boolean"){
+                                @if(question.questionType.equalsIgnoreCase("Discovery")) {
+                                    <div>
+                                        <p><b>Define the dataset by clicking on it once found in the paper.</b></p>
+                                        <div id="datasetChildren">
+                                            <ul style="padding: 20px" >
+                                            </ul>
+                                        </div>
+                                    </div>
+                                }
+                                @if(question.questionType.equalsIgnoreCase("FreeText")){
                                     <div class="input-group">
                                         <input id="textAnswer" name="textAnswer" type="text" class="form-control" placeholder="Answer the question here">
                                         <span class="input-group-btn">
@@ -89,7 +102,7 @@
 
                         <ul style="padding: 20px">
                             <li>
-                                <span>Jump to: <i>document.getElementsByClassName('textLayer')[0].childNodes[175]</i> element. (Page1 - INTRODUCTION div)</span>
+                                <span>Jump to: <i>document.getElementsByClassName('textLayer')[0].childNodes[35]</i> element. (Page1 - INTRODUCTION div)</span>
                                 <button class="btn btn-info" id="jump" onclick="jumpToParagraph();">Jump to a paragraph</button>
                             </li>
                         </ul>
@@ -224,7 +237,9 @@
                                 </menu>
 
                                 <div id="viewerContainer" tabindex="0">
-                                    <div id="viewer" class="pdfViewer"></div>
+                                    <div id="viewer" class="pdfViewer">
+
+                                    </div>
                                 </div>
 
                                 <div id="errorWrapper" hidden='true'>
@@ -334,7 +349,7 @@
 
         <script>
 
-        // Convert CSV to JSON
+        /* Convert CSV to JSON
         var results;
         Papa.parse ("http://localhost:9000/assets/csv/statTest.csv", {
         download: true,
@@ -344,6 +359,7 @@
         results = res.data;
         }
         });
+        */
 
         function highlight(){
         //TODO: highlight terms in pdf
@@ -353,9 +369,9 @@
         //}
         }
 
-        function jumpToParagraph(){
-        var elem = document.getElementsByClassName('textLayer')[0].childNodes[35];
-        scrollIntoView(elem);
+        function jumpToParagraph() {
+            var elem = document.getElementsByClassName ( 'textLayer' )[ 0 ].childNodes[ 35 ] ;
+            scrollIntoView ( elem ) ;
         }
 
         </script>
