@@ -50,15 +50,15 @@ object Answer extends Controller {
    * POST - stores an answer in the database
    * @return
    */
-  def addAnswer = Action { implicit request =>
+  def addAnswer = Action(parse.multipartFormData) { implicit request =>
     println("Storing answer")
-    val question_type = request.body.asFormUrlEncoded.get("question_type")(0)
-    val assignments_id = request.body.asFormUrlEncoded.get("assignments_id")(0).toLong
+    val question_type = request.body.asFormUrlEncoded.get("question_type").get.head
+    val assignments_id = request.body.asFormUrlEncoded.get("assignments_id").get.head.toLong
 
     var answer = ""
-    if (question_type.equals("Boolean")) {
+    if (question_type.equalsIgnoreCase("Boolean")) {
       try {
-        val answerElem = request.body.asFormUrlEncoded.get("answer")(0)
+        val answerElem = request.body.asFormUrlEncoded.get("answer").get.head
         if(answerElem.equalsIgnoreCase("YES")){
           answer = "true"
         } else {
@@ -70,19 +70,32 @@ object Answer extends Controller {
           answer = ""
         }
       }
-    } else {
-      // If not a boolean question
+    } else if(question_type.equalsIgnoreCase("FreeText")){
       try {
-        answer = request.body.asFormUrlEncoded.get("textAnswer")(0)
+        answer = request.body.asFormUrlEncoded.get("textAnswer").get.head
       } catch {
         case e: Exception => {
           println("Cannot get the answer from the textbox")
           answer = ""
         }
       }
+    } else if(question_type.equalsIgnoreCase("Discovery")){
+      try {
+        val keys = request.body.asFormUrlEncoded.keySet//get("dom_children").get.head
+        for(k <- keys){
+          if(k.startsWith("dom_children")){
+            answer = request.body.asFormUrlEncoded.get(k).get.mkString(",")
+          }
+        }
+      } catch {
+        case e: Exception => {
+          println("Cannot get the answer from dom_children")
+          answer = ""
+        }
+      }
     }
 
-    val answerId = AnswerDAO.add(new Answer(NotAssigned, answer, (new Date()).getTime/1000, null, null, null, assignments_id))
+    val answerId = AnswerDAO.add(new Answer(NotAssigned, answer, new Date().getTime/1000, null, null, null, assignments_id))
 
     Redirect(routes.Waiting.waiting()).flashing(
       "success" -> "Answer correctly stored."

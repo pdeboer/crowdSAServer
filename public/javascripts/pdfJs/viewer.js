@@ -37,9 +37,8 @@ var VIEW_HISTORY_MEMORY = 20;
 var SCALE_SELECT_CONTAINER_PADDING = 8;
 var SCALE_SELECT_PADDING = 22;
 var PAGE_NUMBER_LOADING_INDICATOR = 'visiblePageIsLoading';
-var DISABLE_AUTO_FETCH_LOADING_BAR_TIMEOUT = 5000;
 
-PDFJS.imageResourcesPath = '../../assets/images/';
+PDFJS.imageResourcesPath = '../../public/images/';
 PDFJS.workerSrc = '../../assets/javascripts/pdfJs/pdf.worker.js';
 PDFJS.cMapUrl = '../../assets/cmaps/';
 PDFJS.cMapPacked = true;
@@ -174,7 +173,6 @@ function scrollIntoView(element, spot) {
             parent.scrollLeft = offsetX;
         }
     }
-
     parent.scrollTop = offsetY;
 }
 
@@ -307,7 +305,6 @@ var ProgressBar = (function ProgressBarClosure() {
     }
 
     function ProgressBar(id, opts) {
-        this.visible = true;
 
         // Fetch the sub-elements for later.
         this.div = document.querySelector(id + ' .progress');
@@ -361,21 +358,8 @@ var ProgressBar = (function ProgressBarClosure() {
         },
 
         hide: function ProgressBar_hide() {
-            if (!this.visible) {
-                return;
-            }
-            this.visible = false;
             this.bar.classList.add('hidden');
-            document.body.classList.remove('loadingInProgress');
-        },
-
-        show: function ProgressBar_show() {
-            if (this.visible) {
-                return;
-            }
-            this.visible = true;
-            document.body.classList.add('loadingInProgress');
-            this.bar.classList.remove('hidden');
+            this.bar.removeAttribute('style');
         }
     };
 
@@ -1649,9 +1633,9 @@ var PDFHistory = {
             return null;
         }
         var params = { hash: this.currentBookmark, page: this.currentPage };
-        /*if (PresentationMode.active) {
+        if (PresentationMode.active) {
             params.hash = null;
-        }*/
+        }
         return params;
     },
 
@@ -1741,7 +1725,7 @@ var PDFHistory = {
 };
 
 
-/*var SecondaryToolbar = {
+var SecondaryToolbar = {
     opened: false,
     previousContainerHeight: null,
     newContainerHeight: null,
@@ -1885,13 +1869,12 @@ var PDFHistory = {
         }
     }
 };
-*/
+
 
 var DELAY_BEFORE_HIDING_CONTROLS = 3000; // in ms
 var SELECTOR = 'presentationControls';
 var DELAY_BEFORE_RESETTING_SWITCH_IN_PROGRESS = 1000; // in ms
 
-/*
 var PresentationMode = {
     active: false,
     args: null,
@@ -1943,7 +1926,6 @@ var PresentationMode = {
      * out of view when Presentation Mode is enabled.
      * Note: This is only an issue at certain zoom levels, e.g. 'page-width'.
      */
-    /*
     _setSwitchInProgress: function presentationMode_setSwitchInProgress() {
         if (this.switchInProgress) {
             clearTimeout(this.switchInProgress);
@@ -2019,11 +2001,6 @@ var PresentationMode = {
         HandTool.enterPresentationMode();
         this.contextMenuOpen = false;
         this.container.setAttribute('contextmenu', 'viewerContextMenu');
-
-        // Text selection is disabled in Presentation Mode, thus it's not possible
-        // for the user to deselect text that is selected (e.g. with "Select all")
-        // when entering Presentation Mode, hence we remove any active selection.
-        window.getSelection().removeAllRanges();
     },
 
     exit: function presentationModeExit() {
@@ -2133,7 +2110,7 @@ var PresentationMode = {
         false);
     window.addEventListener('MSFullscreenChange', presentationModeChange, false);
 })();
-*/
+
 
 /* Copyright 2013 Rob Wu <gwnRob@gmail.com>
  * https://github.com/Rob--W/grab-to-pan.js
@@ -3371,7 +3348,6 @@ var PageView = function pageView(container, id, scale, defaultViewport,
         var textLayer = null;
         if (!PDFJS.disableTextLayer) {
             textLayerDiv = document.createElement('div');
-
             textLayerDiv.className = 'textLayer';
             textLayerDiv.style.width = canvas.style.width;
             textLayerDiv.style.height = canvas.style.height;
@@ -3651,17 +3627,22 @@ var TextLayerBuilder = (function TextLayerBuilderClosure() {
             if(QUESTION_TYPE.toUpperCase() === 'DISCOVERY') {
                 $('#pageContainer' + (this.pageIdx + 1)).find('.textLayer').children()
                     .click(function () {
-                        domChildren.push(this);
-                        $('#datasetChildren ul').append("<li><i>'" + this.innerText+ "'</i></li>");
-                        this.style.border = "3px solid #FF0000";
+                        var index = $(this).index();
+                        var pageContainer = $(this.parentNode.parentNode.id).selector.split("pageContainer")[1];
+
+                        if(domChildren.indexOf(pageContainer+":"+index) == -1) {
+                            domChildren.push(+":"+index);
+                            $('#datasetChildren ul').append("<li><i>'" + this.innerText + "'</i><input type='hidden' name='dom_children[]' value='" + pageContainer+":"+index + "'/></li>");
+                            this.style.border = "3px solid #FF0000";
+                        }
                     });
-                    $('#pageContainer' + (this.pageIdx + 1)).find('.textLayer').children()
+                $('#pageContainer' + (this.pageIdx + 1)).find('.textLayer').children()
                     .mouseover(function () {
                         $(this).addClass('hover');
                     }).mouseleave(function(){
                         $(this).removeClass('hover');
                     });
-            }
+            };
 
             this.renderingDone = true;
             this.updateMatches();
@@ -4547,7 +4528,7 @@ var PDFViewer = (function pdfViewer() {
 
         setFindController: function (findController) {
             this.findController = findController;
-        }
+        },
     };
 
     return PDFViewer;
@@ -4705,7 +4686,6 @@ var PDFViewerApplication = {
             toggleHandTool: document.getElementById('toggleHandTool')
         });
 
-        /*
         SecondaryToolbar.initialize({
             toolbar: document.getElementById('secondaryToolbar'),
             presentationMode: PresentationMode,
@@ -4731,7 +4711,7 @@ var PDFViewerApplication = {
             lastPage: document.getElementById('contextLastPage'),
             pageRotateCw: document.getElementById('contextPageRotateCw'),
             pageRotateCcw: document.getElementById('contextPageRotateCcw')
-        });*/
+        });
 
         PasswordPrompt.initialize({
             overlayName: 'passwordOverlay',
@@ -5249,24 +5229,6 @@ var PDFViewerApplication = {
         // increases.
         if (percent > this.loadingBar.percent || isNaN(percent)) {
             this.loadingBar.percent = percent;
-
-            // When disableAutoFetch is enabled, it's not uncommon for the entire file
-            // to never be fetched (depends on e.g. the file structure). In this case
-            // the loading bar will not be completely filled, nor will it be hidden.
-            // To prevent displaying a partially filled loading bar permanently, we
-            // hide it when no data has been loaded during a certain amount of time.
-            if (PDFJS.disableAutoFetch && percent) {
-                if (this.disableAutoFetchLoadingBarTimeout) {
-                    clearTimeout(this.disableAutoFetchLoadingBarTimeout);
-                    this.disableAutoFetchLoadingBarTimeout = null;
-                }
-                this.loadingBar.show();
-
-                this.disableAutoFetchLoadingBarTimeout = setTimeout(function () {
-                    this.loadingBar.hide();
-                    this.disableAutoFetchLoadingBarTimeout = null;
-                }.bind(this), DISABLE_AUTO_FETCH_LOADING_BAR_TIMEOUT);
-            }
         }
     },
 
@@ -5285,6 +5247,8 @@ var PDFViewerApplication = {
         var downloadedPromise = pdfDocument.getDownloadInfo().then(function() {
             self.downloadComplete = true;
             self.loadingBar.hide();
+            var outerContainer = document.getElementById('outerContainer');
+            outerContainer.classList.remove('loadingInProgress');
         });
 
         var pagesCount = pdfDocument.numPages;
@@ -6420,7 +6384,7 @@ function webViewerInitialized() {
         function() {
             PDFViewerApplication.setScale(this.value, false);
         });
-/*
+
     document.getElementById('presentationMode').addEventListener('click',
         SecondaryToolbar.presentationModeClick.bind(SecondaryToolbar));
 
@@ -6432,7 +6396,7 @@ function webViewerInitialized() {
 
     document.getElementById('download').addEventListener('click',
         SecondaryToolbar.downloadClick.bind(SecondaryToolbar));
-*/
+
 
     if (file && file.lastIndexOf('file:', 0) === 0) {
         // file:-scheme. Load the contents in the main thread because QtWebKit
@@ -6517,8 +6481,8 @@ window.addEventListener('updateviewarea', function () {
         });
     });
     var href = PDFViewerApplication.getAnchorUrl(location.pdfOpenParams);
-    //document.getElementById('viewBookmark').href = href;
-    //document.getElementById('secondaryViewBookmark').href = href;
+    document.getElementById('viewBookmark').href = href;
+    document.getElementById('secondaryViewBookmark').href = href;
 
     // Update the current bookmark in the browsing history.
     PDFHistory.updateCurrentBookmark(location.pdfOpenParams, location.pageNumber);
@@ -6546,7 +6510,7 @@ window.addEventListener('resize', function webViewerResize(evt) {
     updateViewarea();
 
     // Set the 'max-height' CSS property of the secondary toolbar.
-    //SecondaryToolbar.setMaxHeight(document.getElementById('viewerContainer'));
+    SecondaryToolbar.setMaxHeight(document.getElementById('viewerContainer'));
 });
 
 window.addEventListener('hashchange', function webViewerHashchange(evt) {
@@ -6623,7 +6587,7 @@ window.addEventListener('localized', function localized(evt) {
         }
 
         // Set the 'max-height' CSS property of the secondary toolbar.
-        //SecondaryToolbar.setMaxHeight(document.getElementById('viewerContainer'));
+        SecondaryToolbar.setMaxHeight(document.getElementById('viewerContainer'));
     });
 }, true);
 
@@ -6650,9 +6614,7 @@ window.addEventListener('scalechange', function scalechange(evt) {
 
     var predefinedValueFound = selectScaleOption('' + evt.scale);
     if (!predefinedValueFound) {
-        var customScale = Math.round(evt.scale * 10000) / 100;
-        customScaleOption.textContent =
-            mozL10n.get('page_scale_percent', { scale: customScale }, '{{scale}}%');
+        customScaleOption.textContent = Math.round(evt.scale * 10000) / 100 + '%';
         customScaleOption.selected = true;
     }
     updateViewarea();
@@ -6669,8 +6631,8 @@ window.addEventListener('pagechange', function pagechange(evt) {
     document.getElementById('previous').disabled = (page <= 1);
     document.getElementById('next').disabled = (page >= numPages);
 
-    //document.getElementById('firstPage').disabled = (page <= 1);
-    //document.getElementById('lastPage').disabled = (page >= numPages);
+    document.getElementById('firstPage').disabled = (page <= 1);
+    document.getElementById('lastPage').disabled = (page >= numPages);
 
     // checking if the this.page was called from the updateViewarea function
     if (evt.updateInProgress) {
@@ -6689,10 +6651,10 @@ function handleMouseWheel(evt) {
     evt.wheelDelta / MOUSE_WHEEL_DELTA_FACTOR;
     var direction = (ticks < 0) ? 'zoomOut' : 'zoomIn';
 
-    /*if (PresentationMode.active) {
+    if (PresentationMode.active) {
         evt.preventDefault();
         PDFViewerApplication.mouseScroll(ticks * MOUSE_WHEEL_DELTA_FACTOR);
-    } else*/ if (evt.ctrlKey) { // Only zoom the pages, not the entire viewer
+    } else if (evt.ctrlKey) { // Only zoom the pages, not the entire viewer
         evt.preventDefault();
         PDFViewerApplication[direction](Math.abs(ticks));
     }
@@ -6702,14 +6664,12 @@ window.addEventListener('DOMMouseScroll', handleMouseWheel);
 window.addEventListener('mousewheel', handleMouseWheel);
 
 window.addEventListener('click', function click(evt) {
-    //if (!PresentationMode.active) {
-        /*
+    if (!PresentationMode.active) {
         if (SecondaryToolbar.opened &&
             PDFViewerApplication.pdfViewer.containsElement(evt.target)) {
             SecondaryToolbar.close();
-        }*/
-    //}
-    if (evt.button === 0) {
+        }
+    } else if (evt.button === 0) {
         // Necessary since preventDefault() in 'mousedown' won't stop
         // the event propagation in all circumstances in presentation mode.
         evt.preventDefault();
@@ -6732,9 +6692,9 @@ window.addEventListener('keydown', function keydown(evt) {
     if (cmd === 1 || cmd === 8 || cmd === 5 || cmd === 12) {
         // either CTRL or META key with optional SHIFT.
         var pdfViewer = PDFViewerApplication.pdfViewer;
-        var inPresentationMode = pdfViewer &&
-            (pdfViewer.presentationModeState === PresentationModeState.CHANGING ||
-            pdfViewer.presentationModeState === PresentationModeState.FULLSCREEN);
+        var inPresentationMode =
+            pdfViewer.presentationModeState === PresentationModeState.CHANGING ||
+            pdfViewer.presentationModeState === PresentationModeState.FULLSCREEN;
 
         switch (evt.keyCode) {
             case 70: // f
@@ -6754,23 +6714,22 @@ window.addEventListener('keydown', function keydown(evt) {
             case 107: // FF '+' and '='
             case 187: // Chrome '+'
             case 171: // FF with German keyboard
-                /*if (!inPresentationMode) {
+                if (!inPresentationMode) {
                     PDFViewerApplication.zoomIn();
                 }
-                */
                 handled = true;
                 break;
             case 173: // FF/Mac '-'
             case 109: // FF '-'
             case 189: // Chrome '-'
-                /*if (!inPresentationMode) {
+                if (!inPresentationMode) {
                     PDFViewerApplication.zoomOut();
-                }*/
+                }
                 handled = true;
                 break;
             case 48: // '0'
             case 96: // '0' on Numpad of Swedish keyboard
-                /*if (!inPresentationMode) {
+                if (!inPresentationMode) {
                     // keeping it unhandled (to restore page zoom to 100%)
                     setTimeout(function () {
                         // ... and resetting the scale after browser adjusts its scale
@@ -6778,7 +6737,6 @@ window.addEventListener('keydown', function keydown(evt) {
                     });
                     handled = false;
                 }
-                */
                 break;
         }
     }
@@ -6797,7 +6755,7 @@ window.addEventListener('keydown', function keydown(evt) {
     if (cmd === 3 || cmd === 10) {
         switch (evt.keyCode) {
             case 80: // p
-                //SecondaryToolbar.presentationModeClick();
+                SecondaryToolbar.presentationModeClick();
                 handled = true;
                 break;
             case 71: // g
@@ -6831,11 +6789,10 @@ window.addEventListener('keydown', function keydown(evt) {
             case 38: // up arrow
             case 33: // pg up
             case 8: // backspace
-                /*if (!PresentationMode.active &&
+                if (!PresentationMode.active &&
                     PDFViewerApplication.currentScaleValue !== 'page-fit') {
                     break;
-                }*/
-                break;
+                }
             /* in presentation mode */
             /* falls through */
             case 37: // left arrow
@@ -6850,12 +6807,10 @@ window.addEventListener('keydown', function keydown(evt) {
                 handled = true;
                 break;
             case 27: // esc key
-                /*
                 if (SecondaryToolbar.opened) {
                     SecondaryToolbar.close();
                     handled = true;
                 }
-                */
                 if (!PDFViewerApplication.supportsIntegratedFind &&
                     PDFViewerApplication.findBar.opened) {
                     PDFViewerApplication.findBar.close();
@@ -6865,11 +6820,10 @@ window.addEventListener('keydown', function keydown(evt) {
             case 40: // down arrow
             case 34: // pg down
             case 32: // spacebar
-                /*if (!PresentationMode.active &&
+                if (!PresentationMode.active &&
                     PDFViewerApplication.currentScaleValue !== 'page-fit') {
                     break;
-                }*/
-                break;
+                }
             /* falls through */
             case 39: // right arrow
                 // horizontal scrolling using arrow keys
@@ -6884,23 +6838,23 @@ window.addEventListener('keydown', function keydown(evt) {
                 break;
 
             case 36: // home
-                /*if (PresentationMode.active || PDFViewerApplication.page > 1) {
+                if (PresentationMode.active || PDFViewerApplication.page > 1) {
                     PDFViewerApplication.page = 1;
                     handled = true;
-                }*/
+                }
                 break;
             case 35: // end
-                /*if (PresentationMode.active || (PDFViewerApplication.pdfDocument &&
+                if (PresentationMode.active || (PDFViewerApplication.pdfDocument &&
                     PDFViewerApplication.page < PDFViewerApplication.pagesCount)) {
                     PDFViewerApplication.page = PDFViewerApplication.pagesCount;
                     handled = true;
-                }*/
+                }
                 break;
 
             case 72: // 'h'
-                /*if (!PresentationMode.active) {
+                if (!PresentationMode.active) {
                     HandTool.toggle();
-                }*/
+                }
                 break;
             case 82: // 'r'
                 PDFViewerApplication.rotatePages(90);
@@ -6911,10 +6865,10 @@ window.addEventListener('keydown', function keydown(evt) {
     if (cmd === 4) { // shift-key
         switch (evt.keyCode) {
             case 32: // spacebar
-                /*if (!PresentationMode.active &&
+                if (!PresentationMode.active &&
                     PDFViewerApplication.currentScaleValue !== 'page-fit') {
                     break;
-                }*/
+                }
                 PDFViewerApplication.page--;
                 handled = true;
                 break;
@@ -6924,7 +6878,7 @@ window.addEventListener('keydown', function keydown(evt) {
                 break;
         }
     }
-    /*
+
     if (!handled && !PresentationMode.active) {
         // 33=Page Up  34=Page Down  35=End    36=Home
         // 37=Left     38=Up         39=Right  40=Down
@@ -6942,20 +6896,20 @@ window.addEventListener('keydown', function keydown(evt) {
             }
         }
     }
-    */
+
     if (cmd === 2) { // alt-key
         switch (evt.keyCode) {
             case 37: // left arrow
-                /*if (PresentationMode.active) {
+                if (PresentationMode.active) {
                     PDFHistory.back();
                     handled = true;
-                }*/
+                }
                 break;
             case 39: // right arrow
-                /*if (PresentationMode.active) {
+                if (PresentationMode.active) {
                     PDFHistory.forward();
                     handled = true;
-                }*/
+                }
                 break;
         }
     }
