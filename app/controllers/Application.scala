@@ -1,28 +1,7 @@
 package controllers
 
-import java.io.{File, FileInputStream}
-import java.text.DateFormat
-import java.util.Date
-import javassist.bytecode.stackmap.BasicBlock.Catch
-import anorm.NotAssigned
-import models.{Paper, Question, Turker}
-import org.apache.commons.codec.binary.Base64
-import org.apache.commons.codec.digest.DigestUtils
-import org.apache.pdfbox.pdfparser.PDFParser
-import org.apache.pdfbox.pdmodel.PDDocument
-import org.apache.pdfbox.pdmodel.common.PDStream
 import persistence._
-import play.api.Logger
-
-import play.api.db.DB
-import play.api.libs.json.{Json, JsValue}
 import play.api.mvc._
-
-import play.api.data.Form
-import play.api.data.Forms.{tuple, nonEmptyText}
-import util.{CSVParser, HighlightPdf}
-
-import scala.util.Try
 
 
 object Application extends Controller {
@@ -48,20 +27,11 @@ object Application extends Controller {
     }
   }
 
-  //GET - statistics for user
-  def statistics = Action { implicit request =>
+  //GET - teams for user
+  def teams = Action { implicit request =>
     request.session.get("turkerId").map {
       turkerId =>
-
-        val avgTimeToAns = 0
-        val totQuestionAns = QuestionDAO.getTotalQuestionAnswered(turkerId)
-        val totEarned = QuestionDAO.getTotalEarned(turkerId)
-        val totAcceptedAndBonus = QuestionDAO.getTotalAcceptedAndBonus(turkerId)
-        val totAccepted = QuestionDAO.getTotalAccepted(turkerId)
-        val totPending = QuestionDAO.getTotalPending(turkerId)
-        val totRejected = QuestionDAO.getTotalRejected(turkerId)
-
-        Ok(views.html.statistic(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), avgTimeToAns, totQuestionAns, totEarned, totAcceptedAndBonus, totAccepted, totPending, totRejected))
+        Ok(views.html.teams(TurkerDAO.findByTurkerId(turkerId).getOrElse(null)))
     }.getOrElse {
       Redirect(routes.Application.index())
     }

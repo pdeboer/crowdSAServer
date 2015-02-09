@@ -197,23 +197,11 @@ object Waiting extends Controller{
    * @return
    */
   def assignQuestion(questionId: Long, turkerId: String) : Long = {
-    val date = (new Date()).getTime
+    val date = (new Date()).getTime/1000
     val timeout = config.getInt("reservationTimeForQuestion")
-    val assignment = new Assignment(NotAssigned, date, date + timeout, date, questionId, Turkers2TeamsDAO.findSingleTeamByTurkerId(turkerId).id.get)
+    val assignment = new Assignment(NotAssigned, date, date + timeout, false, questionId, Turkers2TeamsDAO.findSingleTeamByTurkerId(turkerId).id.get)
     val assignmentId = AssignmentDAO.add(assignment)
     assignmentId
-  }
-
-  // GET - get questions related to PDF
-  def jobs = Action { implicit request =>
-    val session = request.session
-
-    request.session.get("turkerId").map {
-      turkerId =>
-        Ok(Json.toJson(JobDAO.getData(turkerId)))
-    }.getOrElse {
-      Redirect(routes.Application.index())
-    }
   }
 
   def rejectAssignment = Action { implicit request =>
@@ -228,4 +216,16 @@ object Waiting extends Controller{
       Redirect(routes.Application.index())
     }
   }
+
+  def secondStep(paper_id: Long) = Action {implicit request =>
+    val session = request.session
+
+    request.session.get("turkerId").map {
+      turkerId =>
+        Ok(views.html.waiting_5_2nd_step(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), request.flash, PaperDAO.getTitleById(paper_id), paper_id))
+    }.getOrElse {
+      Redirect(routes.Application.index())
+    }
+  }
+
 }

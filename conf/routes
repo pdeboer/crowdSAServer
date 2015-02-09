@@ -16,9 +16,11 @@ POST        /registration                                  controllers.Login.add
 # Paper
 GET         /checkPaper/:paperId                           controllers.Paper.checkPaper(paperId: Long)
 POST        /paper                                         controllers.Paper.storePaper
+GET         /papers                                        controllers.Paper.getAllPapers
 
 # Questions
 GET         /questions                                     controllers.Question.questions
+GET         /questions/:paper_id                           controllers.Question.getAllQuestionsByPaperId(paper_id: Long)
 POST        /addQuestion                                   controllers.Question.addQuestion
 POST        /disablequestion                               controllers.Question.disableQuestion
 
@@ -27,14 +29,10 @@ POST        /highlight                                     controllers.Question.
 
 # Waiting
 GET         /waiting                                       controllers.Waiting.waiting
+GET         /waiting/secondStep/:paper_id                  controllers.Waiting.secondStep(paper_id: Long)
 GET         /waiting/getQuestion                           controllers.Waiting.getQuestion
 GET         /waiting/getDefinedQuestion/:questionId        controllers.Waiting.getDefinedQuestion(questionId: Long)
-GET         /jobs                                          controllers.Waiting.jobs
 POST        /rejectAssignment                              controllers.Waiting.rejectAssignment
-
-# Waiting - Search functionality
-GET         /search/:term                                  controllers.Search.perform(term:String)
-GET         /search/                                       controllers.Search.perform(term:String="")
 
 # Answer
 GET         /answers/:qId                                  controllers.Answer.answers(qId: Long)
@@ -44,8 +42,11 @@ POST        /evaluateanswer                                controllers.Answer.ev
 # Account
 GET         /account                                       controllers.Application.account
 
+# Teams
+GET         /teams                                         controllers.Application.teams
+
 # Statistics
-GET         /statistics                                    controllers.Application.statistics
+#GET         /statistics                                    controllers.Application.statistics
 
 # PDF Viewer
 GET         /viewer/:questionId/:assignmentId              controllers.Viewer.viewer(questionId: Long, assignmentId: Long)

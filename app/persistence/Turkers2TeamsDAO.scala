@@ -15,9 +15,9 @@ import scala.collection.mutable
 object Turkers2TeamsDAO {
    private val turkers2TeamsParser: RowParser[Turkers2Teams] =
      get[Pk[Long]]("id") ~
-       get[Long]("turker_fk") ~
-       get[Long]("team_fk") map {
-       case id ~turker_fk ~team_fk => Turkers2Teams(id, turker_fk, team_fk)
+       get[Long]("turkers_id") ~
+       get[Long]("teams_id") map {
+       case id ~turkers_id ~teams_id => Turkers2Teams(id, turkers_id, teams_id)
      }
 
    def findById(id: Long): Option[Turkers2Teams] =
@@ -30,7 +30,7 @@ object Turkers2TeamsDAO {
   def findTeamsByTurkerId(turkerId: String): List[Team] = {
     DB.withConnection { implicit c =>
       val id = TurkerDAO.findByTurkerId(turkerId).get.id.get
-      val turkers2teams = SQL("SELECT * FROM turkers2teams WHERE turker_fk = {id}").on(
+      val turkers2teams = SQL("SELECT * FROM turkers2teams WHERE turkers_id = {id}").on(
         'id -> id
       ).as(turkers2TeamsParser *)
       var result : mutable.MutableList[Team] = new mutable.MutableList[Team]
@@ -43,7 +43,7 @@ object Turkers2TeamsDAO {
 
   def findTurkersByTeamId(teamId: Long): List[Turkers2Teams] =
     DB.withConnection { implicit c =>
-      SQL("SELECT * FROM turkers2teams WHERE team_fk = {teamId}").on(
+      SQL("SELECT * FROM turkers2teams WHERE teams_id = {teamId}").on(
         'teamId -> teamId
       ).as(turkers2TeamsParser*)
     }
@@ -63,9 +63,9 @@ object Turkers2TeamsDAO {
    def add(turkerId: Long, teamId: Long): Long = {
      val id: Option[Long] =
        DB.withConnection { implicit c =>
-         SQL("INSERT INTO turkers2teams(turker_fk, team_fk) VALUES ({turker_fk}, {team_fk})").on(
-           'turker_fk -> turkerId,
-           'team_fk -> teamId
+         SQL("INSERT INTO turkers2teams(turkers_id, teams_id) VALUES ({turkers_id}, {teams_id})").on(
+           'turkers_id -> turkerId,
+           'teams_id -> teamId
          ).executeInsert()
        }
      id.get

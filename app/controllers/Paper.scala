@@ -8,6 +8,7 @@ import controllers.Application._
 import controllers.Question._
 import models.{Paper, Question}
 import persistence.{PaperDAO, QuestionDAO}
+import play.api.libs.json.Json
 import play.api.mvc.{Action, Controller}
 
 /**
@@ -44,7 +45,7 @@ object Paper extends Controller {
         }
 
         source.ref.moveTo(new File(s"./public/pdfs/$filename"))
-        val paper: Paper = new Paper(NotAssigned, "/pdfs/" + filename, title, new Date().getTime, budget.toInt, highlight)
+        val paper: Paper = new Paper(NotAssigned, "/pdfs/" + filename, title, new Date().getTime/1000, highlight)
         val id = PaperDAO.add(paper)
 
         Ok(id.toString)
@@ -54,5 +55,21 @@ object Paper extends Controller {
     }.getOrElse {
       InternalServerError("Wrong request! The source file is missing.")
     }
+  }
+
+  def getAllPapers() = Action { implicit request =>
+    val session = request.session
+
+    request.session.get("turkerId").map {
+      turkerId =>
+        try {
+          Ok(Json.toJson(PaperDAO.getAll()))
+        }catch{
+          case e:Exception => {InternalServerError("Cannot get all the papers.")}
+        }
+    }.getOrElse {
+      Redirect(routes.Application.index())
+    }
+
   }
 }

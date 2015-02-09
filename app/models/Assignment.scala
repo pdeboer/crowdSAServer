@@ -5,4 +5,4 @@ import anorm.Pk
 /**
  * Created by Mattia on 22.01.2015.
  */
-case class Assignment(id: Pk[Long], assignedFrom: Long, assignedTo: Long, acceptedTime: Long, question_fk: Long, team_fk: Long)
+case class Assignment(id: Pk[Long], created_at: Long, expiration_time: Long, is_cancelled: Boolean, questions_id: Long, teams_id: Long)

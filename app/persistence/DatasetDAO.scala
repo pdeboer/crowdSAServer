@@ -11,10 +11,11 @@ import play.api.Play.current
 object DatasetDAO {
   private val datasetParser: RowParser[Dataset] =
     get[Pk[Long]]("id") ~
-      get[String]("statMethod") ~
-      get[String]("domChildred") ~
-      get[Long]("paper_fk") map {
-      case id ~statMethod ~domChildren ~paper_fk => Dataset(id, statMethod, domChildren, paper_fk)
+      get[String]("statistical_method") ~
+      get[String]("dom_children") ~
+      get[String]("name") ~
+      get[Option[String]]("url") map {
+      case id ~statistical_method ~dom_children ~name ~url=> Dataset(id, statistical_method, dom_children, name, url)
     }
 
   def findById(id: Long): Option[Dataset] =
@@ -27,10 +28,11 @@ object DatasetDAO {
   def add(d: Dataset, paperId: Long): Long = {
     val id: Option[Long] =
       DB.withConnection { implicit c =>
-        SQL("INSERT INTO datasets(statMethod, domChildren, paper_fk) VALUES ({statMethod}, {domChildren}, {paper_fk})").on(
-          'statMethod -> d.statMethod,
-          'domChildren -> d.domChildren,
-          'paper_fk -> paperId
+        SQL("INSERT INTO datasets(statistical_method, dom_children, name, url) VALUES ({statMethod}, {domChildren}, {name}, {url})").on(
+          'statMethod -> d.statistical_method,
+          'domChildren -> d.dom_children,
+          'name -> d.name,
+          'url -> d.url
         ).executeInsert()
       }
     id.get

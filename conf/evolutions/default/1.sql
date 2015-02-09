@@ -1,128 +1,140 @@
 # --- !Ups
 
 CREATE TABLE papers (
-  id        INT PRIMARY KEY NOT NULL auto_increment,
-  pdfPath   VARCHAR(255)    NOT NULL,
-  pdfTitle  VARCHAR(255)    NOT NULL,
-  createdAt BIGINT          NOT NULL,
-  budget    INT             NOT NULL,
-  highlight BIT             NOT NULL
+  id        BIGINT PRIMARY KEY NOT NULL auto_increment,
+  pdf_path   VARCHAR(255)    NOT NULL,
+  pdf_title  VARCHAR(255)    NOT NULL,
+  created_at BIGINT          NOT NULL,
+  highlight_enabled BIT             NOT NULL
 ) ENGINE = InnoDB CHARSET = utf8;
 
 CREATE TABLE datasets (
-  id          INT PRIMARY KEY NOT NULL auto_increment,
-  statMethod  VARCHAR(255)    NOT NULL,
-  domChildren VARCHAR(255)    NULL,
-  paper_fk    INT             NOT NULL,
-  FOREIGN KEY (paper_fk) REFERENCES papers (id)
+  id          BIGINT PRIMARY KEY NOT NULL auto_increment,
+  statistical_method  VARCHAR(255)    NOT NULL,
+  dom_children LONGTEXT    NOT NULL,
+  name VARCHAR(255)    NOT NULL UNIQUE,
+  url    VARCHAR(1000)            NULL
 ) ENGINE = InnoDB CHARSET = utf8;
 
+CREATE TABLE datasets2papers (
+  id BIGINT PRIMARY KEY NOT NULL auto_increment,
+  datasets_id BIGINT NOT NULL,
+  papers_id BIGINT NOT NULL,
+  FOREIGN KEY (papers_id) REFERENCES papers (id),
+    FOREIGN KEY (datasets_id) REFERENCES datasets (id)
+)ENGINE = InnoDB CHARSET = utf8;
+
 CREATE TABLE questions (
-  id           INT PRIMARY KEY NOT NULL auto_increment,
+  id           BIGINT PRIMARY KEY NOT NULL auto_increment,
   question     VARCHAR(2000)   NOT NULL,
-  questionType VARCHAR(100)    NOT NULL,
-  reward       INT             NOT NULL,
-  createdAt    BIGINT          NOT NULL,
+  question_type VARCHAR(100)    NOT NULL,
+  reward_cts       INT             NOT NULL,
+  created_at    BIGINT          NOT NULL,
   disabled     BIT             NOT NULL,
-  paper_fk     INT             NOT NULL,
-  FOREIGN KEY (paper_fk) REFERENCES papers (id)
+  expiration_time     BIGINT             NULL,
+  maximal_assignments     INT             NULL,
+  papers_id     BIGINT             NOT NULL,
+  FOREIGN KEY (papers_id) REFERENCES papers (id)
 ) ENGINE = InnoDB CHARSET = utf8;
 
 CREATE TABLE highlights (
-  id          INT PRIMARY KEY NOT NULL auto_increment,
+  id          BIGINT PRIMARY KEY NOT NULL auto_increment,
   assumption  VARCHAR(255)    NOT NULL,
-  terms       VARCHAR(255)    NOT NULL,
-  question_fk INT             NOT NULL,
-  FOREIGN KEY (question_fk) REFERENCES questions (id)
+  terms       VARCHAR(1000)    NOT NULL,
+  questions_id BIGINT             NOT NULL,
+  FOREIGN KEY (questions_id) REFERENCES questions (id)
 ) ENGINE = InnoDB CHARSET = utf8;
 
 CREATE TABLE teams (
-  id        INT PRIMARY KEY NOT NULL auto_increment,
-  createdAt BIGINT          NOT NULL,
-  name      VARCHAR(255)    NOT NULL
+  id        BIGINT PRIMARY KEY NOT NULL auto_increment,
+  created_at BIGINT          NOT NULL,
+  name      VARCHAR(255)    NOT NULL UNIQUE
 ) ENGINE = InnoDB CHARSET = utf8;
 
+CREATE TABLE qualifications (
+  id BIGINT PRIMARY KEY NOT NULL auto_increment,
+  questions_id BIGINT NOT NULL,
+  teams_id BIGINT NOT NULL,
+  FOREIGN KEY (teams_id) REFERENCES teams (id),
+  FOREIGN KEY (questions_id) REFERENCES questions (id)
+)ENGINE = InnoDB CHARSET = utf8;
+
 CREATE TABLE assignments (
-  id           INT PRIMARY KEY NOT NULL auto_increment,
-  assignedFrom BIGINT          NOT NULL,
-  assignedTo   BIGINT          NOT NULL,
-  acceptedTime BIGINT          NOT NULL,
-  question_fk  INT             NOT NULL,
-  team_fk      INT             NOT NULL,
-  FOREIGN KEY (team_fk) REFERENCES teams (id),
-  FOREIGN KEY (question_fk) REFERENCES questions (id)
+  id           BIGINT PRIMARY KEY NOT NULL auto_increment,
+  created_at BIGINT          NOT NULL,
+  expiration_time   BIGINT          NOT NULL,
+  is_cancelled BIT          NOT NULL,
+  questions_id  BIGINT             NOT NULL,
+  teams_id      BIGINT             NOT NULL,
+  FOREIGN KEY (teams_id) REFERENCES teams (id),
+  FOREIGN KEY (questions_id) REFERENCES questions (id)
 ) ENGINE = InnoDB CHARSET = utf8;
 
 CREATE TABLE answers (
-  id               INT PRIMARY KEY NOT NULL auto_increment,
+  id               BIGINT PRIMARY KEY NOT NULL auto_increment,
   answer           VARCHAR(255),
-  completedTime    BIGINT          NOT NULL,
+  created_at    BIGINT          NOT NULL,
   accepted         BIT             NULL,
-  acceptedAndBonus BIT             NULL,
+  bonus_cts INT             NULL,
   rejected         BIT             NULL,
-  assignment_fk    INT             NOT NULL,
-  FOREIGN KEY (assignment_fk) REFERENCES assignments (id)
+  assignments_id    BIGINT             NOT NULL,
+  FOREIGN KEY (assignments_id) REFERENCES assignments (id)
 ) ENGINE = InnoDB CHARSET = utf8;
 
-CREATE TABLE ranking_groups (
-  id        INT PRIMARY KEY NOT NULL auto_increment,
-  groupName VARCHAR(255)    NOT NULL
-) ENGINE = InnoDB CHARSET = utf8;
-
-CREATE TABLE rankings (
-  id               INT PRIMARY KEY NOT NULL auto_increment,
-  rank             INT             NOT NULL,
-  ranking_group_fk INT             NOT NULL,
-  answer_fk        INT             NOT NULL,
-  FOREIGN KEY (answer_fk) REFERENCES answers (id),
-  FOREIGN KEY (ranking_group_fk) REFERENCES ranking_groups (id)
+CREATE TABLE feedbacks (
+  id BIGINT PRIMARY KEY NOT NULL auto_increment,
+  useful INT NOT NULL,
+  answers_id BIGINT NOT NULL,
+  FOREIGN KEY (answers_id) REFERENCES answers (id)
 ) ENGINE = InnoDB CHARSET = utf8;
 
 CREATE TABLE turkers (
-  id         INT PRIMARY KEY NOT NULL auto_increment,
-  turkerId   VARCHAR(100)    NOT NULL UNIQUE,
-  email      VARCHAR(255)    NOT NULL,
-  loginTime  BIGINT          NOT NULL,
+  id         BIGINT PRIMARY KEY NOT NULL auto_increment,
+  turker_id   VARCHAR(100)    NOT NULL UNIQUE,
+  email      VARCHAR(255) NULL,
+  login_time  BIGINT          NOT NULL,
   username   VARCHAR(100)    NOT NULL UNIQUE,
   password   VARCHAR(100)    NOT NULL,
-  layoutMode INT             NULL
+  layout_mode INT             NULL
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8;
 
 CREATE TABLE turkers2teams (
-  id        INT PRIMARY KEY NOT NULL auto_increment,
-  turker_fk INT             NOT NULL,
-  team_fk   INT             NOT NULL,
-  FOREIGN KEY (turker_fk) REFERENCES turkers (id),
-  FOREIGN KEY (team_fk) REFERENCES teams (id)
+  id        BIGINT PRIMARY KEY NOT NULL auto_increment,
+  turkers_id BIGINT             NOT NULL,
+  teams_id   BIGINT             NOT NULL,
+  FOREIGN KEY (turkers_id) REFERENCES turkers (id),
+  FOREIGN KEY (teams_id) REFERENCES teams (id)
 ) ENGINE = InnoDB CHARSET = utf8;
 
-INSERT INTO turkers (id, turkerId, email, loginTime, username, password, layoutMode)
-VALUES (1, "mattia", "mattia.amato@gmail.com", 1421183695322, "mamato", "737eb8871f2ade70fea17fc8df76e691", 1);
-INSERT INTO teams (id, createdAt, name) VALUES (1, 1421183695324, "mattia");
-INSERT INTO turkers2teams (id, turker_fk, team_fk) VALUES (1, 1, 1);
+INSERT INTO turkers (id, turker_id, email, login_time, username, password, layout_mode) VALUES (1, "as$$$0534SD342£$fsw445345rfsfwe", "mattia.amato@gmail.com", 1421183695322, "mamato", "737eb8871f2ade70fea17fc8df76e691", 1);
+INSERT INTO teams (id, created_at, name) VALUES (1, 1421183695324, "as$$$0534SD342£$fsw445345rfsfwe");
+INSERT INTO turkers2teams (id, turkers_id, teams_id) VALUES (1, 1, 1);
 
-INSERT INTO papers (id, pdfPath, pdfTitle, createdAt, budget, highlight) VALUES (1, "/pdfs/test.pdf",
+INSERT INTO papers (id, pdf_path, pdf_title, created_at, highlight_enabled) VALUES (1, "/pdfs/test.pdf",
                                                                                  "Let’s Do It at My Place Instead? Attitudinal and Behavioral Study of Privacy in Client-Side Personalization",
-                                                                                 1421182061982, 10, 1);
+                                                                                 1421182061982, 1);
 
-INSERT INTO questions (id, question, questionType, reward, createdAt, disabled, paper_fk)
-VALUES (1, "Is the D'Agostino's K-squared test used to test the normality assumption?", "Integer", 1, 1421182063982, false, 1);
-INSERT INTO questions (id, question, questionType, reward, createdAt, disabled, paper_fk)
-VALUES (2, "Is the Jarque–Bera test used to test the normality?", "String", 2, 1421182064982, false, 1);
+INSERT INTO questions (id, question, question_type, reward_cts, created_at, disabled, expiration_time, maximal_assignments, papers_id)
+VALUES (1, "Is the D'Agostino's K-squared test used to test the normality assumption?", "Integer", 100, 1421182063982, false, null, null, 1);
+INSERT INTO questions (id, question, question_type, reward_cts, created_at, disabled, expiration_time, maximal_assignments, papers_id)
+VALUES (2, "Is the Jarque–Bera test used to test the normality?", "String", 250, 1421182064982, false, null, null, 1);
 
-INSERT INTO highlights (id, assumption, terms, question_fk)
+INSERT INTO highlights (id, assumption, terms, questions_id)
 VALUES (1, "Normality", "D’Agostino’s K-squared,D’Agostino’s K2,D’Agostino’s K test,kurtosis,skewness", 1);
-INSERT INTO highlights (id, assumption, terms, question_fk) VALUES (2, "Normality", "Jarque–Bera,JB test", 2);
+INSERT INTO highlights (id, assumption, terms, questions_id) VALUES (2, "Normality", "Jarque–Bera,JB test", 2);
 
-INSERT INTO datasets (id, statMethod, domChildren, paper_fk) VALUES (1, "MANOVA", "200,210", 1);
-INSERT INTO datasets (id, statMethod, domChildren, paper_fk) VALUES (2, "MANOVA", "123,125", 1);
+INSERT INTO datasets (id, statistical_method, dom_children, name, url) VALUES (1, "MANOVA", "200,210", "Participants", null);
+INSERT INTO datasets (id, statistical_method, dom_children, name, url) VALUES (2, "ANOVA", "123,125", "Frog study", "www.google.com/search?q=frog+study");
+
+INSERT INTO datasets2papers (id, datasets_id, papers_id) VALUES (1, 1, 1);
+INSERT INTO datasets2papers (id, datasets_id, papers_id) VALUES (2, 2, 1);
+
 
 # --- !Downs
 
 DROP TABLE turkers2teams;
 DROP TABLE turkers;
-DROP TABLE rankings;
-DROP TABLE ranking_groups;
+DROP TABLE feedbacks;
 DROP TABLE assignments;
 DROP TABLE answers;
 DROP TABLE teams;
@@ -130,3 +142,5 @@ DROP TABLE highlights;
 DROP TABLE questions;
 DROP TABLE datasets;
 DROP TABLE papers;
+DROP TABLE datasets2papers;
+DROP TABLE qualifications;

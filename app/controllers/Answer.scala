@@ -33,14 +33,14 @@ object Answer extends Controller {
    */
   def evaluateAnswer = Action(parse.multipartFormData) { implicit request =>
     try {
-      val answerId = request.body.asFormUrlEncoded.get("answerId").get.head.toLong
+      val answer_id = request.body.asFormUrlEncoded.get("answer_id").get.head.toLong
       val accepted = request.body.asFormUrlEncoded.get("accepted").get.head.toBoolean
-      val bonus = request.body.asFormUrlEncoded.get("bonus").get.head.toBoolean
-      AnswerDAO.evaluateAnswer(answerId, accepted, bonus)
+      val bonus_cts = request.body.asFormUrlEncoded.get("bonus_cts").get.head.toInt
+      AnswerDAO.evaluateAnswer(answer_id, accepted, Some(bonus_cts))
       if(accepted)
-        Ok("Answer: " + answerId + " accepted")
+        Ok("Answer: " + answer_id + " accepted")
       else
-        Ok("Answer: " + answerId + " rejected")
+        Ok("Answer: " + answer_id + " rejected")
     } catch {
       case e: Exception => InternalServerError("Wrong request format.")
     }
@@ -51,30 +51,27 @@ object Answer extends Controller {
    * @return
    */
   def addAnswer = Action { implicit request =>
-    val questionType = request.body.asFormUrlEncoded.get("questionType")(0)
-    val assignmentId = request.body.asFormUrlEncoded.get("assignmentId")(0).toLong
+    println("Storing answer")
+    val question_type = request.body.asFormUrlEncoded.get("question_type")(0)
+    val assignments_id = request.body.asFormUrlEncoded.get("assignments_id")(0).toLong
 
     var answer = ""
-    if (questionType.equals("Boolean")) {
+    if (question_type.equals("Boolean")) {
       try {
-        val yes = request.body.asFormUrlEncoded.get("true")(0).toBoolean
-        answer = "true"
+        val answerElem = request.body.asFormUrlEncoded.get("answer")(0)
+        if(answerElem.equalsIgnoreCase("YES")){
+          answer = "true"
+        } else {
+          answer = "false"
+        }
       } catch {
         case e: Exception => {
-          // Try to get no
-          try {
-            val no = request.body.asFormUrlEncoded.get("false")(0).toBoolean
-            answer = "false"
-          } catch {
-            case e1: Exception => {
-              println("No answer is given for the Boolean question")
-              answer = ""
-            }
-          }
+          println("No answer is given for the Boolean question")
+          answer = ""
         }
       }
     } else {
-      // If not a boolean is expected
+      // If not a boolean question
       try {
         answer = request.body.asFormUrlEncoded.get("textAnswer")(0)
       } catch {
@@ -84,7 +81,9 @@ object Answer extends Controller {
         }
       }
     }
-    val answerId = AnswerDAO.add(new Answer(NotAssigned, answer, (new Date()).getTime, null, null, null, assignmentId))
+
+    val answerId = AnswerDAO.add(new Answer(NotAssigned, answer, (new Date()).getTime/1000, null, null, null, assignments_id))
+
     Redirect(routes.Waiting.waiting()).flashing(
       "success" -> "Answer correctly stored."
     )

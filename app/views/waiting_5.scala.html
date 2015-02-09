@@ -9,7 +9,7 @@
 
         <tr>
             <td>
-                <div class="container" ng-controller="jobController">
+                <div class="container" ng-controller="PapersCtrl">
                     @if(flash.get("success")) {
                         <div class="alert alert-success" role="alert">
                             <strong>Well Done!</strong>
@@ -27,39 +27,27 @@
                         <br>
                         <p>
                             Hello!<br>
-                            You can now choose a question from the list. Feel free to choose different papers and different question types
+                            You can now choose a question from the list below.
                         </p>
-                        <h2>Available questions:</h2>
-                        Filter questions:
-                        <input ng-model="input" ng-change="doSearch(input)" autofocus>
+                        <h2>Available papers:</h2>
+                        Filter papers:
+                        <input ng-model="input" autofocus>
                     </div>
-                    <h3 ng-if="jobs.length == 0" style="color: red;">There are no available questions right now!</h3>
-                    <table class="table table-hover" ng-if="jobs.length >= 1">
+                    <h3 ng-if="papers.length == 0" style="color: red;">There are no available papers right now!</h3>
+                    <table class="table table-hover" ng-if="papers.length > 0">
                         <thead>
                             <tr>
                                 <th>#</th>
                                 <th>Paper Title</th>
-                                <th>Question Type</th>
-                                <th>Reward per answer ($)</th>
-                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr ng-repeat="job in jobs">
+                            <tr ng-repeat="paper in papers | filter:input " ng-click="second_step(paper.id)">
                                 <th>
-                                    {{ job.questionId }}
+                                    {{ paper.id }}
                                 </th>
                                 <td>
-                                    {{ job.pdfTitle }}
-                                </td>
-                                <td>
-                                    {{ job.questionType }}
-                                </td>
-                                <td>
-                                    {{ job.rewardAnswer }}
-                                </td>
-                                <td ng-controller="jobController">
-                                    <button class="btn btn-success" ng-click="showViewer(job.questionId)" type="submit">Solve</button>
+                                    {{ paper.pdf_title }}
                                 </td>
                             </tr>
                         </tbody>

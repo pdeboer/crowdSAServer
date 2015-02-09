@@ -22,13 +22,13 @@ object Viewer extends Controller{
     request.session.get("turkerId").map {
       turkerId =>
         try {
-          val paperId = QuestionDAO.findById(questionId).get.paper_fk
+          val paperId = QuestionDAO.findById(questionId).get.papers_id
           val paper = PaperDAO.findById(paperId).get
-          val pdfPath = paper.pdfPath
+          val pdfPath = paper.pdf_path
           val question = QuestionDAO.findById(questionId).getOrElse(null)
 
           // Highlight paper only is requested by job creator
-          if (paper.highlight) {
+          if (paper.highlight_enabled) {
             var highlights: String = ""
             HighlightDAO.filterByQuestionId(questionId).map(h => highlights= highlights+(h.terms + ","))
 
@@ -37,13 +37,13 @@ object Viewer extends Controller{
 
             //var pdfArrayByte = new Array[Byte](0)
             if (!contentCsv.isEmpty) {
-              Ok(views.html.viewer(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), question, Base64.encodeBase64String(HighlightPdf.highlight(pdfPath, contentCsv)), AssignmentDAO.findById(assignmentId).get.team_fk, assignmentId))
+              Ok(views.html.viewer(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), question, Base64.encodeBase64String(HighlightPdf.highlight(pdfPath, contentCsv)), AssignmentDAO.findById(assignmentId).get.teams_id, assignmentId))
             } else {
-              Ok(views.html.viewer(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), question, Base64.encodeBase64String(HighlightPdf.getPdfAsArrayByte(pdfPath)),AssignmentDAO.findById(assignmentId).get.team_fk, assignmentId))
+              Ok(views.html.viewer(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), question, Base64.encodeBase64String(HighlightPdf.getPdfAsArrayByte(pdfPath)),AssignmentDAO.findById(assignmentId).get.teams_id, assignmentId))
             }
 
           } else {
-            Ok(views.html.viewer(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), question,  Base64.encodeBase64String(HighlightPdf.getPdfAsArrayByte(pdfPath)),AssignmentDAO.findById(assignmentId).get.team_fk, assignmentId))
+            Ok(views.html.viewer(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), question,  Base64.encodeBase64String(HighlightPdf.getPdfAsArrayByte(pdfPath)),AssignmentDAO.findById(assignmentId).get.teams_id, assignmentId))
           }
         } catch {
           case e: Exception => {

@@ -1,0 +1,70 @@
+@(turker: Turker, flash: Flash, paper_title: String, paper_id: Long)
+
+@main("Available Questions")(turker) {
+
+    <script src="@routes.Assets.at("/js/app.js")" type="text/javascript"></script>
+    <script src="@routes.Assets.at("/js/controllers.js")" type="text/javascript"></script>
+
+    <table ng-app="myApp" style="height: 100%; width: 100%; margin-top: 60px;">
+
+        <tr>
+            <td>
+                <div class="container" ng-controller="QuestionCtrl" ng-init="getQuestions(@paper_id)">
+                    @if(flash.get("success")) {
+                        <div class="alert alert-success" role="alert">
+                            <strong>Well Done!</strong>
+                            @flash.get("success")
+                        </div>
+                    }
+                    @if(flash.get("error")) {
+                        <div class="alert alert-danger" role="alert">
+                            <strong>Error:</strong>
+                            @flash.get("error")
+                        </div>
+                    }
+                    <br>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div>
+                                You selected the paper:<br>
+                                <b>@paper_title</b> <br>
+                                You can now choose a question type from the list below.
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <button class="btn btn-primary" onclick="window.location.href = '/waiting';">Change Paper</button>
+                            <button class="btn btn-primary" onclick="alert('TODO');">Preview full paper</button>
+                        </div>
+                    </div>
+                        <h2>Available Questions:</h2>
+                        Filter questions:
+                        <input ng-model="input" autofocus>
+
+                    <h3 ng-if="questions.length == 0" style="color: red;">There are no available questions right now!</h3>
+                    <table class="table table-hover" ng-if="questions.length > 0">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Question Type</th>
+                                <th>Reward</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="question in questions | filter:input" ng-click="showViewer(question.id)">
+                                <th>
+                                    {{ question.id }}
+                                </th>
+                                <td>
+                                    {{ question.question_type }}
+                                </td>
+                                <td>
+                                    {{ question.reward }}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </td>
+        </tr>
+    </table>
+    }

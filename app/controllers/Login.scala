@@ -22,7 +22,7 @@ object Login extends Controller {
     val turkerId = TurkerDAO.authenticate(username, password)
 
     if(turkerId != null){
-      TurkerDAO.updateLoginTime(turkerId, new Date().getTime)
+      TurkerDAO.updateLoginTime(turkerId, new Date().getTime/1000)
       Redirect(routes.Waiting.waiting()).withSession("turkerId" -> turkerId)
     } else {
       Redirect(routes.Application.index()).flashing("error" -> "Invalid combination of username/password")
@@ -46,12 +46,12 @@ object Login extends Controller {
           val layoutMode = config.getInt("layoutMode")
 
           val turkerId = request.body.asFormUrlEncoded.get("turkerId")(0)
-          val turker = new Turker(NotAssigned, turkerId, email, (new Date()).getTime, username, password1, layoutMode)
+          val turker = new Turker(NotAssigned, turkerId, Some(email), (new Date()).getTime/1000, username, password1, layoutMode)
           val newTurkerId = TurkerDAO.create(turker)
           try {
             val id = newTurkerId.get
             // Automatically create single team!
-            val team = new Team(NotAssigned, (new Date()).getTime, turkerId)
+            val team = new Team(NotAssigned, (new Date()).getTime/1000, turkerId)
             val teamId = TeamDAO.add(team)
             val t2t = Turkers2TeamsDAO.add(id, teamId)
             Redirect(routes.Waiting.waiting()).withSession("turkerId" -> turkerId).flashing("success" -> "New user registered.")

@@ -17,13 +17,13 @@ object TurkerDAO {
 
   private val turkerParser: RowParser[Turker] =
     get[Pk[Long]]("id") ~
-      get[String]("turkerId") ~
-      get[String]("email") ~
-      get[Long]("loginTime") ~
+      get[String]("turker_id") ~
+      get[Option[String]]("email") ~
+      get[Long]("login_time") ~
       get[String]("username") ~
       get[String]("password") ~
-      get[Int]("layoutMode") map {
-      case id ~turkerId ~email ~loginTime ~username ~password ~layoutMode => Turker(id, turkerId, email, loginTime, username, password, layoutMode)
+      get[Int]("layout_mode") map {
+      case id ~turker_id ~email ~login_time ~username ~password ~layout_mode => Turker(id, turker_id, email, login_time, username, password, layout_mode)
     }
 
   def authenticate(username: String, password: String): String = {
@@ -35,7 +35,7 @@ object TurkerDAO {
           .as(turkerParser.singleOpt)
         try {
           val t = turker.get
-          return t.turkerId
+          return t.turker_id
         } catch {
           case e: Exception => "Cannot find turker with the corresponding credentials."
         }
@@ -44,15 +44,47 @@ object TurkerDAO {
     return null
   }
 
+  def getTotalEarned(turkerId: String): Double = {
+    val teamId = Turkers2TeamsDAO.findSingleTeamByTurkerId(turkerId).id.get.toString
+    DB.withConnection { implicit c =>
+      val count =
+        SQL("SELECT SUM(q.reward_cts) as res FROM questions AS q WHERE EXISTS (SELECT * FROM assignments AS a WHERE teams_id = {teamId} AND questions_id = q.id AND EXISTS( SELECT * FROM answers WHERE accepted=true AND a.id = assignments_id ))")
+          .on('teamId -> teamId)
+          .apply().head
+      try{
+        val res = count[BigDecimal]("res")
+        res.toInt
+      } catch {
+        case e: Exception => return 0
+      }
+    }
+  }
+
+  def getTotalBonus(turkerId: String) : Int = {
+    val teamId = Turkers2TeamsDAO.findSingleTeamByTurkerId(turkerId).id.get.toString
+    DB.withConnection { implicit c =>
+      val count =
+        SQL("SELECT SUM(bonus_cts) FROM answers AS a WHERE accepted = true AND EXISTS (SELECT * FROM assignments WHERE a.assignments_id = id AND teams_id = {teamId})")
+          .on('teamId -> teamId)
+          .apply().head
+      try {
+        val res = count[Long]("COUNT(*)")
+        res.toInt
+      } catch {
+        case e: Exception => return 0
+      }
+    }
+  }
+
   /**
    * Returns true if the registration can take place with these variables, otherwise false
    * @param username
-   * @param turkerId
+   * @param turker_id
    * @return
    */
-  def checkRegistration(username: String, turkerId: String): Boolean ={
+  def checkRegistration(username: String, turker_id: String): Boolean ={
     val tUsername = findByUsername(username)
-    val tTurkerId = findByTurkerId(turkerId)
+    val tTurkerId = findByTurkerId(turker_id)
     try {
       if (tUsername.get != null || tTurkerId.get != null) {
         return false
@@ -63,15 +95,15 @@ object TurkerDAO {
     }
   }
 
-  def updateLoginTime(turkerId: String, loginTime: Long): String = {
+  def updateLoginTime(turker_id: String, login_time: Long): String = {
     DB.withConnection {
       implicit c =>
-        SQL("UPDATE turkers SET loginTime = {loginTime} WHERE turkerId = {turkerId}").on(
-          'loginTime -> loginTime,
-          'turkerId -> turkerId
+        SQL("UPDATE turkers SET login_time = {login_time} WHERE turker_id = {turker_id}").on(
+          'login_time -> login_time,
+          'turker_id -> turker_id
         ).executeUpdate()
-        println("LoginTime updated for turker: " + turkerId)
-        turkerId
+        println("LoginTime updated for turker: " + turker_id)
+        turker_id
     }
   }
 
@@ -89,10 +121,10 @@ object TurkerDAO {
     }
   }
 
-  def findByTurkerId(turkerId: String): Option[Turker] = {
+  def findByTurkerId(turker_id: String): Option[Turker] = {
     DB.withConnection {
       implicit c =>
-        SQL("SELECT * FROM turkers WHERE turkerId = {turkerId}").on('turkerId -> turkerId).as(turkerParser.singleOpt)
+        SQL("SELECT * FROM turkers WHERE turker_id = {turker_id}").on('turker_id -> turker_id).as(turkerParser.singleOpt)
     }
   }
 
@@ -100,41 +132,31 @@ object TurkerDAO {
     val id: Option[Long] =
       DB.withConnection {
         implicit c =>
-          SQL("INSERT INTO turkers(turkerId, email, loginTime, username, password, layoutMode) " +
-            "VALUES ({turkerId}, {email}, {loginTime}, {username}, {password}, {layoutMode})").on(
-              'turkerId -> t.turkerId,
+          SQL("INSERT INTO turkers(turker_id, email, login_time, username, password, layout_mode) " +
+            "VALUES ({turker_id}, {email}, {login_time}, {username}, {password}, {layout_mode})").on(
+              'turker_id -> t.turker_id,
               'email -> t.email,
-              'loginTime -> t.loginTime,
+              'login_time -> t.login_time,
               'username -> t.username,
               'password -> t.password,
-              'layoutMode -> t.layoutMode
+              'layout_mode -> t.layout_mode
             ).executeInsert()
       }
     id
   }
 
-/*
-  implicit object TurkerFormat extends Format[Turker] {
-
-    // convert from Turker object to JSON (serializing to JSON)
-    def writes(t: Turker): JsValue = {
-      val stockSeq = Seq(
-        "id" -> JsNumber(t.id.get),
-        "turkerId" -> JsString(t.turkerId),
-        "loginTime" -> JsString(t.loginTime.toString))
-      JsObject(stockSeq)
+  def countAll(): Int = {
+    DB.withConnection {
+      implicit c =>
+        val count = SQL("SELECT COUNT(*) as count FROM turkers").apply().head
+        try {
+          val res = count[Long]("count")
+          res.toInt
+        } catch {
+          case e: Exception => return 0
+        }
     }
-
-    // convert from a JSON string to a Turker object (de-serializing from JSON)
-    def reads(json: JsValue): JsResult[Turker] = {
-      val id = (json \ "id").as[Pk[Long]]
-      val symbol = (json \ "turkerId").as[String]
-      val companyName = (json \ "loginTime").as[Date]
-      JsSuccess(Turker(id, symbol, companyName))
-    }
-
   }
-  */
 
 }
 

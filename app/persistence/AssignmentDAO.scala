@@ -14,12 +14,12 @@ object AssignmentDAO {
 
   private val assignmentParser: RowParser[Assignment] =
     get[Pk[Long]]("id") ~
-      get[Long]("assignedFrom") ~
-      get[Long]("assignedTo") ~
-      get[Long]("acceptedTime") ~
-      get[Long]("question_fk") ~
-      get[Long]("team_fk") map {
-      case id ~assignedFrom ~assignedTo ~acceptedTime ~question_fk ~team_fk => Assignment(id, assignedFrom, assignedTo, acceptedTime, question_fk, team_fk)
+      get[Long]("created_at") ~
+      get[Long]("expiration_time") ~
+      get[Boolean]("is_cancelled") ~
+      get[Long]("questions_id") ~
+      get[Long]("teams_id") map {
+      case id ~created_at ~expiration_time ~is_cancelled ~questions_id ~teams_id => Assignment(id, created_at, expiration_time, is_cancelled, questions_id, teams_id)
     }
 
   def findById(id: Long): Option[Assignment] =
@@ -31,7 +31,7 @@ object AssignmentDAO {
 
   def findByQuestionId(qId: Long): List[Assignment] =
     DB.withConnection { implicit c =>
-      SQL("SELECT * FROM assignments WHERE question_fk = {qId}").on(
+      SQL("SELECT * FROM assignments WHERE questions_id = {qId}").on(
         'qId -> qId
       ).as(assignmentParser*).toList
     }
@@ -39,12 +39,12 @@ object AssignmentDAO {
   def add(a: Assignment): Long = {
     val id: Option[Long] =
       DB.withConnection { implicit c =>
-        SQL("INSERT INTO assignments(assignedFrom, assignedTo, acceptedTime, question_fk, team_fk) VALUES ({assignedFrom}, {assignedTo}, {acceptedTime}, {question_fk}, {team_fk})").on(
-          'assignedFrom -> a.assignedFrom,
-          'assignedTo -> a.assignedTo,
-          'acceptedTime -> a.acceptedTime,
-          'question_fk -> a.question_fk,
-          'team_fk -> a.team_fk
+        SQL("INSERT INTO assignments(created_at, expiration_time, is_cancelled, questions_id, teams_id) VALUES ({created_at}, {expiration_time}, {is_cancelled}, {questions_id}, {teams_id})").on(
+          'created_at -> a.created_at,
+          'expiration_time-> a.expiration_time,
+          'is_cancelled -> a.is_cancelled,
+          'questions_id -> a.questions_id,
+          'teams_id -> a.teams_id
         ).executeInsert()
       }
     id.get

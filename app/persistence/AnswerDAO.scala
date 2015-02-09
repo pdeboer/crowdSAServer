@@ -17,12 +17,12 @@ object AnswerDAO {
   private val answerParser: RowParser[Answer] =
     get[Pk[Long]]("id") ~
       get[String]("answer") ~
-      get[Long]("completedTime") ~
+      get[Long]("completed_at") ~
       get[Option[Boolean]]("accepted") ~
-      get[Option[Boolean]]("acceptedAndBonus") ~
+      get[Option[Int]]("bonus_cts") ~
       get[Option[Boolean]]("rejected") ~
-      get[Long]("assignment_fk") map {
-      case id ~answer ~completedTime ~accepted ~acceptedAndBonus ~rejected ~assignment_fk => Answer(id, answer, completedTime, accepted, acceptedAndBonus, rejected, assignment_fk)
+      get[Long]("assignments_id") map {
+      case id ~answer ~completed_at ~accepted ~bonus_cts ~rejected ~assignments_id => Answer(id, answer, completed_at, accepted, bonus_cts, rejected, assignments_id)
     }
 
   def findById(id: Long): Option[Answer] =
@@ -32,21 +32,18 @@ object AnswerDAO {
       ).as(answerParser.singleOpt)
     }
 
-  def evaluateAnswer(aId: Long, accepted: Boolean, bonus: Boolean): Int = {
-    if (accepted && bonus) {
+  def evaluateAnswer(id: Long, accepted: Boolean, bonus_cts: Option[Int]): Int = {
+   if (accepted) {
       DB.withConnection { implicit c =>
-        SQL("UPDATE answers SET accepted = true, acceptedAndBonus = true, rejected = false WHERE id = {aId}")
-          .on('aId -> aId).executeUpdate()
-      }
-    } else if (accepted && !bonus) {
-      DB.withConnection { implicit c =>
-        SQL("UPDATE answers SET accepted = true, acceptedAndBonus = false, rejected = false WHERE id = {aId}")
-          .on('aId -> aId).executeUpdate()
+        SQL("UPDATE answers SET accepted = true, bonus_cts = {bonus_cts}, rejected = false WHERE id = {id}")
+          .on(
+            'id -> id,
+            'bonus_cts -> bonus_cts.getOrElse(0)).executeUpdate()
       }
     } else {
       DB.withConnection { implicit c =>
-        SQL("UPDATE answers SET accepted = false, acceptedAndBonus = false, rejected = true WHERE id = {aId}")
-          .on('aId -> aId).executeUpdate()
+        SQL("UPDATE answers SET accepted = false, bonus_cts = 0, rejected = true WHERE id = {id}")
+          .on('id -> id).executeUpdate()
       }
     }
   }
@@ -54,10 +51,10 @@ object AnswerDAO {
   def add(a: Answer): Long = {
     val id: Option[Long] =
       DB.withConnection { implicit c =>
-        SQL("INSERT INTO answers(answer, completedTime, assignment_fk) VALUES ({answer}, {completedTime}, {assignment_fk})").on(
+        SQL("INSERT INTO answers(answer, created_at, assignments_id) VALUES ({answer}, {created_at}, {assignments_id})").on(
           'answer -> a.answer,
-          'completedTime -> a.completedTime,
-          'assignment_fk -> a.assignment_fk
+          'created_at -> a.created_at,
+          'assignments_id -> a.assignments_id
         ).executeInsert()
       }
     id.get
@@ -72,8 +69,8 @@ object AnswerDAO {
     var answers = new mutable.MutableList[Answer]
     for (assignment <- assignments) {
       DB.withConnection { implicit c =>
-        val tmpAnswers = SQL("SELECT * FROM answers WHERE assignment_fk = {assignmentId}")
-          .on('assignmentId -> assignment.id.get)
+        val tmpAnswers = SQL("SELECT * FROM answers WHERE assignments_id = {assignments_id}")
+          .on('assignments_id -> assignment.id.get)
           .as(answerParser*).toList
 
         for (ans <- tmpAnswers) {
@@ -82,6 +79,22 @@ object AnswerDAO {
       }
     }
     answers.toList
+  }
+
+  def getAcceptedAnswers(turker_id: String): Int ={
+    DB.withConnection { implicit c =>
+      val teamsId = Turkers2TeamsDAO.findSingleTeamByTurkerId(turker_id).id.get.toString
+      val count = SQL("SELECT COUNT(*) AS count FROM answers AS ans WHERE accepted = true AND " +
+        "EXISTS ( SELECT assignments_id FROM assignments WHERE id = ans.assignments_id AND teams_id = {teamsId})")
+        .on('teamsId -> teamsId)
+        .apply().head
+      try {
+        val res = count[Long]("count")
+        res.toInt
+      } catch {
+        case e: Exception => return 0
+      }
+    }
   }
 
 }

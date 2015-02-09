@@ -14,9 +14,9 @@ object TeamDAO {
 
   private val teamParser: RowParser[Team] =
     get[Pk[Long]]("id") ~
-      get[Long]("createdAt") ~
+      get[Long]("created_at") ~
       get[String]("name") map {
-      case id ~createdAt ~name => Team(id, createdAt, name)
+      case id ~created_at ~name => Team(id, created_at, name)
     }
 
   def findById(id: Long): Option[Team] =
@@ -29,8 +29,8 @@ object TeamDAO {
   def add(t: Team): Long = {
     val id: Option[Long] =
       DB.withConnection { implicit c =>
-        SQL("INSERT INTO teams(createdAt, name) VALUES ({createdAt}, {name})").on(
-            'createdAt -> t.createdAt,
+        SQL("INSERT INTO teams(created_at, name) VALUES ({created_at}, {name})").on(
+            'created_at -> t.created_at,
             'name -> t.name
           ).executeInsert()
       }

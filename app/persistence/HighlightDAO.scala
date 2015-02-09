@@ -15,8 +15,8 @@ object HighlightDAO {
     get[Pk[Long]]("id") ~
       get[String]("assumption") ~
       get[String]("terms") ~
-      get[Long]("question_fk") map {
-      case id ~assumption ~terms ~question_fk => Highlight(id, assumption, terms, question_fk)
+      get[Long]("questions_id") map {
+      case id ~assumption ~terms ~questions_id => Highlight(id, assumption, terms, questions_id)
     }
 
   def findById(id: Long): Option[Highlight] =
@@ -28,7 +28,7 @@ object HighlightDAO {
 
   def filterByQuestionId(questionId: Long): List[Highlight] =
     DB.withConnection { implicit c =>
-      SQL("SELECT * FROM highlights WHERE question_fk = {questionId}").on(
+      SQL("SELECT * FROM highlights WHERE questions_id = {questionId}").on(
         'questionId -> questionId
       ).as(highlightParser*).toList
     }
@@ -36,10 +36,10 @@ object HighlightDAO {
   def add(h: Highlight): Long = {
     val id: Option[Long] =
       DB.withConnection { implicit c =>
-        SQL("INSERT INTO highlights(assumption, terms, question_fk) VALUES ({assumption}, {terms}, {question_fk})").on(
+        SQL("INSERT INTO highlights(assumption, terms, questions_id) VALUES ({assumption}, {terms}, {questions_id})").on(
           'assumption-> h.assumption,
           'terms-> h.terms,
-          'question_fk -> h.question_fk
+          'question_fk -> h.questions_id
         ).executeInsert()
       }
     id.get
