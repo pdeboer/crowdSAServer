@@ -34,8 +34,8 @@ object Turkers2TeamsDAO {
         'id -> id
       ).as(turkers2TeamsParser *)
       var result : mutable.MutableList[Team] = new mutable.MutableList[Team]
-      for(team <- turkers2teams){
-        result += TeamDAO.findById(team.id.get).get
+      for(t2t <- turkers2teams){
+        result += TeamDAO.findById(t2t.teams_id).get
       }
       result.toList
     }
@@ -49,9 +49,8 @@ object Turkers2TeamsDAO {
     }
 
   def findSingleTeamByTurkerId(turkerId: String): Team = {
-    val teams = findTeamsByTurkerId(turkerId)
     var team : Team = null
-    teams.foreach { t =>
+    findTeamsByTurkerId(turkerId).foreach { t =>
       if (t.name.equals(turkerId)) {
         team = t
       }
