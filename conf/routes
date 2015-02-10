@@ -23,6 +23,8 @@ GET         /questions                                     controllers.Question.
 GET         /questions/:paper_id                           controllers.Question.getAllQuestionsByPaperId(paper_id: Long)
 POST        /addQuestion                                   controllers.Question.addQuestion
 POST        /disablequestion                               controllers.Question.disableQuestion
+POST        /extendmaxassignments                          controllers.Question.extendMaxAssignments
+POST        /extendexpiration                              controllers.Question.extendExpiration
 
 # Highlight
 POST        /highlight                                     controllers.Question.addHighlight
@@ -38,6 +40,9 @@ POST        /rejectAssignment                              controllers.Waiting.r
 GET         /answers/:qId                                  controllers.Answer.answers(qId: Long)
 POST        /answer/add                                    controllers.Answer.addAnswer
 POST        /evaluateanswer                                controllers.Answer.evaluateAnswer
+
+# Assignment
+GET         /assignments/:qId                              controllers.Assignment.assignments(qId: Long)
 
 # Account
 GET         /account                                       controllers.Application.account

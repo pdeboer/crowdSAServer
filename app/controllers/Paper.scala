@@ -36,12 +36,11 @@ object Paper extends Controller {
         var contentType = ""
         var highlight = false
         try {
-          title = request.body.asFormUrlEncoded.get("pdfTitle").get(0)
-          budget = request.body.asFormUrlEncoded.get("budget").get(0)
-          highlight = request.body.asFormUrlEncoded.get("highlight").get(0).toBoolean
+          title = request.body.asFormUrlEncoded.get("pdf_title").get(0)
+          highlight = request.body.asFormUrlEncoded.get("highlight_enabled").get(0).toBoolean
           contentType = source.contentType.get
         } catch {
-          case e: Exception => InternalServerError("Wrong request structure. pdfTitle, budget or contentType is missing in the request.")
+          case e: Exception => InternalServerError("Wrong request structure. pdf_title, highlight_enabled or source is missing in the request.")
         }
 
         source.ref.moveTo(new File(s"./public/pdfs/$filename"))

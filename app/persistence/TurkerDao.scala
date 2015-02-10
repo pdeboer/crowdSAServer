@@ -166,10 +166,11 @@ object TurkerDAO {
     DB.withConnection {
       implicit c =>
         val teams_id = Turkers2TeamsDAO.findSingleTeamByTurkerId(turker_id).id.get
-        val rank = SQL("SELECT rank FROM (SELECT teams_id, totAccepted, CASE WHEN @prevRank = totAccepted THEN @curRank WHEN @prevRank := totAccepted THEN @curRank := @curRank + 1 END AS rank FROM (SELECT ass.teams_id as teams_id, COUNT(*) as totAccepted FROM answers as a, assignments as ass where a.accepted = true and a.assignments_id = ass.id GROUP BY ass.teams_id) p, (SELECT @curRank :=0, @prevRank := NULL) r ORDER BY totAccepted DESC) rankings WHERE teams_id = {teams_id}")
+        try {
+          val rank = SQL("SELECT rank FROM (SELECT teams_id, totAccepted, CASE WHEN @prevRank = totAccepted THEN @curRank WHEN @prevRank := totAccepted THEN @curRank := @curRank + 1 END AS rank FROM (SELECT ass.teams_id as teams_id, COUNT(*) as totAccepted FROM answers as a, assignments as ass where a.accepted = true and a.assignments_id = ass.id GROUP BY ass.teams_id) p, (SELECT @curRank :=0, @prevRank := NULL) r ORDER BY totAccepted DESC) rankings WHERE teams_id = {teams_id}")
           .on('teams_id -> teams_id)
           .apply().head
-        try {
+
           val res = rank[String]("rank")
           res.toInt
         } catch {

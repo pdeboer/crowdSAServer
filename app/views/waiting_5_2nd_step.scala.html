@@ -82,18 +82,15 @@
                 <div class="modal-body">
 
                     <div align="center">
-                        <span>Page: <span id="page_num"></span> / <span id="page_count"></span></span>
-
+                        <button id="prev" class="btn btn-info">Previous</button>
+                        <b><span>Page: <span id="page_num"></span> / <span id="page_count"></span></span></b>
+                        <button id="next" class="btn btn-info">Next</button>
                     </div>
 
                     <div align="center">
                         <canvas id="the-canvas"></canvas>
                     </div>
 
-                    <div align="right">
-                        <button id="prev" class="btn btn-primary">Previous</button>
-                        <button id="next" class="btn btn-primary">Next</button>
-                    </div>
                     <script id="script">
                     //
                     // If absolute URL from the remote server is provided, configure the CORS
