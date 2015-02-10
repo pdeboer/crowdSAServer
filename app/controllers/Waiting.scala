@@ -4,9 +4,11 @@ import anorm.NotAssigned
 import com.typesafe.config.ConfigFactory
 import java.util.Date
 import models.Assignment
+import org.apache.commons.codec.binary.Base64
 import persistence._
 import play.api.libs.json.Json
 import play.api.mvc._
+import util.HighlightPdf
 
 /**
  * Created by Mattia on 22.01.2015.
@@ -222,7 +224,8 @@ object Waiting extends Controller{
 
     request.session.get("turkerId").map {
       turkerId =>
-        Ok(views.html.waiting_5_2nd_step(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), request.flash, PaperDAO.getTitleById(paper_id), paper_id))
+        val paper = PaperDAO.findById(paper_id).get
+        Ok(views.html.waiting_5_2nd_step(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), request.flash, paper, Base64.encodeBase64String(HighlightPdf.getPdfAsArrayByte(paper.pdf_path))))
     }.getOrElse {
       Redirect(routes.Application.index())
     }
