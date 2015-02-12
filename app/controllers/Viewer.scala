@@ -58,4 +58,8 @@ object Viewer extends Controller{
     }
   }
 
+  def cancel(assignmentId: Long) = Action {
+    AssignmentDAO.cancel(assignmentId)
+    Redirect(routes.Waiting.waiting())
+  }
 }

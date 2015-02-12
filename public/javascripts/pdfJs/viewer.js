@@ -3631,7 +3631,7 @@ var TextLayerBuilder = (function TextLayerBuilderClosure() {
                         var pageContainer = $(this.parentNode.parentNode.id).selector.split("pageContainer")[1];
 
                         if(domChildren.indexOf(pageContainer+":"+index) == -1) {
-                            domChildren.push(+":"+index);
+                            domChildren.push(pageContainer+":"+index);
                             $('#datasetChildren ul').append("<li><i>'" + this.innerText + "'</i><input type='hidden' name='dom_children[]' value='" + pageContainer+":"+index + "'/></li>");
                             this.style.border = "3px solid #FF0000";
                         }

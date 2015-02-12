@@ -62,4 +62,11 @@ object AssignmentDAO {
     DB.withConnection { implicit c =>
       SQL("SELECT * FROM assignments").as(assignmentParser*).toList
     }
+
+  def cancel(assignment_id: Long) = {
+    DB.withConnection { implicit c =>
+      SQL("UPDATE assignments SET is_cancelled = true WHERE id = {assignment_id}")
+        .on('assignment_id -> assignment_id).executeUpdate()
+    }
+  }
 }

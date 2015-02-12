@@ -64,11 +64,12 @@ object TurkerDAO {
   def getTotalBonus(turkerId: String) : Double = {
     DB.withConnection { implicit c =>
       val teamId = Turkers2TeamsDAO.findSingleTeamByTurkerId(turkerId).id.get.toString
-      val count =
-      SQL("SELECT SUM(bonus_cts) AS tot_bonus FROM answers AS a WHERE a.accepted = true AND EXISTS (SELECT * FROM assignments AS ass WHERE ass.id = a.assignments_id AND ass.teams_id = {teamId})")
-        .on('teamId -> teamId)
-        .apply().head
       try {
+        val count =
+          SQL("SELECT SUM(bonus_cts) AS tot_bonus FROM answers AS a WHERE a.accepted = true AND EXISTS (SELECT * FROM assignments AS ass WHERE ass.id = a.assignments_id AND ass.teams_id = {teamId})")
+            .on('teamId -> teamId)
+            .apply().head
+
         val res = count[BigDecimal]("tot_bonus")
         res.toDouble
       } catch {

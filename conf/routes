@@ -55,6 +55,7 @@ GET         /teams                                         controllers.Applicati
 
 # PDF Viewer
 GET         /viewer/:questionId/:assignmentId              controllers.Viewer.viewer(questionId: Long, assignmentId: Long)
+GET         /viewer/:assignmentId/cancel                   controllers.Viewer.cancel(assignmentId: Long)
 
 # Map static resources from the /public folder to the /assets URL path
 GET         /assets/*file                                  controllers.Assets.at(path="/public", file)

@@ -85,3 +85,29 @@ myApp.controller('PapersCtrl', function ($scope, $http) {
     };
 
 });
+
+myApp.controller('ViewerCtrl', function($scope, $http, $timeout){
+
+    $scope.cancel_assignment = function(assignment_id){
+        window.location.href = '/viewer/'+assignment_id+'/cancel';
+    };
+
+    $scope.question_type = "";
+
+    // 10 Minutes
+    $scope.counter = 60*10*1000;
+
+    $scope.countdown = function() {
+        stopped = $timeout(function() {
+            //console.log($scope.counter);
+            $scope.counter -= 1000;
+            if($scope.counter > 0) {
+                $scope.countdown();
+            } else {
+                alert("The time is over! The answer will be automatically sent.");
+                angular.element('#submitAnswer').trigger('click');
+            }
+        }, 1000);
+    };
+
+});
