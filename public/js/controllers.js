@@ -92,20 +92,21 @@ myApp.controller('ViewerCtrl', function($scope, $http, $timeout){
         window.location.href = '/viewer/'+assignment_id+'/cancel';
     };
 
-    $scope.question_type = "";
+    $scope.counter_sec = 600;
 
-    // 10 Minutes
-    $scope.counter = 60*10*1000;
+    $scope.countdown = function(expiration_sec) {
+        $scope.counter_sec = expiration_sec;
+        $scope.start_countdown();
+    };
 
-    $scope.countdown = function() {
-        stopped = $timeout(function() {
-            //console.log($scope.counter);
-            $scope.counter -= 1000;
-            if($scope.counter > 0) {
-                $scope.countdown();
+    $scope.start_countdown = function() {
+        $timeout(function () {
+            $scope.counter_sec -= 1;
+            if ($scope.counter_sec > 0) {
+                $scope.start_countdown();
             } else {
                 alert("The time is over! The answer will be automatically sent.");
-                angular.element('#submitAnswer').trigger('click');
+                $('#submitAnswer').trigger('click');
             }
         }, 1000);
     };
