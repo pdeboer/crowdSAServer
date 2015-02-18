@@ -23,7 +23,10 @@ object Answer extends Controller {
      val answers = AnswerDAO.getAllByAssignmentsIds(assignments)
      Ok(Json.toJson(answers))
    } catch {
-     case e: Exception => InternalServerError("Wrong request format.")
+     case e: Exception => {
+       e.printStackTrace()
+       InternalServerError("Wrong request format.")
+     }
    }
   }
 
@@ -57,6 +60,7 @@ object Answer extends Controller {
 
     var answer = ""
     if (question_type.equalsIgnoreCase("Boolean")) {
+      println("Found question type boolean")
       try {
         val answerElem = request.body.asFormUrlEncoded.get("answer").get.head
         if(answerElem.equalsIgnoreCase("YES")){
@@ -71,6 +75,7 @@ object Answer extends Controller {
         }
       }
     } else if(question_type.equalsIgnoreCase("FreeText")){
+      println("Found question type free text")
       try {
         answer = request.body.asFormUrlEncoded.get("textAnswer").get.head
       } catch {
@@ -80,6 +85,7 @@ object Answer extends Controller {
         }
       }
     } else if(question_type.equalsIgnoreCase("Discovery")){
+      println("Found question type discovery")
       try {
         val keys = request.body.asFormUrlEncoded.keySet//get("dom_children").get.head
         for(k <- keys){
@@ -96,6 +102,7 @@ object Answer extends Controller {
     }
 
     val answerId = AnswerDAO.add(new Answer(NotAssigned, answer, new Date().getTime/1000, null, null, null, assignments_id))
+    println("Answer stored with id: " + answerId)
 
     Redirect(routes.Waiting.waiting()).flashing(
       "success" -> "Answer correctly stored."

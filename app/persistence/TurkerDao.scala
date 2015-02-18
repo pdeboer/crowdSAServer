@@ -74,7 +74,6 @@ object TurkerDAO {
         res.toDouble
       } catch {
         case e: Exception => {
-          println(e.printStackTrace())
           return 0
         }
       }
@@ -176,7 +175,6 @@ object TurkerDAO {
           res.toInt
         } catch {
           case e: Exception => {
-            println(e.printStackTrace())
             return 0
           }
         }

@@ -39,7 +39,7 @@ object HighlightDAO {
         SQL("INSERT INTO highlights(assumption, terms, questions_id) VALUES ({assumption}, {terms}, {questions_id})").on(
           'assumption-> h.assumption,
           'terms-> h.terms,
-          'question_fk -> h.questions_id
+          'questions_id -> h.questions_id
         ).executeInsert()
       }
     id.get

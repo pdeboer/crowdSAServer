@@ -36,6 +36,16 @@ object AssignmentDAO {
       ).as(assignmentParser*).toList
     }
 
+
+  def findByAnswerId(ansId: Long): Option[Assignment] = {
+    DB.withConnection { implicit c =>
+      val answer = AnswerDAO.findById(ansId).get
+      SQL("SELECT * FROM assignments WHERE id = {assignments_id}").on(
+        'assignments_id -> answer.assignments_id
+      ).as(assignmentParser.singleOpt)
+    }
+  }
+
   def add(a: Assignment): Long = {
     val id: Option[Long] =
       DB.withConnection { implicit c =>

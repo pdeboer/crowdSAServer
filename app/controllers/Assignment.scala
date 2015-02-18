@@ -25,4 +25,13 @@ object Assignment extends Controller {
      case e: Exception => InternalServerError("Wrong request format.")
    }
   }
+
+  def assignmentOfAnswer(ansId: Long) = Action { implicit request =>
+    try {
+      val assignment = AssignmentDAO.findByAnswerId(ansId).get
+      Ok(Json.toJson(assignment))
+    } catch {
+      case e: Exception => InternalServerError("Error: Cannot get assignment for answer: " + ansId)
+    }
+  }
 }

@@ -17,7 +17,7 @@ object AnswerDAO {
   private val answerParser: RowParser[Answer] =
     get[Pk[Long]]("id") ~
       get[String]("answer") ~
-      get[Long]("completed_at") ~
+      get[Long]("created_at") ~
       get[Option[Boolean]]("accepted") ~
       get[Option[Int]]("bonus_cts") ~
       get[Option[Boolean]]("rejected") ~
@@ -51,7 +51,7 @@ object AnswerDAO {
   def add(a: Answer): Long = {
     val id: Option[Long] =
       DB.withConnection { implicit c =>
-        SQL("INSERT INTO answers(answer, created_at, assignments_id) VALUES ({answer}, {created_at}, {assignments_id})").on(
+        SQL("INSERT INTO answers(answer, created_at, accepted, bonus_cts, rejected, assignments_id) VALUES ({answer}, {created_at}, NULL, NULL, NULL, {assignments_id})").on(
           'answer -> a.answer,
           'created_at -> a.created_at,
           'assignments_id -> a.assignments_id

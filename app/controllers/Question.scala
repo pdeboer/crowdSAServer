@@ -31,15 +31,16 @@ object Question extends Controller {
       val reward_cts = request.body.asFormUrlEncoded.get("reward_cts").get.head.toInt
       val created_at = request.body.asFormUrlEncoded.get("created_at").get.head.toLong
       val papers_id = request.body.asFormUrlEncoded.get("papers_id").get.head.toLong
-      val expiration_time_sec = request.body.asFormUrlEncoded.get("expiration_time_sec").get.head.toLong
-      val maximal_assignments = request.body.asFormUrlEncoded.get("maximal_assignments").get.head.toInt
+      val expiration_time_sec = request.body.asFormUrlEncoded.get("expiration_time_sec").get.headOption.getOrElse(null).toInt
+      val maximal_assignments = request.body.asFormUrlEncoded.get("maximal_assignments").get.headOption.getOrElse(null).toInt
 
-      val ques = new Question(NotAssigned, question, question_type, reward_cts, created_at, false,Some(expiration_time_sec), Some(maximal_assignments), papers_id)
+      val ques = new Question(NotAssigned, question, question_type, reward_cts, created_at, false, Some(expiration_time_sec), Some(maximal_assignments), papers_id)
+      println(ques.toString)
       val id = QuestionDAO.add(ques)
 
       Ok(id.toString)
     } catch {
-      case e: Exception => InternalServerError("Cannot add question. Check the parameters.")
+      case e: Exception => InternalServerError("Error: Cannot add question. Check the parameters.")
     }
   }
 
@@ -60,7 +61,7 @@ object Question extends Controller {
       val terms = request.body.asFormUrlEncoded.get("terms").get.head
       val h = new Highlight(NotAssigned, assumption, terms, questionId)
       HighlightDAO.add(h)
-      Ok("Highlight terms successfully added!")
+      Ok("Success!")
     } catch {
       case e: Exception => InternalServerError("Wrong request format.")
     }

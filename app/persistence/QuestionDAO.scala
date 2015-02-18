@@ -52,7 +52,7 @@ object QuestionDAO {
           ", reward_cts, created_at, disabled, expiration_time_sec, maximal_assignments, papers_id) VALUES (" +
           "{question}, " +
           "{question_type}, " +
-          "{reward_Cts}, " +
+          "{reward_cts}, " +
           "{created_at}, " +
           "{disabled}, " +
           "{expiration_time_sec}, " +

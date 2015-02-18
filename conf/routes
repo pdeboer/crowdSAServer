@@ -43,6 +43,7 @@ POST        /evaluateanswer                                controllers.Answer.ev
 
 # Assignment
 GET         /assignments/:qId                              controllers.Assignment.assignments(qId: Long)
+GET         /assignmentbyanswerid/:ansId                   controllers.Assignment.assignmentOfAnswer(ansId: Long)
 
 # Account
 GET         /account                                       controllers.Application.account
