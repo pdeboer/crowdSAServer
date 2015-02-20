@@ -105,8 +105,8 @@ myApp.controller('ViewerCtrl', function($scope, $http, $timeout){
             if ($scope.counter_sec > 0) {
                 $scope.start_countdown();
             } else {
-                alert("The time is over! The answer will be automatically sent.");
-                $('#submitAnswer').trigger('click');
+                alert("The time is over!");
+                $('#cancelAnswer').trigger('click');
             }
         }, 1000);
     };
