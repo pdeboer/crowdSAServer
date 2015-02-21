@@ -1,6 +1,6 @@
 package util
 
-import java.io.{ByteArrayInputStream, ByteArrayOutputStream, FileInputStream}
+import java.io.{ByteArrayOutputStream, FileInputStream}
 
 import controllers.TextHighlight
 import org.apache.pdfbox.pdfparser.PDFParser
@@ -27,6 +27,7 @@ object HighlightPdf {
     pdfHighlight.initialize(pdDoc)
 
     for(textRegEx <- contentCsv) {
+      println("Highlighting: " + textRegEx)
       pdfHighlight.highlightDefault(textRegEx)
     }
 

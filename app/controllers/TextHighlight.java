@@ -240,7 +240,7 @@ public class TextHighlight extends PDFTextStripper
      */
     public void highlightDefault(final String pattern) throws IOException
     {
-        this.highlightDefault(Pattern.compile(pattern));
+        this.highlightDefault(Pattern.compile("\\Q"+pattern+"\\E", Pattern.CASE_INSENSITIVE));
     }
 
     /**

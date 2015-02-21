@@ -11,6 +11,8 @@ import play.api.mvc.{Action, Controller}
 import util.{HighlightPdf, CSVParser}
 import java.util.Date
 
+import scala.collection.mutable
+
 /**
  * Created by Mattia on 23.01.2015.
  */
@@ -29,15 +31,15 @@ object Viewer extends Controller{
 
           // Highlight paper only is requested by job creator
           if (paper.highlight_enabled) {
-            var highlights: String = ""
-            HighlightDAO.filterByQuestionId(questionId).map(h => highlights= highlights+(h.terms + ","))
+            val highlights: mutable.MutableList[String] = new mutable.MutableList[String]
+            HighlightDAO.filterByQuestionId(questionId).map(h => highlights.+=:(h.terms))
 
             //val contentCsv = CSVParser.readCsv(request.session.get("toHighlight").getOrElse(""))
-            val contentCsv = CSVParser.readCsv(highlights)
+            val contentCsv = highlights//CSVParser.readCsv(highlights)
 
             //var pdfArrayByte = new Array[Byte](0)
             if (!contentCsv.isEmpty) {
-              Ok(views.html.viewer(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), question, Base64.encodeBase64String(HighlightPdf.highlight(pdfPath, contentCsv)), AssignmentDAO.findById(assignmentId).get.teams_id, assignmentId))
+              Ok(views.html.viewer(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), question, Base64.encodeBase64String(HighlightPdf.highlight(pdfPath, highlights.toList)), AssignmentDAO.findById(assignmentId).get.teams_id, assignmentId))
             } else {
               Ok(views.html.viewer(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), question, Base64.encodeBase64String(HighlightPdf.getPdfAsArrayByte(pdfPath)),AssignmentDAO.findById(assignmentId).get.teams_id, assignmentId))
             }

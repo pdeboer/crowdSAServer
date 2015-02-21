@@ -9,7 +9,7 @@ object CSVParser {
    * Read the CSV file
    * @return
    */
-  def readCsv(csv: String) : List[String] = {
+  /*def readCsv(csv: String) : List[String] = {
     if(csv != ""){
       val res = csv.split(",")
       return res.toList
@@ -18,6 +18,6 @@ object CSVParser {
     }
 
     //return Source.fromFile("./public/csv/statTest.csv").getLines().toList
-  }
+  }*/
 
 }

@@ -89,7 +89,7 @@ myApp.controller('PapersCtrl', function ($scope, $http) {
 myApp.controller('ViewerCtrl', function($scope, $http, $timeout){
 
     $scope.cancel_assignment = function(assignment_id){
-        window.location.href = '/viewer/'+assignment_id+'/cancel';
+        window.location.href = '/viewer/cancel/'+assignment_id;
     };
 
     $scope.counter_sec = 600;
