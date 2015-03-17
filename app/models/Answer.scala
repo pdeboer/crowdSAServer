@@ -25,7 +25,7 @@ object Answer {
     }
   }*/
 
-  def simpleAnswerExtractor(a: Answer): Option[(Long, String, Long, Option[Boolean],Option[Int],Option[Boolean], Long)] =
+  /*def simpleAnswerExtractor(a: Answer): Option[(Long, String, Long, Option[Boolean],Option[Int],Option[Boolean], Long)] =
     Some(a.id.get, a.answer, a.created_at, a.accepted, a.bonus_cts, a.rejected, a.assignments_id)
 
   implicit val answerWrites: Writes[Answer] = (
@@ -37,4 +37,19 @@ object Answer {
       (__ \ "rejected").write[Option[Boolean]] and
       (__ \ "assignments_id").write[Long]
     )(unlift(simpleAnswerExtractor))
+    */
+
+  implicit val answerWrites = new Writes[Answer] {
+    def writes(a: Answer): JsValue = {
+      Json.obj(
+        "id" -> a.id.get,
+        "answer" -> a.answer,
+        "created_at" -> a.created_at,
+        "accepted" -> a.accepted,
+        "bonus_cts" -> a.bonus_cts,
+        "rejected" -> a.rejected,
+        "assignments_id" -> a.assignments_id
+      )
+    }
+  }
 }

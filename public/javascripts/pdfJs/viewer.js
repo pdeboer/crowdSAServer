@@ -3632,7 +3632,7 @@ var TextLayerBuilder = (function TextLayerBuilderClosure() {
 
                         if(domChildren.indexOf(pageContainer+":"+index) == -1) {
                             domChildren.push(pageContainer+":"+index);
-                            $('#datasetChildren ul').append("<li><i>'" + this.innerText + "'</i><input type='hidden' name='dom_children[]' value='" + pageContainer+":"+index + "'/></li>");
+                            $('#datasetChildren ul').append("<li><i>'" + this.innerText + "'</i><input type='hidden' name='dom_children[]' value='"+this.innerText+"'/></li>");// + pageContainer+":"+index + "'/></li>");
                             this.style.border = "3px solid #FF0000";
                         }
                     });

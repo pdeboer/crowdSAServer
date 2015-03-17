@@ -71,4 +71,12 @@ object Paper extends Controller {
     }
 
   }
+
+  def getPaperIdFromAnswerId(answerId: Long) = Action { implicit request =>
+    try {
+      Ok(Json.toJson(PaperDAO.findByAnswerId(answerId)))
+    }catch{
+      case e:Exception => {InternalServerError("Cannot get id of the paper for answer with id: " + answerId)}
+    }
+  }
 }

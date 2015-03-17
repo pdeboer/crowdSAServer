@@ -74,13 +74,13 @@ object Answer extends Controller {
           answer = ""
         }
       }
-    } else if(question_type.equalsIgnoreCase("FreeText")){
-      println("Found question type free text")
+    } else if(question_type.equalsIgnoreCase("Voting")){
+      println("Found question type voting")
       try {
-        answer = request.body.asFormUrlEncoded.get("textAnswer").get.head
+        answer = request.body.asFormUrlEncoded.get("answer").get.toString
       } catch {
         case e: Exception => {
-          println("Cannot get the answer from the textbox")
+          println("Cannot get the answer from the checkboxes")
           answer = ""
         }
       }
@@ -90,7 +90,7 @@ object Answer extends Controller {
         val keys = request.body.asFormUrlEncoded.keySet//get("dom_children").get.head
         for(k <- keys){
           if(k.startsWith("dom_children")){
-            answer = request.body.asFormUrlEncoded.get(k).get.mkString(",")
+            answer = request.body.asFormUrlEncoded.get(k).get.mkString("#")//TODO: before ,
           }
         }
       } catch {

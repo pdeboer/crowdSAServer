@@ -23,9 +23,10 @@ object QuestionDAO {
       get[Boolean]("disabled") ~
       get[Option[Long]]("expiration_time_sec") ~
       get[Option[Int]]("maximal_assignments") ~
-      get[Long]("papers_id") map {
-      case id ~question ~question_type ~reward_cts ~created_at ~disabled ~expiration_time_sec ~maximal_assignments ~papers_id
-      => Question(id, question, question_type, reward_cts, created_at, disabled, expiration_time_sec, maximal_assignments, papers_id)
+      get[Long]("papers_id") ~
+      get[Option[String]]("possible_answers") map {
+      case id ~question ~question_type ~reward_cts ~created_at ~disabled ~expiration_time_sec ~maximal_assignments ~papers_id ~possible_answers
+      => Question(id, question, question_type, reward_cts, created_at, disabled, expiration_time_sec, maximal_assignments, papers_id, possible_answers)
     }
 
   def findById(id: Long): Option[Question] =
@@ -49,7 +50,7 @@ object QuestionDAO {
     val id: Option[Long] =
       DB.withConnection { implicit c =>
         SQL("INSERT INTO questions(question, question_type" +
-          ", reward_cts, created_at, disabled, expiration_time_sec, maximal_assignments, papers_id) VALUES (" +
+          ", reward_cts, created_at, disabled, expiration_time_sec, maximal_assignments, papers_id, possible_answers) VALUES (" +
           "{question}, " +
           "{question_type}, " +
           "{reward_cts}, " +
@@ -57,7 +58,8 @@ object QuestionDAO {
           "{disabled}, " +
           "{expiration_time_sec}, " +
           "{maximal_assignments}, " +
-          "{papers_id})").on(
+          "{papers_id}, "+
+          "{possible_answers})").on(
               'question -> q.question,
               'question_type
                 -> q.question_type,
@@ -66,7 +68,8 @@ object QuestionDAO {
               'disabled -> q.disabled,
               'expiration_time_sec -> q.expiration_time_sec,
               'maximal_assignments -> q.maximal_assignments,
-              'papers_id -> q.papers_id
+              'papers_id -> q.papers_id,
+              'possible_answers -> q.possible_answers
           ).executeInsert()
       }
     id.get

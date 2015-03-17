@@ -65,4 +65,16 @@ object PaperDAO {
       ).as(paperParser.singleOpt).get.id.get
     }
 
+  def findByAnswerId(answerId: Long): Long = {
+    val assignment = AssignmentDAO.findByAnswerId(answerId)
+    try {
+      val questionId = assignment.get.questions_id
+      QuestionDAO.findById(questionId).get.papers_id
+    }catch {
+      case e: Exception => {
+        e.printStackTrace()
+        -1
+      }
+    }
+  }
 }

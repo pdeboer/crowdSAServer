@@ -17,6 +17,7 @@ POST        /registration                                  controllers.Login.add
 GET         /checkPaper/:paperId                           controllers.Paper.checkPaper(paperId: Long)
 POST        /paper                                         controllers.Paper.storePaper
 GET         /papers                                        controllers.Paper.getAllPapers
+GET         /paper/:answerId                               controllers.Paper.getPaperIdFromAnswerId(answerId: Long)
 
 # Questions
 GET         /questions                                     controllers.Question.questions

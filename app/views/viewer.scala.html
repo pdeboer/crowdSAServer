@@ -2,7 +2,7 @@
 @import play.api.libs.json.Json
 
 <!DOCTYPE html>
-    <html>
+<html xmlns="http://www.w3.org/1999/html">
         <head>
             <title>Solving question</title>
 
@@ -68,8 +68,12 @@
                                             </div>
                                         </div>
                                     }
-                                    @if(question.question_type.equalsIgnoreCase("FreeText")){
-                                        <textarea class="form-control" id="textAnswer" name="textAnswer" ng-model="textAnswer" rows="3" placeholder="Answer the question here"></textarea>
+                                    @if(question.question_type.equalsIgnoreCase("Voting")){
+                                        <div ng-init="set_possible_answers('@(question.possible_answers.get)');">
+                                            <div ng-repeat="ds in possible_answers">
+                                                <input type="checkbox" name="answer">{{ds}}
+                                            </div>
+                                        </div>
                                     }
                                     <span class="input-group-btn">
                                         <button class="btn btn-success" id="submitAnswer" type="submit">Submit Answer</button>

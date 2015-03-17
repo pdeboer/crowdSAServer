@@ -47,7 +47,7 @@ myApp.controller('QuestionCtrl', function($scope, $http){
             .error(function() {
                 $scope.question = "Error while getting the question!";
             });
-    }
+    };
 
     $scope.showViewer = function(question_id){
         $http.get('/waiting/getDefinedQuestion/'+ question_id)
@@ -90,6 +90,12 @@ myApp.controller('ViewerCtrl', function($scope, $http, $timeout){
 
     $scope.cancel_assignment = function(assignment_id){
         window.location.href = '/viewer/cancel/'+assignment_id;
+    };
+
+    $scope.possible_answers = [];
+    $scope.set_possible_answers = function(possibilities){
+        possibilities = possibilities.split("#");
+        $scope.possible_answers = possibilities;
     };
 
     $scope.counter_sec = 600;
