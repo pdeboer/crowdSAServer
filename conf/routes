@@ -42,6 +42,9 @@ GET         /answers/:qId                                  controllers.Answer.an
 POST        /answer/add                                    controllers.Answer.addAnswer
 POST        /evaluateanswer                                controllers.Answer.evaluateAnswer
 
+# Datasets
+POST        /dataset                                       controllers.Dataset.addDataset
+
 # Assignment
 GET         /assignments/:qId                              controllers.Assignment.assignments(qId: Long)
 GET         /assignmentbyanswerid/:ansId                   controllers.Assignment.assignmentOfAnswer(ansId: Long)

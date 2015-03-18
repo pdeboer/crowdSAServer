@@ -77,7 +77,8 @@ object Answer extends Controller {
     } else if(question_type.equalsIgnoreCase("Voting")){
       println("Found question type voting")
       try {
-        answer = request.body.asFormUrlEncoded.get("answer").get.toString
+        answer = request.body.asFormUrlEncoded.get("answer").get.mkString("$$")
+        println("Stored answer: " + answer)
       } catch {
         case e: Exception => {
           println("Cannot get the answer from the checkboxes")

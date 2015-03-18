@@ -71,9 +71,10 @@
                                     @if(question.question_type.equalsIgnoreCase("Voting")){
                                         <div ng-init="set_possible_answers('@(question.possible_answers.get)');">
                                             <div ng-repeat="ds in possible_answers">
-                                                <input type="checkbox" name="answer">{{ds}}
+                                                <input type="checkbox" value="{{ds}}" ng-model="answer" name="answer">{{ds}}
                                             </div>
                                         </div>
+                                        <br><br>
                                     }
                                     <span class="input-group-btn">
                                         <button class="btn btn-success" id="submitAnswer" type="submit">Submit Answer</button>

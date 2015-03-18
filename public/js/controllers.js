@@ -94,7 +94,7 @@ myApp.controller('ViewerCtrl', function($scope, $http, $timeout){
 
     $scope.possible_answers = [];
     $scope.set_possible_answers = function(possibilities){
-        possibilities = possibilities.split("#");
+        possibilities = possibilities.split("$$");
         $scope.possible_answers = possibilities;
     };
 
