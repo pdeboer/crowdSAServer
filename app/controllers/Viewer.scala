@@ -32,10 +32,12 @@ object Viewer extends Controller{
           // Highlight paper only is requested by job creator
           if (paper.highlight_enabled) {
             val highlights: mutable.MutableList[String] = new mutable.MutableList[String]
-            HighlightDAO.filterByQuestionId(questionId).map(h => highlights.+=:(h.terms))
+            HighlightDAO.filterByQuestionId(questionId).map(h => {
+              h.terms.split(",").map(f => highlights += f)
+            })
 
             //val contentCsv = CSVParser.readCsv(request.session.get("toHighlight").getOrElse(""))
-            val contentCsv = highlights//CSVParser.readCsv(highlights)
+            val contentCsv = highlights.toList//CSVParser.readCsv(highlights)
 
             //var pdfArrayByte = new Array[Byte](0)
             if (!contentCsv.isEmpty) {
