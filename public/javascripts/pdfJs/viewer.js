@@ -28,7 +28,7 @@
 'use strict';
 
 var QUESTION_TYPE = '';
-var domChildren = [];
+//var domChildren = [];
 var DEFAULT_URL = '';
 var DEFAULT_SCALE_DELTA = 1.1;
 var MIN_SCALE = 0.25;
@@ -3630,11 +3630,16 @@ var TextLayerBuilder = (function TextLayerBuilderClosure() {
                         var index = $(this).index();
                         var pageContainer = $(this.parentNode.parentNode.id).selector.split("pageContainer")[1];
 
+                        var txt = this.innerText;
+
+                        manageClick(txt, this);
+
+                        /*    ...
                         if(domChildren.indexOf(pageContainer+":"+index) == -1) {
                             domChildren.push(pageContainer+":"+index);
                             $('#datasetChildren ul').append("<li><i>'" + this.innerText + "'</i><input type='hidden' name='dom_children[]' value='"+this.innerText+"'/></li>");// + pageContainer+":"+index + "'/></li>");
                             this.style.border = "3px solid #FF0000";
-                        }
+                        }*/
                     });
                 $('#pageContainer' + (this.pageIdx + 1)).find('.textLayer').children()
                     .mouseover(function () {

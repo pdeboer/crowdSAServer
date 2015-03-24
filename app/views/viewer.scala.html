@@ -37,6 +37,27 @@
         <body ng-app="myApp">
             <div class="container-fluid" style="width: 100%; height: 100%;">
                 <table style="width: 100%; height: 100%;" ng-controller="ViewerCtrl">
+                    <script>
+                        function manageClick(txt, elem){
+                            var scope = angular.element($('#datasetChildren')).scope();
+                            scope.$apply(function(){
+                                var found = false;
+                                scope.dom_children.forEach(function(a){
+                                    if( a[0] == txt){
+                                        found = true;
+                                    }
+                                })
+                                if(!found) {
+                                    scope.dom_children.push([txt, elem]);
+                                    elem.style.border = "3px solid #FF0000";
+                                }
+                            });
+                        }
+
+                        function disableBorders(elem){
+                            elem.style.border = "0px";
+                        }
+                    </script>
                     <tr>
                         <td style="width: 30%; vertical-align: top; text-align: left;">
 
@@ -63,7 +84,14 @@
                                         <div>
                                             <p><b>Extract the dataset by clicking on it once found in the paper.</b></p>
                                             <div id="datasetChildren" >
-                                                <ul style="padding: 20px" ng-model="dom_children">
+                                                <ul class="list-group" style="padding: 20px" ng-init="getDsToRefine('@(question.possible_answers.get)');">
+                                                    <li class="list-group-item" ng-repeat="ds in dom_children" >
+                                                            <span class="badge">
+                                                                <span class="glyphicon glyphicon-trash" ng-click="removeElementDS(ds)" aria-hidden="true"></span>
+                                                            </span>
+                                                        {{ds[0]}}
+                                                        <input type='hidden' name='dom_children[]' ng-value="ds[0]"/>
+                                                    </li>
                                                 </ul>
                                             </div>
                                         </div>
@@ -76,34 +104,15 @@
                                         </div>
                                         <br><br>
                                     }
+
                                     <span class="input-group-btn">
                                         <button class="btn btn-success" id="submitAnswer" type="submit">Submit Answer</button>
                                         <button class="btn btn-danger" id="cancelAnswer" type="button" ng-click="cancel_assignment(@assignmentId)">Cancel</button>
                                     </span>
+
                                 </form>
                             </div>
                             <br>
-
-                            ---------------------------------------------------------------------
-
-                            <ul style="padding: 20px">
-                                <li><span>Separate values with a "," without extra spaces!<br>The search is case sensitive</span><br></li>
-                            </ul>
-
-                            <div class="input-group">
-                                <input type="text" id="csvTerms" class="form-control" placeholder="Highlight...">
-                                <span class="input-group-btn">
-                                    <button id="compute" onclick="highlight();" class="btn btn-default" type="button" style="margin-right: 20px;">Go!</button>
-                                </span>
-                            </div><!-- /input-group -->
-
-
-                            <ul style="padding: 20px">
-                                <li>
-                                    <span>Jump to: <i>document.getElementsByClassName('textLayer')[0].childNodes[35]</i> element. (Page1 - INTRODUCTION div)</span>
-                                    <button class="btn btn-info" id="jump" onclick="jumpToParagraph();">Jump to a paragraph</button>
-                                </li>
-                            </ul>
 
                         </td>
 

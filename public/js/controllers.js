@@ -94,8 +94,23 @@ myApp.controller('ViewerCtrl', function($scope, $http, $timeout){
 
     $scope.possible_answers = [];
     $scope.set_possible_answers = function(possibilities){
-        possibilities = possibilities.split("$$");
+        var possibilities = possibilities.split("$$");
         $scope.possible_answers = possibilities;
+    };
+
+    $scope.dom_children = [];
+    $scope.getDsToRefine = function(possibilities){
+        var dss = possibilities.split("$$");
+        if(dss==""){
+            $scope.dom_children = [];
+        } else {
+            $scope.dom_children = dss;
+        }
+    };
+
+    $scope.removeElementDS = function(ds) {
+        $scope.dom_children.splice($scope.dom_children.indexOf(ds), 1);
+        disableBorders(ds[1]);
     };
 
     $scope.counter_sec = 600;

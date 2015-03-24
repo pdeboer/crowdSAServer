@@ -89,6 +89,10 @@ object Answer extends Controller {
       println("Found question type discovery")
       try {
         val keys = request.body.asFormUrlEncoded.keySet//get("dom_children").get.head
+        println("***")
+        println(keys)
+        println("***")
+
         for(k <- keys){
           if(k.startsWith("dom_children")){
             answer = request.body.asFormUrlEncoded.get(k).get.mkString("#")//TODO: before ,
