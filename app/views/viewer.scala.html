@@ -85,6 +85,7 @@
                                             <p><b>Extract the dataset by clicking on it once found in the paper.</b></p>
                                             <div id="datasetChildren" >
                                                 <ul class="list-group" style="padding: 20px" ng-init="getDsToRefine('@(question.possible_answers.get)');">
+                                                    <div ng-if="dom_children.length == 0">No dataset defined yet</div>
                                                     <li class="list-group-item" ng-repeat="ds in dom_children" >
                                                             <span class="badge">
                                                                 <span class="glyphicon glyphicon-trash" ng-click="removeElementDS(ds)" aria-hidden="true"></span>
