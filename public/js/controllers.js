@@ -100,11 +100,13 @@ myApp.controller('ViewerCtrl', function($scope, $http, $timeout){
 
     $scope.dom_children = [];
     $scope.getDsToRefine = function(possibilities){
-        var dss = possibilities.split("$$");
+        var dss = possibilities.split("#");
         if(dss==""){
             $scope.dom_children = [];
         } else {
-            $scope.dom_children = dss;
+            dss.forEach(function(a) {
+                $scope.dom_children.push([a, "undefined"]);
+            });
         }
     };
 

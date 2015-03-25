@@ -73,7 +73,7 @@ CREATE TABLE assignments (
 
 CREATE TABLE answers (
   id             BIGINT PRIMARY KEY NOT NULL auto_increment,
-  answer         VARCHAR(255),
+  answer         VARCHAR(2000),
   created_at     BIGINT             NOT NULL,
   accepted       BIT                NULL,
   bonus_cts      INT                NULL,
