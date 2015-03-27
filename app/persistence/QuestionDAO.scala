@@ -85,10 +85,11 @@ object QuestionDAO {
 
   def getAllEnabled(turkerId: String): List[Question] = {
     val teamId = Turkers2TeamsDAO.findSingleTeamByTurkerId(turkerId).id.get.toString
+    println("GETTING ALL ENABLED FOR TEAM ID: " + teamId)
     DB.withConnection { implicit c =>
       SQL("SELECT * FROM questions AS q WHERE disabled=false AND " +
-        "NOT EXISTS (SELECT * FROM assignments WHERE ( expiration_time_sec > UNIX_TIMESTAMP() OR teams_id = {teamId}) AND questions_id = q.id)" +
-        "AND (SELECT COUNT(*) FROM assignments WHERE questions_id = q.id) < maximal_assignments")
+        "NOT EXISTS (SELECT * FROM assignments WHERE ( expiration_time_sec < UNIX_TIMESTAMP() OR teams_id = {teamId}) AND questions_id = q.id)" +
+        "AND (SELECT COUNT(*) FROM assignments WHERE questions_id = q.id) < q.maximal_assignments")
         .on('teamId -> teamId.toString)
         .as(questionParser *)
     }
@@ -98,8 +99,8 @@ object QuestionDAO {
     val teamId = Turkers2TeamsDAO.findSingleTeamByTurkerId(turkerId).id.get.toString
     DB.withConnection { implicit c =>
       SQL("SELECT * FROM questions AS q WHERE papers_id = {paperId} AND disabled=false AND " +
-        "NOT EXISTS (SELECT * FROM assignments WHERE ( expiration_time_sec > UNIX_TIMESTAMP() OR teams_id = {teamId}) AND questions_id = q.id) " +
-        "AND (SELECT COUNT(*) FROM assignments WHERE questions_id = q.id) < maximal_assignments GROUP BY RAND() LIMIT 1")
+        "NOT EXISTS (SELECT * FROM assignments WHERE ( expiration_time_sec < UNIX_TIMESTAMP() OR teams_id = {teamId}) AND questions_id = q.id) " +
+        "AND (SELECT COUNT(*) FROM assignments WHERE questions_id = q.id) < q.maximal_assignments GROUP BY RAND() LIMIT 1")
         .on('paperId -> paperId,
         'teamId -> teamId)
         .as(questionParser.single).id.get
@@ -110,10 +111,10 @@ object QuestionDAO {
   : String): Long = {
     val teamId = Turkers2TeamsDAO.findSingleTeamByTurkerId(turkerId).id.get.toString
     DB.withConnection { implicit c =>
-      SQL("SELECT * FROM questions AS q WHERE question_type" +
-        " = {question_type" +
-        "} AND NOT EXISTS (SELECT * FROM assignments WHERE ( expiration_time_sec > UNIX_TIMESTAMP() or teams_id = {teamId}) AND questions_id = q.id) AND disabled=false AND " +
-        "(SELECT COUNT(*) FROM assignments WHERE questions_id = q.id) < maximal_assignments GROUP BY RAND() LIMIT 1")
+      SQL("SELECT * FROM questions AS q WHERE " +
+        "question_type = {question_type} AND NOT EXISTS " +
+        "(SELECT * FROM assignments WHERE ( expiration_time_sec < UNIX_TIMESTAMP() or teams_id = {teamId}) AND questions_id = q.id) AND disabled=false AND " +
+        "(SELECT COUNT(*) FROM assignments WHERE questions_id = q.id) < q.maximal_assignments GROUP BY RAND() LIMIT 1")
         .on('question_type
         -> question_type
           ,
@@ -200,7 +201,13 @@ object QuestionDAO {
   def getQuestionsByPaperId(turker_id: String, paper_id: Long) = {
     val teamId = Turkers2TeamsDAO.findSingleTeamByTurkerId(turker_id).id.get.toString
     DB.withConnection { implicit c =>
-      SQL("SELECT * FROM questions AS q WHERE papers_id = {paper_id} AND disabled=false AND NOT EXISTS (SELECT * FROM assignments WHERE ( expiration_time_sec > UNIX_TIMESTAMP() or teams_id = {teamId}) AND questions_id = q.id) AND IF(maximal_assignments IS NULL, TRUE, (SELECT COUNT(*) FROM assignments WHERE questions_id = q.id) < maximal_assignments)").on('paper_id -> paper_id, 'teamId -> teamId).as(questionParser*)
+      SQL("SELECT * FROM questions AS q WHERE papers_id = {paper_id} " +
+        "AND disabled=false AND NOT EXISTS (SELECT * FROM assignments WHERE" +
+        " ( expiration_time_sec < UNIX_TIMESTAMP() OR teams_id = {teamId}) AND" +
+        " questions_id = q.id) AND IF(maximal_assignments IS NULL, TRUE, " +
+        "(SELECT COUNT(*) FROM assignments WHERE questions_id = q.id) < q.maximal_assignments)")
+        .on('paper_id -> paper_id, 'teamId -> teamId)
+        .as(questionParser*)
     }
   }
 

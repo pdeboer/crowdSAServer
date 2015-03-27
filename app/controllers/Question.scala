@@ -31,7 +31,7 @@ object Question extends Controller {
       val reward_cts = request.body.asFormUrlEncoded.get("reward_cts").get.head.toInt
       val created_at = request.body.asFormUrlEncoded.get("created_at").get.head.toLong
       val papers_id = request.body.asFormUrlEncoded.get("papers_id").get.head.toLong
-      val expiration_time_sec = request.body.asFormUrlEncoded.get("expiration_time_sec").get.headOption.getOrElse(null).toInt
+      val expiration_time_sec = request.body.asFormUrlEncoded.get("expiration_time_sec").get.headOption.getOrElse(null).toLong
       val maximal_assignments = request.body.asFormUrlEncoded.get("maximal_assignments").get.headOption.getOrElse(null).toInt
       val possible_answers = request.body.asFormUrlEncoded.get("possible_answers").get.head
 

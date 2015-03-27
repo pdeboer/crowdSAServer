@@ -25,7 +25,7 @@ object Waiting extends Controller{
         case 3 => Ok(views.html.waiting_3(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), flash))
         case 4 => Ok(views.html.waiting_4(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), flash))
         case 5 => Ok(views.html.waiting_5(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), flash))
-        case _ => Ok("LayoutMode is not yes defined")
+        case _ => Ok("LayoutMode is not yet defined")
       }
       return mode
     } catch {

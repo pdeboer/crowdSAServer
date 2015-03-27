@@ -23,12 +23,11 @@ myApp.controller('QuestionCtrl', function($scope, $http){
         $scope.question = "";
         $http.get("/waiting/getQuestion")
             .success(function(data) {
-                //TODO: pause the game
+
                 // From now on the turker has 1 minute time to accept the assignment or reject it
                 if (window.confirm('A question is ready for you! Do you want to answer it?'))
                 {
                     // Accepted
-                    //TODO: Extend the assignment
                     window.location = '/viewer/' + data;
                     $scope.question = "The question is loading! Please wait a moment.";
                 }

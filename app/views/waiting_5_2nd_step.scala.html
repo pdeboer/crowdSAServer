@@ -27,24 +27,40 @@
                     }
                     <br>
                     <div class="row">
-                        <div class="col-sm-6">
+                        <div class="col-sm-8">
                             <div>
                                 You selected the paper:<br>
-                                <b>@paper.pdf_title</b> <br>
-                                You can now choose a question type from the list below.
+                                <b>@paper.pdf_title</b>
+                                    <br><br>
+                                You can now choose a question type from the list below.<br>
+                                We recommend to <b>read the abstract</b> of the paper before choosing to answer the questions below.<br>
+                                There are 3 kind of questions: Discovery, Boolean and Voting.<br>
+                                <ul>
+                                    <li>
+                                        In the Discovery questions you will be asked to identify the corresponding dataset of a statistical method.
+                                    </li>
+                                    <li>
+                                        In the Boolean questions you will be asked to check if a dataset is tested for specific assumptions like: Normality, Linearity and others.
+                                    </li>
+                                    <li>
+                                        In the Voting questions you will be asked to select from a list of answers the one you think is the correct one.
+                                    </li>
+                                </ul>
+                                <br>
+
                             </div>
                         </div>
-                        <div class="col-sm-6">
-                            <button class="btn btn-primary" onclick="window.location.href = '/waiting';">Change Paper</button>
-                            <button class="btn btn-primary" data-toggle="modal" data-target="#myModal">Preview full paper</button>
+                        <div class="col-sm-4">
+                            <button class="btn btn-warning" onclick="window.location.href = '/waiting';">Change Paper</button>
+                            <button class="btn btn-primary" data-toggle="modal" data-target="#myModal">Preview paper</button>
                         </div>
                     </div>
-                        <h2>Available Questions:</h2>
+                        <h3>Available Questions:</h3>
                         Filter questions:
                         <input ng-model="input" autofocus>
 
                     <h3 ng-if="questions.length == 0" style="color: red;">There are no available questions right now!</h3>
-                    <table class="table table-hover" ng-if="questions.length > 0">
+                    <table class="table table-hover" ng-if="questions.length > 0" style="cursor:pointer">
                         <thead>
                             <tr>
                                 <th>#</th>

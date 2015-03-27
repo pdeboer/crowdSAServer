@@ -46,16 +46,18 @@
                                     if( a[0] == txt){
                                         found = true;
                                     }
-                                })
+                                });
                                 if(!found) {
                                     scope.dom_children.push([txt, elem]);
-                                    elem.style.border = "3px solid #FF0000";
+                                    elem.style.backgroundColor = "#FF0000";
+                                    elem.style.opacity = 0.9;
                                 }
                             });
                         }
 
                         function disableBorders(elem){
-                            elem.style.border = "0px";
+                            elem.style.backgroundColor = "";
+                            elem.style.opacity = 1;
                         }
                     </script>
                     <tr>

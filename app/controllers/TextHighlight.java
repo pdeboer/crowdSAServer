@@ -21,6 +21,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.graphics.PDExtendedGraphicsState;
 import org.apache.pdfbox.util.Matrix;
 import org.apache.pdfbox.util.PDFTextStripper;
 import org.apache.pdfbox.util.TextPosition;
@@ -287,7 +288,9 @@ public class TextHighlight extends PDFTextStripper
 
                 if (textBoundingBoxes.size() > 0)
                 {
+                    contentStream.setNonStrokingColor(Color.RED);
                     contentStream.setStrokingColor(Color.RED);
+
                     float[] arrX = new float[]{
                             textBoundingBoxes.get(0).getUpperRightX(), textBoundingBoxes.get(0).getUpperRightX(),
                             textBoundingBoxes.get(0).getLowerLeftX(), textBoundingBoxes.get(0).getLowerLeftX(),
@@ -299,6 +302,8 @@ public class TextHighlight extends PDFTextStripper
 
                     contentStream.drawPolygon(arrX, arrY);
                     contentStream.fillPolygon(new float[]{1.0f, 1.0f}, new float[]{1.0f, 1.0f});
+                    //contentStream.fillPolygon(arrX, arrY);
+                    //contentStream.fillRect(1.0f, 1.0f, 1.0f, 4.0f);
                 }
             }
             contentStream.close();

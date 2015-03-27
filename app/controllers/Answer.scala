@@ -3,8 +3,10 @@ package controllers
 import java.util.Date
 
 import anorm.NotAssigned
+import controllers.Viewer._
 import models.Answer
-import persistence.{AnswerDAO, AssignmentDAO}
+import persistence.{PaperDAO, AnswerDAO, AssignmentDAO}
+import play.api.Logger
 import play.api.libs.json.Json
 import play.api.mvc.{Action, Controller}
 
@@ -54,61 +56,75 @@ object Answer extends Controller {
    * @return
    */
   def addAnswer = Action(parse.multipartFormData) { implicit request =>
-    println("Storing answer")
+    Logger.debug("Storing answer")
     val question_type = request.body.asFormUrlEncoded.get("question_type").get.head
     val assignments_id = request.body.asFormUrlEncoded.get("assignments_id").get.head.toLong
 
-    var answer = ""
-    if (question_type.equalsIgnoreCase("Boolean")) {
-      println("Found question type boolean")
-      try {
-        val answerElem = request.body.asFormUrlEncoded.get("answer").get.head
-        if(answerElem.equalsIgnoreCase("YES")){
-          answer = "true"
-        } else {
-          answer = "false"
-        }
-      } catch {
-        case e: Exception => {
-          println("No answer is given for the Boolean question")
-          answer = ""
-        }
-      }
-    } else if(question_type.equalsIgnoreCase("Voting")){
-      println("Found question type voting")
-      try {
-        answer = request.body.asFormUrlEncoded.get("answer").get.mkString("$$")
-        println("Stored answer: " + answer)
-      } catch {
-        case e: Exception => {
-          println("Cannot get the answer from the checkboxes")
-          answer = ""
-        }
-      }
-    } else if(question_type.equalsIgnoreCase("Discovery")){
-      println("Found question type discovery")
-      try {
-        val keys = request.body.asFormUrlEncoded.keySet//get("dom_children").get.head
-
-        for(k <- keys){
-          if(k.startsWith("dom_children")){
-            answer = request.body.asFormUrlEncoded.get(k).get.mkString("#")//TODO: before ,
+    if (AnswerDAO.getByAssignmentId(assignments_id) != None) {
+      Logger.debug("Cannot store answer. User already answered this question!")
+      Redirect(routes.Waiting.waiting()).flashing(
+        "error" -> "You already answered the question."
+      )
+    }
+    else {
+      var answer = ""
+      if (question_type.equalsIgnoreCase("Boolean")) {
+        Logger.debug("Found question type boolean")
+        try {
+          val answerElem = request.body.asFormUrlEncoded.get("answer").get.head
+          if (answerElem.equalsIgnoreCase("YES")) {
+            answer = "true"
+          } else {
+            answer = "false"
+          }
+        } catch {
+          case e: Exception => {
+            Logger.error("No answer is given for the Boolean question")
+            answer = ""
           }
         }
-      } catch {
-        case e: Exception => {
-          println("Cannot get the answer from dom_children")
-          answer = ""
+      } else if (question_type.equalsIgnoreCase("Voting")) {
+        Logger.debug("Found question type voting")
+        try {
+          answer = request.body.asFormUrlEncoded.get("answer").get.mkString("$$")
+          Logger.debug("Stored answer: " + answer)
+        } catch {
+          case e: Exception => {
+            Logger.error("Cannot get the answer from the checkboxes")
+            answer = ""
+          }
+        }
+      } else if (question_type.equalsIgnoreCase("Discovery")) {
+        Logger.debug("Found question type discovery")
+        try {
+          val keys = request.body.asFormUrlEncoded.keySet //get("dom_children").get.head
+
+          for (k <- keys) {
+            if (k.startsWith("dom_children")) {
+              answer = request.body.asFormUrlEncoded.get(k).get.mkString("#") //TODO: before ,
+            }
+          }
+        } catch {
+          case e: Exception => {
+            Logger.error("Cannot get the answer from dom_children")
+            answer = ""
+          }
         }
       }
+
+      val answerId = AnswerDAO.add(new Answer(NotAssigned, answer, new Date().getTime / 1000, null, null, null, assignments_id))
+      Logger.debug("Answer stored with id: " + answerId)
+
+      if (answerId != -1) {
+        Redirect(routes.Waiting.secondStep(PaperDAO.findByAnswerId(answerId))).flashing(
+          "success" -> "Answer correctly stored."
+        )
+      } else {
+        Redirect(routes.Waiting.waiting()).flashing(
+          "error" -> "Error while storing the answer."
+        )
+      }
     }
-
-    val answerId = AnswerDAO.add(new Answer(NotAssigned, answer, new Date().getTime/1000, null, null, null, assignments_id))
-    println("Answer stored with id: " + answerId)
-
-    Redirect(routes.Waiting.waiting()).flashing(
-      "success" -> "Answer correctly stored."
-    )
   }
 
 }

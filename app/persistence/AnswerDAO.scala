@@ -49,15 +49,19 @@ object AnswerDAO {
   }
 
   def add(a: Answer): Long = {
-    val id: Option[Long] =
-      DB.withConnection { implicit c =>
-        SQL("INSERT INTO answers(answer, created_at, accepted, bonus_cts, rejected, assignments_id) VALUES ({answer}, {created_at}, NULL, NULL, NULL, {assignments_id})").on(
-          'answer -> a.answer,
-          'created_at -> a.created_at,
-          'assignments_id -> a.assignments_id
-        ).executeInsert()
-      }
-    id.get
+    try {
+      val id: Option[Long] =
+        DB.withConnection { implicit c =>
+          SQL("INSERT INTO answers(answer, created_at, accepted, bonus_cts, rejected, assignments_id) VALUES ({answer}, {created_at}, NULL, NULL, NULL, {assignments_id})").on(
+            'answer -> a.answer,
+            'created_at -> a.created_at,
+            'assignments_id -> a.assignments_id
+          ).executeInsert()
+        }
+      id.get
+    }catch{
+      case e: Exception => return -1
+    }
   }
 
   def getAll(): List[Answer] =
@@ -93,6 +97,21 @@ object AnswerDAO {
         res.toInt
       } catch {
         case e: Exception => return 0
+      }
+    }
+  }
+
+  def getByAssignmentId(assignment_id: Long): Option[Answer] = {
+    try {
+      DB.withConnection { implicit c =>
+        SQL("SELECT * FROM answers WHERE assignments_id = {assignments_id}")
+          .on('assignments_id -> assignment_id)
+          .as(answerParser.singleOpt)
+      }
+    }catch {
+      case e: Exception => {
+        e.printStackTrace()
+        None
       }
     }
   }

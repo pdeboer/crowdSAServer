@@ -27,9 +27,11 @@
                         <br>
                         <p>
                             Hello!<br>
-                            You can now choose a question from the list below.
+                            You can now choose a paper on which you want to work on.<br>
+                                Feel free to jump between different papers.<br>
+                                Once you click on a paper you will have the possibility to read further details about it.
                         </p>
-                        <h2>Available papers:</h2>
+                        <h3>Available papers:</h3>
                         Filter papers:
                         <input ng-model="input" autofocus>
                     </div>
@@ -38,7 +40,7 @@
                         <thead>
                             <tr>
                                 <th>#</th>
-                                <th>Paper Title</th>
+                                <th colspan="2">Paper Title</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -48,6 +50,9 @@
                                 </th>
                                 <td>
                                     {{ paper.pdf_title }}
+                                </td>
+                                <td align="right" style="cursor:pointer">
+                                    <span class="badge">Show details</span>
                                 </td>
                             </tr>
                         </tbody>
