@@ -38,7 +38,12 @@ object Viewer extends Controller{
             if (paper.highlight_enabled) {
               val highlights: mutable.MutableList[String] = new mutable.MutableList[String]
               HighlightDAO.filterByQuestionId(questionId).map(h => {
-                h.terms.split(",").map(f => highlights += f)
+                h.terms.split(",").map(f => {
+                  //Highlight only the words that contain more than 2 characters and are not empty spaces
+                  if(f != "" & f != " " && f.length > 2){
+                    highlights += f
+                  }
+                })
               })
 
               //val contentCsv = CSVParser.readCsv(request.session.get("toHighlight").getOrElse(""))

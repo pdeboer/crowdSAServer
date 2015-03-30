@@ -69,22 +69,25 @@
                                     <input type="hidden" id="assignments_id" name="assignments_id" value="@assignmentId">
                                     <input type="hidden" id="question_type" name="question_type" value="@question.question_type">
                                     @if(question.question_type.equalsIgnoreCase("Boolean")){
-                                        <div class="radio">
-                                            <label>
-                                                <input type="radio" name="answer" ng-model="answer" id="yes" value="yes">
-                                                Yes
-                                            </label>
-                                        </div>
-                                        <div class="radio">
-                                            <label>
-                                                <input type="radio" name="answer" ng-model="answer" id="no" value="no">
-                                                No
-                                            </label>
+                                        <div>
+                                            <p><b>Please select yes or no to answer the question.</b></p>
+                                            <div class="radio">
+                                                <label>
+                                                    <input type="radio" name="answer" ng-model="answer" id="yes" value="yes">
+                                                    Yes
+                                                </label>
+                                            </div>
+                                            <div class="radio">
+                                                <label>
+                                                    <input type="radio" name="answer" ng-model="answer" id="no" value="no">
+                                                    No
+                                                </label>
+                                            </div>
                                         </div>
                                     }
                                     @if(question.question_type.equalsIgnoreCase("Discovery")) {
                                         <div>
-                                            <p><b>Extract the dataset by clicking on it once found in the paper.</b></p>
+                                            <p><b>Extract the dataset information by clicking on the sentences that you think are part of the dataset.</b></p>
                                             <div id="datasetChildren" >
                                                 <ul class="list-group" style="padding: 20px" ng-init="getDsToRefine('@(question.possible_answers.get)');">
                                                     <div ng-if="dom_children.length == 0">No dataset defined yet</div>
@@ -100,10 +103,13 @@
                                         </div>
                                     }
                                     @if(question.question_type.equalsIgnoreCase("Voting")){
-                                        <div ng-init="set_possible_answers('@(question.possible_answers.get)');">
-                                            <div ng-repeat="ds in possible_answers">
-                                                <input type="radio" value="{{ds}}" ng-model="answer" name="answer">
-                                                {{ds}}
+                                        <div>
+                                            <p><b>Please choose only one answer out of the list below.</b></p>
+                                            <div ng-init="set_possible_answers('@(question.possible_answers.get)');">
+                                                <div ng-repeat="ds in possible_answers">
+                                                    <input type="radio" value="{{ds}}" ng-model="answer" name="answer">
+                                                    {{ds}}
+                                                </div>
                                             </div>
                                         </div>
                                         <br><br>
@@ -117,7 +123,6 @@
                                 </form>
                             </div>
                             <br>
-
                         </td>
 
                         <td>
@@ -499,30 +504,14 @@
                 }
             )
 
-            /* Convert CSV to JSON
-            var results;
-            Papa.parse ("http://localhost:9000/assets/csv/statTest.csv", {
-            download: true,
-            //worker: true,
-            complete: function(res) {
-            console.log("Remote file parsed! ", res.data.length);
-            results = res.data;
-            }
-            });
-            */
+            /*function jumpToFirstMatch() {
+                //Find page of match
+                var elements = $('div.textLayer div').filter(function() {
+                    return ( $(this).css('background-color') == '#FF0000' );
+                }).css('background-color', 'green');
 
-            function highlight(){
-                //TODO: highlight terms in pdf
-            //    var csv = document.getElementById('csvTerms');
-            //    if(csv.value != "") {
-            //        window.location = window.location ;
-            //    }
-            }
-
-            function jumpToParagraph() {
-                var elem = document.getElementsByClassName ( 'textLayer' )[ 0 ].childNodes[ 35 ] ;
-                scrollIntoView ( elem ) ;
-            }
+                scrollIntoView(elements[0]);
+            }*/
 
             </script>
 

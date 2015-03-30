@@ -4934,12 +4934,12 @@ var PDFViewerApplication = {
 
         var parameters = {password: password};
         if (typeof file === 'string') { // URL
-            this.setTitleUsingUrl(file);
+            this.setTitleUsingUrl("Solving Question");
             parameters.url = file;
         } else if (file && 'byteLength' in file) { // ArrayBuffer
             parameters.data = file;
         } else if (file.url && file.originalUrl) {
-            this.setTitleUsingUrl(file.originalUrl);
+            this.setTitleUsingUrl("Solving Question");
             parameters.url = file.url;
         }
         if (args) {
@@ -5430,7 +5430,7 @@ var PDFViewerApplication = {
             }
 
             if (pdfTitle) {
-                self.setTitle(pdfTitle + ' - ' + document.title);
+                self.setTitle("Solving Question");
             }
 
             if (info.IsAcroFormPresent) {
@@ -6407,7 +6407,7 @@ function webViewerInitialized() {
         // file:-scheme. Load the contents in the main thread because QtWebKit
         // cannot load file:-URLs in a Web Worker. file:-URLs are usually loaded
         // very quickly, so there is no need to set up progress event listeners.
-        PDFViewerApplication.setTitleUsingUrl(file);
+        PDFViewerApplication.setTitleUsingUrl("Solving question");
         var xhr = new XMLHttpRequest();
         xhr.onload = function() {
             PDFViewerApplication.open(new Uint8Array(xhr.response), 0);
@@ -6545,7 +6545,7 @@ window.addEventListener('change', function webViewerChange(evt) {
         fileReader.readAsArrayBuffer(file);
     }
 
-    PDFViewerApplication.setTitleUsingUrl(file.name);
+    PDFViewerApplication.setTitleUsingUrl("Solving Question");
 
     // URL does not reflect proper document location - hiding some icons.
     document.getElementById('viewBookmark').setAttribute('hidden', 'true');
