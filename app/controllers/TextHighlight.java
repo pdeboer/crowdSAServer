@@ -261,7 +261,8 @@ public class TextHighlight extends PDFTextStripper
     public void highlight(final String pattern)
             throws IOException
     {
-        this.highlight(Pattern.compile(pattern));
+        //this.highlight(Pattern.compile("\\b"+pattern+"\\b", Pattern.CASE_INSENSITIVE));
+        this.highlight(Pattern.compile(pattern, Pattern.CASE_INSENSITIVE));
     }
 
     public void highlight(final Pattern pattern)
