@@ -2,17 +2,25 @@
  * Created by Mattia on 23.01.2015.
  */
 
-myApp.controller('QuestionCtrl', function($scope, $http){
+myApp.controller('QuestionCtrl', ['$scope', '$interval', '$http',
+    function($scope, $interval, $http){
     $scope.questions = [];
 
-    $scope.getQuestions = function(paper_id){
-        $http.get("/questions/"+paper_id)
-            .success(function(data){
+    $scope.paper_id = -1;
+
+    $scope.getQuestions = function(){
+        console.log("Get available questions");
+        $http.get("/questions/" + $scope.paper_id)
+            .success(function (data) {
                 $scope.questions = data;
             })
-            .error(function(data) {
-               console.error("Error: Cannot get the questions related to paper " + paper_id);
+            .error(function (data) {
+                console.error("Error: Cannot get the questions related to paper " + paper_id);
             });
+    };
+
+    $scope.startIntervalGet = function (){
+        $interval(function() { $scope.getQuestions(); }, 10000)
     };
 
     $scope.getQuestion = function() {
@@ -57,7 +65,7 @@ myApp.controller('QuestionCtrl', function($scope, $http){
                console.error("Error: " + data);
             });
     }
-});
+}]);
 
 myApp.controller('PapersCtrl', function ($scope, $http) {
     $scope.papers =[ ] ;

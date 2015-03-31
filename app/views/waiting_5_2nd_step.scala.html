@@ -12,7 +12,7 @@
 
         <tr>
             <td>
-                <div class="container" ng-controller="QuestionCtrl" ng-init="getQuestions(@paper.id)">
+                <div class="container" ng-controller="QuestionCtrl" ng-model="paper_id" ng-init="paper_id=@paper.id;getQuestions();">
                     @if(flash.get("success")) {
                         <div class="alert alert-success" role="alert">
                             <strong>Well Done!</strong>
@@ -55,7 +55,7 @@
                             <button class="btn btn-primary" data-toggle="modal" data-target="#myModal">Preview paper</button>
                         </div>
                     </div>
-                        <h3>Available Questions:</h3>
+                        <h3 ng-init="startIntervalGet();">Available Questions:</h3>
                         Filter questions:
                         <input ng-model="input" autofocus>
 
