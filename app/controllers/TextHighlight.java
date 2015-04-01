@@ -19,6 +19,7 @@ package controllers;
 import org.apache.pdfbox.cos.COSDocument;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDResources;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.graphics.PDExtendedGraphicsState;
@@ -29,10 +30,8 @@ import org.apache.pdfbox.util.TextPosition;
 import java.awt.*;
 import java.io.IOException;
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -241,7 +240,7 @@ public class TextHighlight extends PDFTextStripper
      */
     public void highlightDefault(final String pattern) throws IOException
     {
-        this.highlightDefault(Pattern.compile("\\Q"+pattern+"\\E", Pattern.CASE_INSENSITIVE));
+        this.highlightDefault(Pattern.compile("\\Q" + pattern + "\\E", Pattern.CASE_INSENSITIVE));
     }
 
     /**
@@ -262,7 +261,7 @@ public class TextHighlight extends PDFTextStripper
             throws IOException
     {
         //this.highlight(Pattern.compile("\\b"+pattern+"\\b", Pattern.CASE_INSENSITIVE));
-        this.highlight(Pattern.compile(pattern, Pattern.CASE_INSENSITIVE));
+        this.highlight(Pattern.compile("\\b("+pattern+")\\b", Pattern.CASE_INSENSITIVE));
     }
 
     public void highlight(final Pattern pattern)
@@ -281,30 +280,29 @@ public class TextHighlight extends PDFTextStripper
             final PDPage page = pages.get(pageIndex);
             PDPageContentStream contentStream = new PDPageContentStream(document, page, true, true);
 
+            PDExtendedGraphicsState graphicsState = new PDExtendedGraphicsState();
+            graphicsState.setNonStrokingAlphaConstant(0.5f);
+            PDResources resources = page.findResources();
+            Map graphicsStateDictionary = resources.getGraphicsStates();
+            if (graphicsStateDictionary == null) {
+                // There is no graphics state dictionary in the resources dictionary, create one.
+                graphicsStateDictionary = new TreeMap();
+            }
+            graphicsStateDictionary.put("highlights", graphicsState);
+            resources.setGraphicsStates(graphicsStateDictionary);
+
             final List<Match> matches = textCache.match(pageIndex + 1, pattern);
 
             for (final Match match : matches)
             {
                 final List<PDRectangle> textBoundingBoxes = getTextBoundingBoxes(match.positions);
 
-                if (textBoundingBoxes.size() > 0)
-                {
-                    contentStream.setNonStrokingColor(Color.RED);
-                    contentStream.setStrokingColor(Color.RED);
+                if (textBoundingBoxes.size() > 0) {
+                    contentStream.appendRawCommands("/highlights gs\n");
+                    contentStream.setNonStrokingColor(Color.yellow);
 
-                    float[] arrX = new float[]{
-                            textBoundingBoxes.get(0).getUpperRightX(), textBoundingBoxes.get(0).getUpperRightX(),
-                            textBoundingBoxes.get(0).getLowerLeftX(), textBoundingBoxes.get(0).getLowerLeftX(),
-                    };
-                    float[] arrY = new float[]{
-                            textBoundingBoxes.get(0).getUpperRightY(), textBoundingBoxes.get(0).getLowerLeftY(),
-                            textBoundingBoxes.get(0).getLowerLeftY(), textBoundingBoxes.get(0).getUpperRightY(),
-                    };
+                    contentStream.fillRect(textBoundingBoxes.get(0).getLowerLeftX(), textBoundingBoxes.get(0).getLowerLeftY(), 40, 10);
 
-                    contentStream.drawPolygon(arrX, arrY);
-                    contentStream.fillPolygon(new float[]{1.0f, 1.0f}, new float[]{1.0f, 1.0f});
-                    //contentStream.fillPolygon(arrX, arrY);
-                    //contentStream.fillRect(1.0f, 1.0f, 1.0f, 4.0f);
                 }
             }
             contentStream.close();
