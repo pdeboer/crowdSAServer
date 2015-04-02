@@ -114,31 +114,6 @@ INSERT INTO turkers (id, turker_id, email, login_time, username, password, layou
 INSERT INTO teams (id, created_at, name) VALUES (1, 1421183695324, "as$$$0534SD342£$fsw445345rfsfwe");
 INSERT INTO turkers2teams (id, turkers_id, teams_id) VALUES (1, 1, 1);
 
-INSERT INTO papers (id, pdf_path, pdf_title, created_at, highlight_enabled) VALUES (1, "/pdfs/test.pdf",
-                                                                                    "Let’s Do It at My Place Instead? Attitudinal and Behavioral Study of Privacy in Client-Side Personalization",
-                                                                                    1421182061982, 1);
-
-INSERT INTO questions (id, question, question_type, reward_cts, created_at, disabled, expiration_time_sec, maximal_assignments, papers_id, possible_answers)
-VALUES
-  (1, "Is the D'Agostino's K-squared test used to test the normality assumption?", "Boolean", 100, 1421182063982, FALSE,
-   NULL, NULL, 1, NULL);
-INSERT INTO questions (id, question, question_type, reward_cts, created_at, disabled, expiration_time_Sec, maximal_assignments, papers_id, possible_answers)
-VALUES
-  (2, "Is the Jarque–Bera test used to test the normality?", "Discovery", 250, 1421182064982, FALSE, NULL, NULL, 1, NULL);
-
-INSERT INTO highlights (id, assumption, terms, questions_id)
-VALUES (1, "Normality", "D’Agostino’s K-squared,D’Agostino’s K2,D’Agostino’s K test,kurtosis,skewness", 1);
-INSERT INTO highlights (id, assumption, terms, questions_id) VALUES (2, "Normality", "Jarque–Bera,JB test", 2);
-
-INSERT INTO datasets (id, statistical_method, dom_children, name, url)
-VALUES (1, "MANOVA", "200,210", "Participants", NULL);
-INSERT INTO datasets (id, statistical_method, dom_children, name, url)
-VALUES (2, "ANOVA", "123,125", "Frog study", "www.google.com/search?q=frog+study");
-
-INSERT INTO datasets2papers (id, datasets_id, papers_id) VALUES (1, 1, 1);
-INSERT INTO datasets2papers (id, datasets_id, papers_id) VALUES (2, 2, 1);
-
-
 # --- !Downs
 
 DROP TABLE turkers2teams;
