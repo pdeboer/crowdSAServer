@@ -64,13 +64,17 @@
                         <td style="width: 30%; vertical-align: top; text-align: left;">
 
                             <div>
-                                <h3>"@question.question"</h3>
+                                <h2>@Html(question.question)</h2>
                                 <form action="/answer/add" method="POST" accept-charset="utf-8" enctype="multipart/form-data" ng-submit="submit(@question.question_type)">
                                     <input type="hidden" id="assignments_id" name="assignments_id" value="@assignmentId">
                                     <input type="hidden" id="question_type" name="question_type" value="@question.question_type">
                                     @if(question.question_type.equalsIgnoreCase("Boolean")){
                                         <div>
-                                            <p><b>Please select yes or no to answer the question.</b></p>
+                                            <b><div style="font-size: 120%;display: inline-block;">
+                                                Please select <div style="font-size: 130%;display: inline-block;">YES</div> or <div style="font-size: 130%;display: inline-block;">NO</div> to answer the question.
+                                            </div></b>
+                                            <b>
+                                            <h2>
                                             <div class="radio">
                                                 <label>
                                                     <input type="radio" name="answer" ng-model="answer" id="yes" value="yes">
@@ -83,11 +87,16 @@
                                                     No
                                                 </label>
                                             </div>
+                                            </h2>
+                                            </b>
                                         </div>
                                     }
                                     @if(question.question_type.equalsIgnoreCase("Discovery")) {
                                         <div>
-                                            <p><b>Extract the dataset information by clicking on the sentences that you think are part of the dataset.</b></p>
+                                            <div style="font-size: 120%;display: inline-block;"><b>
+                                                Please click on all lines in the paper on the right hand side that include information
+                                                about the dataset that was used for the method shown above.
+                                            </b></div>
                                             <div id="datasetChildren" >
                                                 <ul class="list-group" style="padding: 20px" ng-init="getDsToRefine('@(question.possible_answers.get)');">
                                                     <div ng-if="dom_children.length == 0">No dataset defined yet</div>
@@ -104,7 +113,9 @@
                                     }
                                     @if(question.question_type.equalsIgnoreCase("Voting")){
                                         <div>
-                                            <p><b>Please choose only one answer out of the list below.</b></p>
+                                            <div style="font-size: 120%;display: inline-block;"><b>
+                                                Please select the answer you think best represent the question above.
+                                            </b></div>
                                             <div ng-init="set_possible_answers('@(question.possible_answers.get)');">
                                                 <div ng-repeat="ds in possible_answers">
                                                     <input type="radio" value="{{ds}}" ng-model="answer" name="answer">

@@ -96,7 +96,8 @@ CREATE TABLE turkers (
   login_time  BIGINT             NOT NULL,
   username    VARCHAR(100)       NOT NULL UNIQUE,
   password    VARCHAR(100)       NOT NULL,
-  layout_mode INT                NULL
+  layout_mode INT                NULL,
+  feedback    VARCHAR(10000)     NULL
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8;
 
 CREATE TABLE turkers2teams (

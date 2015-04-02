@@ -57,7 +57,6 @@ object QualificationDAO {
     team
   }
 
-
    def add(questionId: Long, teamId: Long): Long = {
      val id: Option[Long] =
        DB.withConnection { implicit c =>

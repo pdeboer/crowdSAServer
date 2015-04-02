@@ -46,7 +46,7 @@ object Login extends Controller {
           val layoutMode = config.getInt("layoutMode")
 
           val turkerId = request.body.asFormUrlEncoded.get("turkerId")(0)
-          val turker = new Turker(NotAssigned, turkerId, Some(email), (new Date()).getTime/1000, username, password1, layoutMode)
+          val turker = new Turker(NotAssigned, turkerId, Some(email), (new Date()).getTime/1000, username, password1, layoutMode, null)
           val newTurkerId = TurkerDAO.create(turker)
           try {
             val id = newTurkerId.get

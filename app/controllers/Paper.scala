@@ -62,7 +62,7 @@ object Paper extends Controller {
     request.session.get("turkerId").map {
       turkerId =>
         try {
-          Ok(Json.toJson(PaperDAO.getAll()))
+          Ok(Json.toJson(PaperDAO.getAll(turkerId)))
         }catch{
           case e:Exception => {InternalServerError("Cannot get all the papers.")}
         }

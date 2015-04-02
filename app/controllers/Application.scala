@@ -1,10 +1,11 @@
 package controllers
 
 import persistence._
+import play.api.Logger
 import play.api.mvc._
 
 
-object Application extends Controller {
+object Application extends Controller{
 
   def index = Action { implicit request =>
     val session = request.session
@@ -37,5 +38,18 @@ object Application extends Controller {
     }
   }
 
+  //POST - update turker's feedback
+  def updateFeedback =  Action { implicit request =>
+    Logger.debug("Updating feedback")
+    request.session.get("turkerId").map {
+      turkerId =>
+        val turk = TurkerDAO.findByTurkerId(turkerId).getOrElse(null)
+        TurkerDAO.updateFeedback(turk.id.get, request.body.asJson.get.\\("feedback").head.toString())
+        Logger.debug("Feedback updated")
+        Ok("Feedback successfully updated")
+    }.getOrElse {
+      Redirect(routes.Application.index())
+    }
+  }
 
 }

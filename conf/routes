@@ -30,6 +30,9 @@ POST        /extendexpiration                              controllers.Question.
 # Highlight
 POST        /highlight                                     controllers.Question.addHighlight
 
+# Qualification
+POST        /qualification                                 controllers.Qualification.addQualification
+
 # Waiting
 GET         /waiting                                       controllers.Waiting.waiting
 GET         /waiting/secondStep/:paper_id                  controllers.Waiting.secondStep(paper_id: Long)
@@ -51,6 +54,9 @@ GET         /assignmentbyanswerid/:ansId                   controllers.Assignmen
 
 # Account
 GET         /account                                       controllers.Application.account
+
+# Feedback
+POST        /feedback                                      controllers.Application.updateFeedback
 
 # Teams
 GET         /teams                                         controllers.Application.teams

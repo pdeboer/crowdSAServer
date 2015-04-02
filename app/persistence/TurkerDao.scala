@@ -23,8 +23,9 @@ object TurkerDAO {
   get[Long]("login_time") ~
   get[String]("username") ~
   get[String]("password") ~
-  get[Int]("layout_mode") map {
-    case id ~turker_id ~email ~login_time ~username ~password ~layout_mode => Turker(id, turker_id, email, login_time, username, password, layout_mode)
+  get[Int]("layout_mode") ~
+  get[Option[String]]("feedback") map {
+    case id ~turker_id ~email ~login_time ~username ~password ~layout_mode ~feedback => Turker(id, turker_id, email, login_time, username, password, layout_mode, feedback)
   }
 
   def authenticate(username: String, password: String): String = {
@@ -168,8 +169,8 @@ object TurkerDAO {
         val teams_id = Turkers2TeamsDAO.findSingleTeamByTurkerId(turker_id).id.get
         try {
           val rank = SQL("SELECT rank FROM (SELECT teams_id, totAccepted, CASE WHEN @prevRank = totAccepted THEN @curRank WHEN @prevRank := totAccepted THEN @curRank := @curRank + 1 END AS rank FROM (SELECT ass.teams_id as teams_id, COUNT(*) as totAccepted FROM answers as a, assignments as ass where a.accepted = true and a.assignments_id = ass.id GROUP BY ass.teams_id) p, (SELECT @curRank :=0, @prevRank := NULL) r ORDER BY totAccepted DESC) rankings WHERE teams_id = {teams_id}")
-          .on('teams_id -> teams_id)
-          .apply().head
+            .on('teams_id -> teams_id)
+            .apply().head
 
           val res = rank[String]("rank")
           res.toInt
@@ -181,5 +182,14 @@ object TurkerDAO {
 
     }
   }
+
+  def updateFeedback(id: Long, feedback: String): Unit = {
+    DB.withConnection {
+      implicit c =>
+        SQL("UPDATE turkers SET feedback= {feedback} WHERE id={id}")
+          .on("feedback" -> feedback, "id" -> id).executeUpdate()
+    }
+  }
+
 }
 

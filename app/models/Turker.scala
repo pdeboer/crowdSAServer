@@ -9,7 +9,7 @@ import persistence.{AnswerDAO, QuestionDAO, TurkerDAO}
  * Created by Mattia on 22.12.2014.
  */
 
-case class Turker(id: Pk[Long], turker_id: String, email: Option[String], login_time: Long, username: String, password: String, layout_mode: Int)
+case class Turker(id: Pk[Long], turker_id: String, email: Option[String], login_time: Long, username: String, password: String, layout_mode: Int, feedback: Option[String])
 
 object Turker{
   def getRank(t: Turker): String ={

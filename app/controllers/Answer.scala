@@ -117,7 +117,7 @@ object Answer extends Controller {
 
       if (answerId != -1) {
         Redirect(routes.Waiting.secondStep(PaperDAO.findByAnswerId(answerId))).flashing(
-          "success" -> "Answer correctly stored."
+          "success" -> "Your answer has been stored and will be evaluated by other crowd workers."
         )
       } else {
         Redirect(routes.Waiting.waiting()).flashing(

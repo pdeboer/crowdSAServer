@@ -32,14 +32,16 @@
                         </p>
                         <h3>Available papers:</h3>
                         Filter papers:
-                        <input ng-model="input" autofocus>
+                        <input style="display:none;" ng-model="input" autofocus>
                     </div>
                     <h3 ng-if="papers.length == 0" style="color: red;">There are no available papers right now!</h3>
                     <table class="table table-hover" ng-if="papers.length > 0">
                         <thead>
                             <tr>
                                 <th>#</th>
-                                <th colspan="2">Paper Title</th>
+                                <th>Paper Title</th>
+                                <th>Available questions</th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -50,12 +52,25 @@
                                 <td>
                                     {{ paper.pdf_title }}
                                 </td>
+                                <td align="center">
+                                    {{ paper.nQuestions }}
+                                </td>
                                 <td align="right" style="cursor:pointer">
                                     <span class="badge">Show details</span>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
+                    <br><br>
+                    <hr>
+                    <form>
+                        <blockquote class="blockquote-reverse">
+                        Your feedback is important to us, please write whatever you want to convey to us.<br>
+                            <textarea cols="60" style="resize:none;" rows="5" maxlength="10000" placeholder="Insert your feedback here..." ng-model="feedback" ng-init="feedback=@turker.feedback"></textarea>
+                        <br>
+                        <button class="btn btn-success" ng-click="storeFeedback(feedback);">Save</button>
+                            </blockquote>
+                    </form>
                 </div>
                 <br>
             </td>

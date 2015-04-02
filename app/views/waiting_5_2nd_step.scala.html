@@ -33,17 +33,17 @@
                                 <b>@paper.pdf_title</b>
                                     <br><br>
                                 You can now choose a question type from the list below.<br>
-                                We recommend to <b>read the abstract</b> of the paper before choosing to answer the questions below.<br>
-                                There are 3 kind of questions: Discovery, Boolean and Voting.<br>
+                                We recommend to <b>read the abstract</b> of the paper before choosing to answer the questions below by clicking the blue button "Preview Paper".<br>
+                                There are 3 kind of questions: general, yes/no and preference.<br>
                                 <ul>
                                     <li>
-                                        In the Discovery questions you will be asked to identify the corresponding dataset of a statistical method.
+                                        In the general question type you will be asked to identify the corresponding dataset of a statistical method.
                                     </li>
                                     <li>
-                                        In the Boolean questions you will be asked to check if a dataset is tested for specific assumptions like: Normality, Linearity and others.
+                                        In the yes/no question type you will be asked to check if a dataset is tested for specific assumptions like: Normality, Linearity and others.
                                     </li>
                                     <li>
-                                        In the Voting questions you will be asked to select from a list of answers the one you think is the correct one.
+                                        In the preference question type you will be asked to select from a list of answers the one you think is the correct one.
                                     </li>
                                 </ul>
                                 <br>
@@ -73,8 +73,14 @@
                                 <th>
                                     {{ question.id }}
                                 </th>
-                                <td>
-                                    {{ question.question_type }}
+                                <td ng-if="question.question_type == 'Discovery'">
+                                    General question
+                                </td>
+                                <td ng-if="question.question_type == 'Voting'">
+                                    Preference question
+                                </td>
+                                <td ng-if="question.question_type == 'Boolean'">
+                                    Yes/No question
                                 </td>
                                 <td>
                                     {{ question.reward }}

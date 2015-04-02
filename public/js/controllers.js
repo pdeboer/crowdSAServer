@@ -73,7 +73,19 @@ myApp.controller('PapersCtrl', function ($scope, $http) {
     $scope.getPapers = function ( ) {
         $http.get("/papers")
             .success ( function ( data, status ) {
-                $scope.papers = data ;
+                data.forEach(function(p){
+                    $http.get("/questions/" + p.id)
+                        .success(function(qq){
+                            data.forEach(function(d){
+                                if(d.id == p.id){
+                                    d["nQuestions"] = qq.length;
+                                }
+                            });
+                            $scope.papers = data;
+                        }).error(function(error){
+                            return 0;
+                        })
+                });
             } )
             .error ( function ( arg ) {
                 alert ( "error " ) ;
@@ -83,6 +95,15 @@ myApp.controller('PapersCtrl', function ($scope, $http) {
     //Init papers
     $scope.getPapers() ;
 
+    $scope.nOfAvailableQ = function (paperId) {
+        $http.get("/questions/" + paperId)
+            .success(function(data, status){
+                return data.length;
+            }).error(function(error){
+                return 0;
+            })
+    };
+
     $scope.second_step = function(paper_id){
         window.location.href = "/waiting/secondStep/"+paper_id;
     };
@@ -90,6 +111,17 @@ myApp.controller('PapersCtrl', function ($scope, $http) {
     $scope.setLocation = function(url) {
         window.location.href = url;
     };
+
+    $scope.storeFeedback = function(feedback){
+        $http.post("/feedback", {feedback: feedback})
+            .success(function(data){
+                alert("Thank you for sharing your opinion with us." +
+                "Your feedback was successfully updated.");
+            })
+            .error(function(error){
+                console.error("Cannot update feedback.");
+            });
+    }
 
 });
 

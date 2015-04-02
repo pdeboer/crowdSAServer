@@ -1,4 +1,4 @@
-conf/application.conf
+conf/*.conf
 logs
 project/project
 project/target

@@ -5,6 +5,7 @@ import java.util.Date
 import anorm._
 import anorm.SqlParser._
 import models.{Question, Paper}
+import play.api.Logger
 import play.api.db.DB
 import play.api.Play.current
 
@@ -85,11 +86,12 @@ object QuestionDAO {
 
   def getAllEnabled(turkerId: String): List[Question] = {
     val teamId = Turkers2TeamsDAO.findSingleTeamByTurkerId(turkerId).id.get.toString
-    println("GETTING ALL ENABLED FOR TEAM ID: " + teamId)
+    Logger.debug("GETTING ALL ENABLED FOR TEAM ID: " + teamId)
     DB.withConnection { implicit c =>
       SQL("SELECT * FROM questions AS q WHERE disabled=false AND " +
         "NOT EXISTS (SELECT * FROM assignments WHERE ( expiration_time_sec < UNIX_TIMESTAMP() OR teams_id = {teamId}) AND questions_id = q.id)" +
-        "AND (SELECT COUNT(*) FROM assignments WHERE questions_id = q.id) < q.maximal_assignments")
+        "AND (SELECT COUNT(*) FROM assignments WHERE questions_id = q.id) < q.maximal_assignments" +
+        "AND NOT EXISTS (SELECT * FROM qualifications WHERE teams_id={teamId} AND questions_id=q.id)")
         .on('teamId -> teamId.toString)
         .as(questionParser *)
     }
@@ -198,14 +200,16 @@ object QuestionDAO {
     }
   }
 
-  def getQuestionsByPaperId(turker_id: String, paper_id: Long) = {
+  def getQuestionsByPaperId(turker_id: String, paper_id: Long): List[Question] = {
     val teamId = Turkers2TeamsDAO.findSingleTeamByTurkerId(turker_id).id.get.toString
+    Logger.debug("Get all question for paper: " + paper_id)
     DB.withConnection { implicit c =>
       SQL("SELECT * FROM questions AS q WHERE papers_id = {paper_id} " +
         "AND disabled=false AND NOT EXISTS (SELECT * FROM assignments WHERE" +
         " ( expiration_time_sec < UNIX_TIMESTAMP() OR teams_id = {teamId}) AND" +
         " questions_id = q.id) AND IF(maximal_assignments IS NULL, TRUE, " +
-        "(SELECT COUNT(*) FROM assignments WHERE questions_id = q.id) < q.maximal_assignments)")
+        "(SELECT COUNT(*) FROM assignments WHERE questions_id = q.id) < q.maximal_assignments)"+
+        "AND NOT EXISTS (SELECT * FROM qualifications WHERE teams_id={teamId} AND questions_id=q.id)")
         .on('paper_id -> paper_id, 'teamId -> teamId)
         .as(questionParser*)
     }

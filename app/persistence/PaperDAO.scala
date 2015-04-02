@@ -7,6 +7,8 @@ import play.api.db.DB
 
 import play.api.Play.current
 
+import scala.collection.mutable
+
 /**
  * Created by Mattia on 08.01.2015.
  */
@@ -41,9 +43,16 @@ object PaperDAO {
     id.get
   }
 
-  def getAll(): List[Paper] =
+  def getAll(turkerId: String): List[Paper] =
     DB.withConnection { implicit c =>
-      SQL("SELECT * FROM papers").as(paperParser*).toList
+      val papers = SQL("SELECT * FROM papers").as(paperParser*)
+      val validPapers = new mutable.MutableList[Paper]
+      papers.foreach(p => {
+        if(QuestionDAO.getQuestionsByPaperId(turkerId, p.id.get).length > 0){
+          validPapers += p
+        }
+      })
+      validPapers.toList
     }
 
   def getRandomPaperId(): Long =
