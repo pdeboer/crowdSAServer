@@ -301,7 +301,7 @@ public class TextHighlight extends PDFTextStripper
                     contentStream.appendRawCommands("/highlights gs\n");
                     contentStream.setNonStrokingColor(Color.yellow);
 
-                    contentStream.fillRect(textBoundingBoxes.get(0).getLowerLeftX(), textBoundingBoxes.get(0).getLowerLeftY(), 40, 10);
+                    contentStream.fillRect(textBoundingBoxes.get(0).getLowerLeftX(), textBoundingBoxes.get(0).getLowerLeftY(), textBoundingBoxes.get(0).getUpperRightX()-textBoundingBoxes.get(0).getLowerLeftX(), 10);
 
                 }
             }

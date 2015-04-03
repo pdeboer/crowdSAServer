@@ -4,6 +4,7 @@ package controllers
 import anorm.NotAssigned
 import models.{Highlight, Question}
 import persistence._
+import play.api.Logger
 import play.api.libs.json.Json
 import play.api.mvc.{Action, Controller}
 
@@ -36,7 +37,7 @@ object Question extends Controller {
       val possible_answers = request.body.asFormUrlEncoded.get("possible_answers").get.head
 
       val ques = new Question(NotAssigned, question, question_type, reward_cts, created_at, false, Some(expiration_time_sec), Some(maximal_assignments), papers_id, Some(possible_answers))
-      println(ques.toString)
+      Logger.debug(ques.toString)
       val id = QuestionDAO.add(ques)
 
       Ok(id.toString)

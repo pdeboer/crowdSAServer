@@ -1,12 +1,12 @@
 package controllers
 
+import java.util.Date
+
 import anorm.NotAssigned
 import com.typesafe.config.ConfigFactory
-import java.util.Date
 import models.Assignment
 import org.apache.commons.codec.binary.Base64
 import persistence._
-import play.api.libs.json.Json
 import play.api.mvc._
 import util.HighlightPdf
 
@@ -40,7 +40,7 @@ object Waiting extends Controller{
 
     request.session.get("turkerId").map {
       turkerId => {
-        //println("Get Waiting Layout with args: " + request.session.get("success").get)
+        //Logger.debug("Get Waiting Layout with args: " + request.session.get("success").get)
         getWaitingLayout(turkerId, request.flash)
       }
     }.getOrElse {

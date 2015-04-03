@@ -5,6 +5,7 @@ import java.io.{ByteArrayOutputStream, FileInputStream}
 import controllers.TextHighlight
 import org.apache.pdfbox.pdfparser.PDFParser
 import org.apache.pdfbox.pdmodel.PDDocument
+import play.api.Logger
 
 /**
  * Created by Mattia on 22.01.2015.
@@ -27,7 +28,7 @@ object HighlightPdf {
     pdfHighlight.initialize(pdDoc)
 
     for(textRegEx <- contentCsv) {
-      println("Highlighting: " + textRegEx)
+      Logger.debug("Highlighting: " + textRegEx)
       pdfHighlight.highlightDefault(textRegEx)
     }
 
