@@ -1,15 +1,10 @@
 package controllers
 
-import anorm.NotAssigned
-import controllers.Application._
-import controllers.Waiting._
-import models.{Assignment, Answer}
+import com.typesafe.config.ConfigFactory
 import org.apache.commons.codec.binary.Base64
-import org.apache.commons.codec.digest.DigestUtils
 import persistence._
 import play.api.mvc.{Action, Controller}
-import util.{HighlightPdf, CSVParser}
-import java.util.Date
+import util.HighlightPdf
 
 import scala.collection.mutable
 
@@ -34,6 +29,9 @@ object Viewer extends Controller{
             val pdfPath = paper.pdf_path
             val question = QuestionDAO.findById(questionId).getOrElse(null)
 
+            val config = ConfigFactory.load("application.conf")
+            val enablePdfHeader = config.getBoolean("showRewardAndTimer")
+
             // Highlight paper only if requested by job creator
             if (paper.highlight_enabled) {
               val highlights: mutable.MutableList[String] = new mutable.MutableList[String]
@@ -51,13 +49,13 @@ object Viewer extends Controller{
 
               //var pdfArrayByte = new Array[Byte](0)
               if (!contentCsv.isEmpty) {
-                Ok(views.html.viewer(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), question, Base64.encodeBase64String(HighlightPdf.highlight(pdfPath, highlights.toList)), AssignmentDAO.findById(assignmentId).get.teams_id, assignmentId))
+                Ok(views.html.viewer(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), question, Base64.encodeBase64String(HighlightPdf.highlight(pdfPath, highlights.toList)), AssignmentDAO.findById(assignmentId).get.teams_id, assignmentId, enablePdfHeader))
               } else {
-                Ok(views.html.viewer(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), question, Base64.encodeBase64String(HighlightPdf.getPdfAsArrayByte(pdfPath)), AssignmentDAO.findById(assignmentId).get.teams_id, assignmentId))
+                Ok(views.html.viewer(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), question, Base64.encodeBase64String(HighlightPdf.getPdfAsArrayByte(pdfPath)), AssignmentDAO.findById(assignmentId).get.teams_id, assignmentId, enablePdfHeader))
               }
 
             } else {
-              Ok(views.html.viewer(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), question, Base64.encodeBase64String(HighlightPdf.getPdfAsArrayByte(pdfPath)), AssignmentDAO.findById(assignmentId).get.teams_id, assignmentId))
+              Ok(views.html.viewer(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), question, Base64.encodeBase64String(HighlightPdf.getPdfAsArrayByte(pdfPath)), AssignmentDAO.findById(assignmentId).get.teams_id, assignmentId, enablePdfHeader))
             }
           }
         } catch {
