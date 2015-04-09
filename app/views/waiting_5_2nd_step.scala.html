@@ -3,8 +3,6 @@
 
 @main("Available Questions")(turker) {
 
-    <script src="@routes.Assets.at("/js/app.js")" type="text/javascript"></script>
-    <script src="@routes.Assets.at("/js/controllers.js")" type="text/javascript"></script>
     <script src="@routes.Assets.at("javascripts/pdfJs/pdf.js")" type="text/javascript"></script>
     <script src="@routes.Assets.at("javascripts/pdfJs/pdf.worker.js")" type="text/javascript"></script>
 
@@ -69,7 +67,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr ng-repeat="question in questions | filter:input" ng-click="showViewer(question.id)">
+                            <tr ng-repeat="question in questions | filter:input" ng-click="showViewer(question.id)" style="cursor:pointer">
                                 <th>
                                     {{ question.id }}
                                 </th>

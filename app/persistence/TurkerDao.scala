@@ -1,16 +1,11 @@
 package persistence
 
-import java.sql.Connection
-import java.util.Date
+import anorm.SqlParser._
 import anorm._
-import SqlParser._
-import com.fasterxml.jackson.annotation.JsonValue
 import models.Turker
-import play.api.db.DB
-
-import play.api.libs.json.Json
-import play.api.libs.json._
+import play.api.Logger
 import play.api.Play.current
+import play.api.db.DB
 
 
 object TurkerDAO {
@@ -19,13 +14,15 @@ object TurkerDAO {
   private val turkerParser: RowParser[Turker] =
   get[Pk[Long]]("id") ~
   get[String]("turker_id") ~
+  get[Long]("created_at") ~
   get[Option[String]]("email") ~
   get[Long]("login_time") ~
+  get[Option[Long]]("logout_time") ~
   get[String]("username") ~
   get[String]("password") ~
   get[Int]("layout_mode") ~
   get[Option[String]]("feedback") map {
-    case id ~turker_id ~email ~login_time ~username ~password ~layout_mode ~feedback => Turker(id, turker_id, email, login_time, username, password, layout_mode, feedback)
+    case id ~turker_id ~created_at ~email ~login_time ~logout_time ~username ~password ~layout_mode ~feedback => Turker(id, turker_id, created_at, email, login_time, logout_time, username, password, layout_mode, feedback)
   }
 
   def authenticate(username: String, password: String): String = {
@@ -112,6 +109,23 @@ object TurkerDAO {
     }
   }
 
+  def updateLogoutTime(turker_id: String, logout_time: Long): String = {
+    if(turker_id != null) {
+    DB.withConnection {
+      implicit c =>
+        SQL("UPDATE turkers SET logout_time = {logout_time} WHERE turker_id = {turker_id}").on(
+          'logout_time -> logout_time,
+          'turker_id -> turker_id
+        ).executeUpdate()
+        Logger.debug("LogoutTime updated for turker: " + turker_id)
+        turker_id
+    }
+    }else {
+      Logger.error("Cannot set LogoutTime. Turker not found.")
+      ""
+    }
+  }
+
   def findById(id: Long): Option[Turker] = {
     DB.withConnection {
       implicit c =>
@@ -137,11 +151,13 @@ object TurkerDAO {
     val id: Option[Long] =
     DB.withConnection {
       implicit c =>
-        SQL("INSERT INTO turkers(turker_id, email, login_time, username, password, layout_mode) " +
-        "VALUES ({turker_id}, {email}, {login_time}, {username}, {password}, {layout_mode})").on(
+        SQL("INSERT INTO turkers(turker_id, created_at, email, login_time, logout_time, username, password, layout_mode) " +
+        "VALUES ({turker_id}, {created_at}, {email}, {login_time}, {logout_time}, {username}, {password}, {layout_mode})").on(
         'turker_id -> t.turker_id,
+        'created_at -> t.created_at,
         'email -> t.email,
         'login_time -> t.login_time,
+        'logout_time -> t.logout_time,
         'username -> t.username,
         'password -> t.password,
         'layout_mode -> t.layout_mode

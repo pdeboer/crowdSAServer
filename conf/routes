@@ -7,7 +7,7 @@ GET         /                                              controllers.Applicati
 
 # Login
 POST        /login                                         controllers.Login.login
-GET         /logout                                        controllers.Login.logout
+POST        /logout                                        controllers.Login.logout
 
 # Registration
 GET         /registration                                  controllers.Login.registration

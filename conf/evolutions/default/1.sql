@@ -92,8 +92,10 @@ CREATE TABLE feedbacks (
 CREATE TABLE turkers (
   id          BIGINT PRIMARY KEY NOT NULL auto_increment,
   turker_id   VARCHAR(100)       NOT NULL UNIQUE,
+  created_at  BIGINT             NOT NULL,
   email       VARCHAR(255)       NULL,
   login_time  BIGINT             NOT NULL,
+  logout_time BIGINT             NULL,
   username    VARCHAR(100)       NOT NULL UNIQUE,
   password    VARCHAR(100)       NOT NULL,
   layout_mode INT                NULL,
@@ -108,8 +110,8 @@ CREATE TABLE turkers2teams (
   FOREIGN KEY (teams_id) REFERENCES teams (id)
 ) ENGINE = InnoDB CHARSET = utf8;
 
-INSERT INTO turkers (id, turker_id, email, login_time, username, password, layout_mode) VALUES
-  (1, "as$$$0534SD342£$fsw445345rfsfwe", "mattia.amato@gmail.com", 1421183695322, "mamato",
+INSERT INTO turkers (id, turker_id, created_at, email, login_time, logout_time, username, password, layout_mode) VALUES
+  (1, "as$$$0534SD342£$fsw445345rfsfwe", 1421183695, "mattia.amato@gmail.com", 1421183695, NULL, "mamato",
    "737eb8871f2ade70fea17fc8df76e691", 1);
 INSERT INTO teams (id, created_at, name) VALUES (1, 1421183695324, "as$$$0534SD342£$fsw445345rfsfwe");
 INSERT INTO turkers2teams (id, turkers_id, teams_id) VALUES (1, 1, 1);

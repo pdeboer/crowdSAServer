@@ -4,10 +4,9 @@ import java.util.Date
 
 import anorm.NotAssigned
 import com.typesafe.config.ConfigFactory
-import controllers.Application._
-import models.{Team, Turkers2Teams, Turker}
+import models.{Team, Turker}
 import org.apache.commons.codec.digest.DigestUtils
-import persistence.{TeamDAO, Turkers2TeamsDAO, TurkerDAO}
+import persistence.{TeamDAO, TurkerDAO, Turkers2TeamsDAO}
 import play.api.mvc.{Action, Controller}
 
 /**
@@ -46,7 +45,7 @@ object Login extends Controller {
           val layoutMode = config.getInt("layoutMode")
 
           val turkerId = request.body.asFormUrlEncoded.get("turkerId")(0)
-          val turker = new Turker(NotAssigned, turkerId, Some(email), (new Date()).getTime/1000, username, password1, layoutMode, null)
+          val turker = new Turker(NotAssigned, turkerId, (new Date()).getTime/1000, Some(email), (new Date()).getTime/1000, None, username, password1, layoutMode, null)
           val newTurkerId = TurkerDAO.create(turker)
           try {
             val id = newTurkerId.get
@@ -70,9 +69,13 @@ object Login extends Controller {
     }
   }
 
-  def logout = Action {
+  def logout = Action { implicit request => {
+    println(request.body.asFormUrlEncoded)
+    println(request.body.asFormUrlEncoded.get("turker_id"))
+    TurkerDAO.updateLogoutTime(request.body.asFormUrlEncoded.get("turker_id")(0), new Date().getTime/1000)
     Redirect(routes.Application.index()).withNewSession.flashing(
       "success" -> "You are now logged out."
     )
+    }
   }
 }

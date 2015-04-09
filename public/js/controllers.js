@@ -2,6 +2,20 @@
  * Created by Mattia on 23.01.2015.
  */
 
+myLogin.controller('loginLogoutCtrl', ['$scope', '$http', function($scope, $http){
+    $scope.logout = function(turker_id){
+        console.log("Logging out turker: " + turker_id);
+        $http.post("/logout", {turker_id: turker_id})
+            .success(function (data) {
+                console.log("Successfully logged out");
+                document.location.href="/";
+            })
+            .error(function (data) {
+                console.error("Error: Cannot logout turker: "+ turker_id);
+            });
+    }
+}]);
+
 myApp.controller('QuestionCtrl', ['$scope', '$interval', '$http',
     function($scope, $interval, $http){
     $scope.questions = [];
