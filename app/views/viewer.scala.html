@@ -97,7 +97,7 @@
                                     @if(question.question_type.equalsIgnoreCase("Boolean")){
                                         <div>
                                             <b><div style="font-size: 120%;display: inline-block;">
-                                                Please select <div style="font-size: 130%;display: inline-block;">YES</div> or <div style="font-size: 130%;display: inline-block;">NO</div> to answer the question.
+                                                Please read through the paper and select <div style="font-size: 130%;display: inline-block;">YES</div> or <div style="font-size: 130%;display: inline-block;">NO</div> to answer the question.
                                             </div></b>
                                             <b>
                                             <h2>
@@ -158,7 +158,7 @@
                                     @if(question.question_type.equalsIgnoreCase("Voting")){
                                         <div>
                                             <div style="font-size: 120%;display: inline-block;"><b>
-                                                Please select the answer you think best represent the question above.
+                                                Please select the answer you think best represent the question above. All the alternatives are highlighted in the paper on the right.
                                             </b></div>
                                             <div ng-init="set_possible_answers('@(question.possible_answers.get)');">
                                                 <div ng-repeat="ds in possible_answers">
