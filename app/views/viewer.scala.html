@@ -8,7 +8,7 @@
 
             <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("../../public/stylesheets/imagess/favicon.png")">
 
-                <!-- Bootstrap -->
+            <!-- Bootstrap -->
             <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet">
 
                 <!-- CSV reader -->
@@ -46,8 +46,7 @@
 
                     // For Chrome, Safari, IE8+ and Opera 12+
                     return message;
-                }
-
+                };
 
             </script>
 
@@ -78,6 +77,14 @@
                             elem.style.backgroundColor = "";
                             elem.style.opacity = 1;
                         }
+
+                            $(document).ready(function () {
+                                $('#showhidetarget').hide();
+
+                                $('a#showhidetrigger').click(function () {
+                                    $('#showhidetarget').toggle(500);
+                                });
+                            });
                     </script>
                     <tr>
                         <td style="width: 30%; vertical-align: top; text-align: left;">
@@ -112,10 +119,28 @@
                                     }
                                     @if(question.question_type.equalsIgnoreCase("Discovery")) {
                                         <div>
-                                            <div style="font-size: 120%;display: inline-block;"><b>
-                                                Please click on all lines in the paper on the right hand side that include information
-                                                about the dataset that was used for the method shown above.
+                                            <div style="font-size: 120%;display: inline-block;" id="showhidetarget"><b>
+                                                The paper shown on the right hand side uses the statistical method shown above.
+                                                Every statistical method is applied to a certain kind of data to draw conclusions from it.
+                                                Please identify the lines in the paper that describe the data on which the above method was applied by reading the immediate surroundings of the method
+                                                (you’ll see it marked yellow in the PDF if you scroll down).
+                                                If you can’t find information about the data in the immediate surroundings,
+                                                try the first part of the paper (Abstract / Introduction).<br>
+                                                <br>
+                                                An example of this task is provided on YouTube<br>
+                                                <br>
+                                                In order to tell us about the data for this method,
+                                                please click on all lines in the paper that talk about it.
+                                                It’s ok if there is other information on a line as well, as long as it is part of a sentence that describes the data.
+                                                <br>
+                                                If you happen to select a sentence by mistake,
+                                                you can click on the "delete" icon next to it’s text just below this introduction.
+                                                <br>
+                                                Once you’re done, please click "submit".
+                                                Your selection will be compared with the one of other crowd workers.
                                             </b></div>
+                                            <a class="btn btn-info" id="showhidetrigger" href="#">How to solve this task?</a>
+
                                             <div id="datasetChildren" >
                                                 <ul class="list-group" style="padding: 20px" ng-init="getDsToRefine('@(question.possible_answers.get)');">
                                                     <div ng-if="dom_children.length == 0">No dataset defined yet</div>
