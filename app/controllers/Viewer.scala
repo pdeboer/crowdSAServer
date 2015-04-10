@@ -30,7 +30,7 @@ object Viewer extends Controller{
             val question = QuestionDAO.findById(questionId).getOrElse(null)
 
             val config = ConfigFactory.load("application.conf")
-            val enablePdfHeader = config.getBoolean("showRewardAndTimer")
+            val showReward = config.getBoolean("showReward")
 
             // Highlight paper only if requested by job creator
             if (paper.highlight_enabled) {
@@ -49,13 +49,13 @@ object Viewer extends Controller{
 
               //var pdfArrayByte = new Array[Byte](0)
               if (!contentCsv.isEmpty) {
-                Ok(views.html.viewer(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), question, Base64.encodeBase64String(HighlightPdf.highlight(pdfPath, highlights.toList)), AssignmentDAO.findById(assignmentId).get.teams_id, assignmentId, enablePdfHeader))
+                Ok(views.html.viewer(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), question, Base64.encodeBase64String(HighlightPdf.highlight(pdfPath, highlights.toList)), AssignmentDAO.findById(assignmentId).get.teams_id, assignmentId, showReward))
               } else {
-                Ok(views.html.viewer(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), question, Base64.encodeBase64String(HighlightPdf.getPdfAsArrayByte(pdfPath)), AssignmentDAO.findById(assignmentId).get.teams_id, assignmentId, enablePdfHeader))
+                Ok(views.html.viewer(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), question, Base64.encodeBase64String(HighlightPdf.getPdfAsArrayByte(pdfPath)), AssignmentDAO.findById(assignmentId).get.teams_id, assignmentId, showReward))
               }
 
             } else {
-              Ok(views.html.viewer(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), question, Base64.encodeBase64String(HighlightPdf.getPdfAsArrayByte(pdfPath)), AssignmentDAO.findById(assignmentId).get.teams_id, assignmentId, enablePdfHeader))
+              Ok(views.html.viewer(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), question, Base64.encodeBase64String(HighlightPdf.getPdfAsArrayByte(pdfPath)), AssignmentDAO.findById(assignmentId).get.teams_id, assignmentId, showReward))
             }
           }
         } catch {

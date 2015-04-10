@@ -1,4 +1,4 @@
-@(turker: Turker, question: Question, paperBase64: String, teamId: Long, assignmentId: Long, enabledPdfHeader: Boolean)
+@(turker: Turker, question: Question, paperBase64: String, teamId: Long, assignmentId: Long, showReward: Boolean)
 @import play.api.libs.json.Json
 
 <!DOCTYPE html>
@@ -32,6 +32,25 @@
 
             <script src="@routes.Assets.at("/js/app.js")" type="text/javascript"></script>
             <script src="@routes.Assets.at("/js/controllers.js")" type="text/javascript"></script>
+
+            <script type="text/javascript">
+                window.onbeforeunload = function(e){
+                    // If we haven't been passed the event get the window.event
+                    e = e || window.event;
+                    var message = "If you return to the overview, all of your unsaved data will be lost.";
+                    // For IE6-8 and Firefox prior to version 4
+                    if (e)
+                    {
+                        e.returnValue = message;
+                    }
+
+                    // For Chrome, Safari, IE8+ and Opera 12+
+                    return message;
+                }
+
+
+            </script>
+
 
         </head>
         <body ng-app="myApp">
@@ -102,7 +121,7 @@
                                                     <div ng-if="dom_children.length == 0">No dataset defined yet</div>
                                                     <li class="list-group-item" ng-repeat="ds in dom_children" >
                                                             <span class="badge">
-                                                                <span class="glyphicon glyphicon-trash" ng-click="removeElementDS(ds)" aria-hidden="true"></span>
+                                                                <span class="glyphicon glyphicon-trash" ng-click="removeElementDS(ds)" aria-hidden="true" style="cursor:pointer"></span>
                                                             </span>
                                                         {{ds[0]}}
                                                         <input type='hidden' name='dom_children[]' ng-value="ds[0]"/>
@@ -127,7 +146,7 @@
                                     }
 
                                     <span class="input-group-btn">
-                                        <button class="btn btn-success" id="submitAnswer" type="submit">Submit Answer</button>
+                                        <button class="btn btn-success" id="submitAnswer" onclick="window.onbeforeunload = null;" type="submit">Submit Answer</button>
                                         <button class="btn btn-danger" id="cancelAnswer" type="button" ng-click="cancel_assignment(@assignmentId)">Cancel</button>
                                     </span>
 
@@ -137,9 +156,9 @@
                         </td>
 
                         <td>
-                            <div ng-if="@enabledPdfHeader=true" id="header-paper" style="backgroud-color: #FFFFFF;" ng-init="countdown(600);"> <!--(question.expiration_time_sec.getOrElse(600).toString)-->
+                            <div id="header-paper" style="backgroud-color: #FFFFFF;" ng-init="countdown(600);"> <!--(question.expiration_time_sec.getOrElse(600).toString)-->
                                 <div align="center">
-                                    <h3>Payment for answer: @(question.reward_cts.toDouble/100) $ - Remaining time to answer the question: {{ counter_sec*1000 | date:'mm:ss' }}</h3>
+                                    <h3><span ng-if="@showReward=true">Payment for answer: @(question.reward_cts.toDouble/100) $ -</span><span> Remaining time to answer the question: {{ counter_sec*1000 | date:'mm:ss' }}</span></h3>
                                 </div>
                             </div>
 

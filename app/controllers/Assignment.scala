@@ -1,10 +1,6 @@
 package controllers
 
-import java.util.Date
-
-import anorm.NotAssigned
-import models.Answer
-import persistence.{AnswerDAO, AssignmentDAO}
+import persistence.AssignmentDAO
 import play.api.libs.json.Json
 import play.api.mvc.{Action, Controller}
 
@@ -33,5 +29,33 @@ object Assignment extends Controller {
     } catch {
       case e: Exception => InternalServerError("Error: Cannot get assignment for answer: " + ansId)
     }
+  }
+
+  def isAssignmentOpen(turker_id: String) = Action {implicit request =>
+    try {
+      val resp = AssignmentDAO.isAnAssignmentAlreadyOpen(turker_id)
+      Ok(Json.toJson(resp))
+    } catch {
+      case e: Exception => InternalServerError("Error: Cannot check if an assignment is open")
+    }
+
+  }
+
+  def getOpenAssignment(turker_id: String) = Action {implicit request =>
+    try {
+      if(AssignmentDAO.isAnAssignmentAlreadyOpen(turker_id)){
+        val assignment = AssignmentDAO.getOpenAssignment(turker_id)
+        if(assignment != null) {
+          Redirect("/viewer/"+assignment.questions_id+"/"+assignment.id)
+        } else {
+          Ok("Assignment not found")
+        }
+      } else {
+        Ok("No open questions to answer")
+      }
+    } catch {
+      case e: Exception => InternalServerError("Error: Cannot get open assignment")
+    }
+
   }
 }

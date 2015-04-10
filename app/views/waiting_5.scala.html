@@ -9,7 +9,7 @@
 
         <tr>
             <td>
-                <div class="container" ng-controller="PapersCtrl">
+                <div class="container" ng-controller="PapersCtrl" ng-init="checkAssigned('@turker.turker_id');">
                     @if(flash.get("success")) {
                         <div class="alert alert-success" role="alert">
                             <strong>Well Done!</strong>
@@ -23,6 +23,13 @@
                         </div>
                     }
                     <div>
+                        <div ng-if="assigned">
+
+                            <b><span style="cursor:pointer; color:red;" ng-click="getAssigned('@turker.turker_id');">
+                                You have an assigned question to answer.</span>
+                            </b>
+
+                        </div>
                         <h2>Welcome @turker.username</h2>
                         <br>
                         <p>
@@ -31,7 +38,7 @@
                                 Once you click on a paper you will have the possibility to read further details about it or change you selection.
                         </p>
                         <h3>Available papers:</h3>
-                        Filter papers:
+                        <span style="display:none;">Filter papers:</span>
                         <input style="display:none;" ng-model="input" autofocus>
                     </div>
                     <h3 ng-if="papers.length == 0" style="color: red;">There are no available papers right now!</h3>

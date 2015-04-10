@@ -1,4 +1,4 @@
-@(turker: Turker, flash: Flash, paper: Paper, pdf_base64: String)
+@(turker: Turker, flash: Flash, paper: Paper, pdf_base64: String, showReward: Boolean)
 @import play.api.libs.json.Json
 
 @main("Available Questions")(turker) {
@@ -10,7 +10,7 @@
 
         <tr>
             <td>
-                <div class="container" ng-controller="QuestionCtrl" ng-model="paper_id" ng-init="paper_id=@paper.id;getQuestions();">
+                <div class="container" ng-controller="QuestionCtrl" ng-model="paper_id" ng-init="paper_id=@paper.id;getQuestions(); checkAssigned('@turker.turker_id');">
                     @if(flash.get("success")) {
                         <div class="alert alert-success" role="alert">
                             <strong>Well Done!</strong>
@@ -24,6 +24,14 @@
                         </div>
                     }
                     <br>
+                    <div ng-if="assigned">
+
+                        <b><span style="cursor:pointer; color:red;" ng-click="getAssigned('@turker.turker_id');">
+                            You have an assigned question to answer.</span>
+                        </b>
+
+                    </div>
+
                     <div class="row">
                         <div class="col-sm-8">
                             <div>
@@ -32,18 +40,6 @@
                                     <br><br>
                                 You can now choose a question type from the list below.<br>
                                 We recommend to <b>read the abstract</b> of the paper before choosing to answer the questions below by clicking the blue button "Preview Paper".<br>
-                                There are 3 kind of questions: general, yes/no and preference.<br>
-                                <ul>
-                                    <li>
-                                        In the general question type you will be asked to identify the corresponding dataset of a statistical method.
-                                    </li>
-                                    <li>
-                                        In the yes/no question type you will be asked to check if a dataset is tested for specific assumptions like: Normality, Linearity and others.
-                                    </li>
-                                    <li>
-                                        In the preference question type you will be asked to select from a list of answers the one you think is the correct one.
-                                    </li>
-                                </ul>
                                 <br>
 
                             </div>
@@ -63,7 +59,7 @@
                             <tr>
                                 <th>#</th>
                                 <th>Question Type</th>
-                                <th>Reward</th>
+                                <th ng-if="@showReward">Reward</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -80,7 +76,7 @@
                                 <td ng-if="question.question_type == 'Boolean'">
                                     Yes/No question
                                 </td>
-                                <td>
+                                <td ng-if="@showReward">
                                     {{ question.reward }}
                                 </td>
                             </tr>

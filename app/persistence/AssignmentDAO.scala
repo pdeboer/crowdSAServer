@@ -1,10 +1,10 @@
 package persistence
 
-import java.util.Date
-import play.api.Play.current
-import anorm._
 import anorm.SqlParser._
-import models.{Assignment, Answer}
+import anorm._
+import models.Assignment
+import play.api.Logger
+import play.api.Play.current
 import play.api.db.DB
 
 /**
@@ -33,7 +33,7 @@ object AssignmentDAO {
     DB.withConnection { implicit c =>
       SQL("SELECT * FROM assignments WHERE questions_id = {qId}").on(
         'qId -> qId
-      ).as(assignmentParser*).toList
+      ).as(assignmentParser*)
     }
 
 
@@ -43,6 +43,55 @@ object AssignmentDAO {
       SQL("SELECT * FROM assignments WHERE id = {assignments_id}").on(
         'assignments_id -> answer.assignments_id
       ).as(assignmentParser.singleOpt)
+    }
+  }
+
+  def isAnAssignmentAlreadyOpen(turker_id: String): Boolean = {
+    DB.withConnection { implicit c =>
+      val teams_id = Turkers2TeamsDAO.findSingleTeamByTurkerId(turker_id).id.get
+
+      SQL("SELECT * FROM questions AS q WHERE " +
+        "q.disabled=false AND EXISTS (SELECT * FROM assignments AS a WHERE " +
+        "(a.expiration_time < UNIX_TIMESTAMP() OR a.teams_id = {teams_id}) AND " +
+        "a.is_cancelled = false AND (SELECT COUNT(*) FROM answers WHERE assignments_id = a.id) = 0 AND " +
+        "a.questions_id = q.id)").on(
+          'teams_id -> teams_id
+        ).as(QuestionDAO.questionParser*).length > 0
+    }
+  }
+
+  def getOpenAssignment(turker_id: String): Assignment = {
+    DB.withConnection { implicit c =>
+      val teams_id = Turkers2TeamsDAO.findSingleTeamByTurkerId(turker_id).id.get
+
+      val question = SQL("SELECT * FROM questions AS q WHERE " +
+        "q.disabled=false AND EXISTS (SELECT * FROM assignments AS a WHERE " +
+        "(a.expiration_time < UNIX_TIMESTAMP() OR a.teams_id = {teams_id}) AND " +
+        "a.is_cancelled = false AND (SELECT COUNT(*) FROM answers WHERE assignments_id = a.id) = 0 AND " +
+        "a.questions_id = q.id)").on(
+          'teams_id -> teams_id
+        ).as(QuestionDAO.questionParser.singleOpt)
+      if(question.isDefined) {
+        val assignments = findByQuestionId(question.get.id.get)
+        Logger.debug("Found " + assignments.length + " assignments")
+        var result: Assignment = null
+        if(assignments.length == 1) {
+          result = assignments.head
+        }
+        assignments.foreach(a => {
+          Logger.debug("Assignment: " + a)
+          if(a.is_cancelled==false && a.teams_id==teams_id
+            && !AnswerDAO.getByAssignmentId(a.id.get).isDefined){
+            //&& a.expiration_time < (new Date().getTime()/1000)
+            Logger.debug("Found open assignment")
+            result = a
+          }
+        })
+        result
+      } else {
+        Logger.debug("Cannot find assignments for this question")
+        null
+      }
     }
   }
 
@@ -70,7 +119,7 @@ object AssignmentDAO {
 
   def getAll(): List[Assignment] =
     DB.withConnection { implicit c =>
-      SQL("SELECT * FROM assignments").as(assignmentParser*).toList
+      SQL("SELECT * FROM assignments").as(assignmentParser*)
     }
 
   def cancel(assignment_id: Long) = {

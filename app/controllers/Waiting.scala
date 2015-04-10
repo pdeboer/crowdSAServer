@@ -78,7 +78,14 @@ object Waiting extends Controller{
     request.session.get("turkerId").map {
       turkerId =>
         val assignmentId = assignQuestion(questionId, turkerId)
-        Ok(questionId.toString+"/"+assignmentId.toString)
+        if(assignmentId != -1){
+          Redirect("/viewer/"+questionId.toString+"/"+assignmentId.toString)
+        }else {
+          val paper_id = QuestionDAO.findById(questionId).get.papers_id
+          Redirect(routes.Waiting.secondStep(paper_id)).flashing(
+            "error" -> "You are already solving another question. Submit or cancel the task in order to solve other questions."
+          )
+        }
     }.getOrElse {
       Redirect(routes.Application.index())
     }
@@ -199,11 +206,16 @@ object Waiting extends Controller{
    * @return
    */
   def assignQuestion(questionId: Long, turkerId: String) : Long = {
-    val date = (new Date()).getTime/1000
-    val timeout = config.getInt("reservationTimeForQuestion")
-    val assignment = new Assignment(NotAssigned, date, date + timeout, false, questionId, Turkers2TeamsDAO.findSingleTeamByTurkerId(turkerId).id.get)
-    val assignmentId = AssignmentDAO.add(assignment)
-    assignmentId
+    //TODO: if a question is already assigned and it is not cancelled and there are no answers and the question is still available return -1
+    if(AssignmentDAO.isAnAssignmentAlreadyOpen(turkerId)){
+      -1
+    } else {
+      val date = (new Date()).getTime / 1000
+      val timeout = config.getInt("reservationTimeForQuestion")
+      val assignment = new Assignment(NotAssigned, date, date + timeout, false, questionId, Turkers2TeamsDAO.findSingleTeamByTurkerId(turkerId).id.get)
+      val assignmentId = AssignmentDAO.add(assignment)
+      assignmentId
+    }
   }
 
   def rejectAssignment = Action { implicit request =>
@@ -225,7 +237,9 @@ object Waiting extends Controller{
     request.session.get("turkerId").map {
       turkerId =>
         val paper = PaperDAO.findById(paper_id).get
-        Ok(views.html.waiting_5_2nd_step(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), request.flash, paper, Base64.encodeBase64String(HighlightPdf.getPdfAsArrayByte(paper.pdf_path))))
+        val config = ConfigFactory.load("application.conf")
+        val showReward = config.getBoolean("showReward")
+        Ok(views.html.waiting_5_2nd_step(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), request.flash, paper, Base64.encodeBase64String(HighlightPdf.getPdfAsArrayByte(paper.pdf_path)), showReward))
     }.getOrElse {
       Redirect(routes.Application.index())
     }

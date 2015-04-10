@@ -1,13 +1,11 @@
 package persistence
 
-import java.util.Date
-
-import anorm._
 import anorm.SqlParser._
-import models.{Question, Paper}
+import anorm._
+import models.Question
 import play.api.Logger
-import play.api.db.DB
 import play.api.Play.current
+import play.api.db.DB
 
 /**
  * Created by Mattia on 12.01.2015.
@@ -15,7 +13,7 @@ import play.api.Play.current
 
 object QuestionDAO {
 
-  private val questionParser: RowParser[Question] =
+  val questionParser: RowParser[Question] =
     get[Pk[Long]]("id") ~
       get[String]("question") ~
       get[String]("question_type") ~
@@ -205,8 +203,9 @@ object QuestionDAO {
     Logger.debug("Get all question for paper: " + paper_id)
     DB.withConnection { implicit c =>
       SQL("SELECT * FROM questions AS q WHERE papers_id = {paper_id} " +
-        "AND disabled=false AND NOT EXISTS (SELECT * FROM assignments WHERE" +
-        " ( expiration_time_sec < UNIX_TIMESTAMP() OR teams_id = {teamId}) AND" +
+        "AND disabled=false AND NOT EXISTS (SELECT * FROM assignments AS a WHERE" +
+        " ( a.expiration_time < UNIX_TIMESTAMP() OR a.teams_id = {teamId}) AND" +
+        " a.is_cancelled = false AND (SELECT COUNT(*) FROM answers WHERE assignments_id = a.id) >= 0 AND" +
         " questions_id = q.id) AND IF(maximal_assignments IS NULL, TRUE, " +
         "(SELECT COUNT(*) FROM assignments WHERE questions_id = q.id) < q.maximal_assignments)"+
         "AND NOT EXISTS (SELECT * FROM qualifications WHERE teams_id={teamId} AND questions_id=q.id)")

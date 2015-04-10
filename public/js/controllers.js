@@ -2,22 +2,9 @@
  * Created by Mattia on 23.01.2015.
  */
 
-myLogin.controller('loginLogoutCtrl', ['$scope', '$http', function($scope, $http){
-    $scope.logout = function(turker_id){
-        console.log("Logging out turker: " + turker_id);
-        $http.post("/logout", {turker_id: turker_id})
-            .success(function (data) {
-                console.log("Successfully logged out");
-                document.location.href="/";
-            })
-            .error(function (data) {
-                console.error("Error: Cannot logout turker: "+ turker_id);
-            });
-    }
-}]);
-
 myApp.controller('QuestionCtrl', ['$scope', '$interval', '$http',
     function($scope, $interval, $http){
+
     $scope.questions = [];
 
     $scope.paper_id = -1;
@@ -27,6 +14,7 @@ myApp.controller('QuestionCtrl', ['$scope', '$interval', '$http',
         $http.get("/questions/" + $scope.paper_id)
             .success(function (data) {
                 $scope.questions = data;
+
             })
             .error(function (data) {
                 console.error("Error: Cannot get the questions related to paper " + paper_id);
@@ -70,19 +58,39 @@ myApp.controller('QuestionCtrl', ['$scope', '$interval', '$http',
             });
     };
 
+        $scope.assigned = false;
+
+        $scope.checkAssigned = function(turker_id){
+            $http.get('/isAssignmentOpen/'+turker_id)
+                .success(function(data){
+                    $scope.assigned = data;
+                })
+        };
+
+        $scope.getAssigned = function(turker_id){
+            window.location.href = '/getAssignedQuestion/'+turker_id;
+        };
+
     $scope.showViewer = function(question_id){
-        $http.get('/waiting/getDefinedQuestion/'+ question_id)
-            .success(function(data){
-                window.location.href = '/viewer/' + data;
-            })
-            .error(function(data){
-               console.error("Error: " + data);
-            });
+        window.location.href = '/waiting/getDefinedQuestion/'+ question_id;
     }
 }]);
 
 myApp.controller('PapersCtrl', function ($scope, $http) {
     $scope.papers =[ ] ;
+
+    $scope.assigned = false;
+
+    $scope.checkAssigned = function(turker_id){
+        $http.get('/isAssignmentOpen/'+turker_id)
+            .success(function(data){
+                $scope.assigned = data;
+            })
+    };
+
+    $scope.getAssigned = function(turker_id){
+        window.location.href = '/getAssignedQuestion/'+turker_id;
+    };
 
     $scope.getPapers = function ( ) {
         $http.get("/papers")
@@ -142,7 +150,8 @@ myApp.controller('PapersCtrl', function ($scope, $http) {
 myApp.controller('ViewerCtrl', function($scope, $http, $timeout){
 
     $scope.cancel_assignment = function(assignment_id){
-        window.location.href = '/viewer/cancel/'+assignment_id;
+        window.onbeforeunload = null;
+        window.location.href = '/viewer/cancel/' + assignment_id;
     };
 
     $scope.possible_answers = [];

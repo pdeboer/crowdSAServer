@@ -3,4 +3,3 @@
  */
 
 var myApp = angular.module('myApp', []);
-var myLogin = angular.module('myLogin', []);
