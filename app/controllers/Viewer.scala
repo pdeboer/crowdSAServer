@@ -73,6 +73,7 @@ object Viewer extends Controller{
 
   def cancel(assignmentId: Long) = Action {
     AssignmentDAO.cancel(assignmentId)
-    Redirect(routes.Waiting.waiting())
+    val paperId = QuestionDAO.findById(AssignmentDAO.findById(assignmentId).get.questions_id).get.papers_id
+    Redirect(routes.Waiting.secondStep(paperId))
   }
 }

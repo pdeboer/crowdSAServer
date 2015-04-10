@@ -60,6 +60,7 @@
                                 <th>#</th>
                                 <th>Question Type</th>
                                 <th ng-if="@showReward">Reward</th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -78,6 +79,9 @@
                                 </td>
                                 <td ng-if="@showReward">
                                     {{ question.reward }}
+                                </td>
+                                <td align="right" style="cursor:pointer; width:100px;">
+                                    <span class="badge">Answer this question</span>
                                 </td>
                             </tr>
                         </tbody>
