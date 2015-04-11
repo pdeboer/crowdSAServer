@@ -2,8 +2,8 @@
  * Created by Mattia on 23.01.2015.
  */
 
-myApp.controller('QuestionCtrl', ['$scope', '$interval', '$http',
-    function($scope, $interval, $http){
+myApp.controller('QuestionCtrl', ['$scope', '$interval', '$timeout', '$http',
+    function($scope, $interval, $timeout, $http){
 
     $scope.questions = [];
 
@@ -22,7 +22,7 @@ myApp.controller('QuestionCtrl', ['$scope', '$interval', '$http',
     };
 
     $scope.startIntervalGet = function (){
-        $interval(function() { $scope.getQuestions(); }, 10000)
+        $interval(function() { $scope.getQuestions(); }, 10000);
     };
 
     $scope.getQuestion = function() {
@@ -30,7 +30,11 @@ myApp.controller('QuestionCtrl', ['$scope', '$interval', '$http',
         el.className = "btn btn-info";
         el.innerText = "Looking for a question...";
         $('#startBtn').prop('disabled', true);
+
         $scope.question = "";
+
+        $scope.expiration_time = 0;
+
         $http.get("/waiting/getQuestion")
             .success(function(data) {
 
@@ -63,8 +67,24 @@ myApp.controller('QuestionCtrl', ['$scope', '$interval', '$http',
         $scope.checkAssigned = function(turker_id){
             $http.get('/isAssignmentOpen/'+turker_id)
                 .success(function(data){
-                    $scope.assigned = data;
-                })
+                    var d = JSON.parse(JSON.stringify(data));
+
+                    $scope.assigned = d.assigned;
+                    if($scope.assigned) {
+                        $scope.expiration_time = d.time - new Date().getTime()/1000;
+                        if($scope.expiration_time - 1 > 0)
+                            $interval(function(){
+                                if($scope.expiration_time > 0) {
+                                    $scope.expiration_time -= 1;
+                                } else {
+                                    $http.get('/getAssignedQuestion/'+turker_id).success(function(data){
+                                        $http.get('/viewer/cancel/' + data.id);
+                                        $scope.assigned = false;
+                                    });
+                                }
+                            }, 1000);
+                    }
+                });
         };
 
         $scope.getAssigned = function(turker_id){
@@ -76,7 +96,7 @@ myApp.controller('QuestionCtrl', ['$scope', '$interval', '$http',
     }
 }]);
 
-myApp.controller('PapersCtrl', function ($scope, $http) {
+myApp.controller('PapersCtrl', function ($scope, $http, $timeout, $interval) {
     $scope.papers =[ ] ;
 
     $scope.assigned = false;
@@ -84,7 +104,23 @@ myApp.controller('PapersCtrl', function ($scope, $http) {
     $scope.checkAssigned = function(turker_id){
         $http.get('/isAssignmentOpen/'+turker_id)
             .success(function(data){
-                $scope.assigned = data;
+                var d = JSON.parse(JSON.stringify(data));
+
+                $scope.assigned = d.assigned;
+                if($scope.assigned) {
+                    $scope.expiration_time = d.time - new Date().getTime()/1000;
+                    if($scope.expiration_time - 1 > 0)
+                        $interval(function(){
+                            if($scope.expiration_time > 0) {
+                                $scope.expiration_time -= 1;
+                            } else {
+                                $http.get('/getAssignedQuestion/'+turker_id).success(function(data){
+                                    $http.get('/viewer/cancel/' + data.id);
+                                    $scope.assigned = false;
+                                });
+                            }
+                        }, 1000);
+                }
             })
     };
 
@@ -149,6 +185,8 @@ myApp.controller('PapersCtrl', function ($scope, $http) {
 
 myApp.controller('ViewerCtrl', function($scope, $http, $timeout){
 
+    $scope.turker_id = -1;
+
     $scope.cancel_assignment = function(assignment_id){
         window.onbeforeunload = null;
         window.location.href = '/viewer/cancel/' + assignment_id;
@@ -177,11 +215,16 @@ myApp.controller('ViewerCtrl', function($scope, $http, $timeout){
         disableBorders(ds[1]);
     };
 
-    $scope.counter_sec = 600;
+    $scope.countdown = function() {
+        $http.get('/isAssignmentOpen/'+$scope.turker_id)
+            .success(function(data) {
+                var d = JSON.parse(JSON.stringify(data));
+                var diff = d.time - Math.floor(new Date().getTime() / 1000);
+                $scope.counter_sec = diff;
+                $scope.start_countdown();
+                console.log("Remaining seconds: " + diff);
+            });
 
-    $scope.countdown = function(expiration_sec) {
-        $scope.counter_sec = expiration_sec;
-        $scope.start_countdown();
     };
 
     $scope.start_countdown = function() {

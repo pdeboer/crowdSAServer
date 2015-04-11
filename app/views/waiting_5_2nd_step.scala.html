@@ -27,7 +27,7 @@
                     <div ng-if="assigned">
 
                         <b><span style="cursor:pointer; color:red;" ng-click="getAssigned('@turker.turker_id');">
-                            You have an assigned question to answer.</span>
+                            You have an assigned question to answer. (Time left: {{expiration_time*1000 | date:'mm:ss'}})</span>
                         </b>
 
                     </div>

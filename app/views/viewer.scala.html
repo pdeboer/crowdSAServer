@@ -181,7 +181,7 @@
                         </td>
 
                         <td>
-                            <div id="header-paper" style="backgroud-color: #FFFFFF;" ng-init="countdown(600);"> <!--(question.expiration_time_sec.getOrElse(600).toString)-->
+                            <div id="header-paper" style="backgroud-color: #FFFFFF;" ng-init="turker_id='@turker.turker_id';countdown();"> <!--(question.expiration_time_sec.getOrElse(600).toString)-->
                                 <div align="center">
                                     <h3><span ng-if="@showReward=true">Payment for answer: @(question.reward_cts.toDouble/100) $ -</span><span> Remaining time to answer the question: {{ counter_sec*1000 | date:'mm:ss' }}</span></h3>
                                 </div>

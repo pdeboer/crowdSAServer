@@ -34,7 +34,14 @@ object Assignment extends Controller {
   def isAssignmentOpen(turker_id: String) = Action {implicit request =>
     try {
       val resp = AssignmentDAO.isAnAssignmentAlreadyOpen(turker_id)
-      Ok(Json.toJson(resp))
+      if(resp){
+        val time = AssignmentDAO.getOpenAssignment(turker_id).expiration_time
+
+        Ok("{\"assigned\" : "+resp+", \"time\": \""+time+"\"}")
+      }else {
+        Ok("{\"assigned\" : "+resp+", \"time\": \"0\"}")
+      }
+
     } catch {
       case e: Exception => InternalServerError("Error: Cannot check if an assignment is open")
     }

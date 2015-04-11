@@ -53,6 +53,7 @@ GET         /assignments/:qId                              controllers.Assignmen
 GET         /assignmentbyanswerid/:ansId                   controllers.Assignment.assignmentOfAnswer(ansId: Long)
 GET         /isAssignmentOpen/:turker_id                   controllers.Assignment.isAssignmentOpen(turker_id: String)
 GET         /getAssignedQuestion/:turker_id                controllers.Assignment.getOpenAssignment(turker_id: String)
+
 # Account
 GET         /account                                       controllers.Application.account
 

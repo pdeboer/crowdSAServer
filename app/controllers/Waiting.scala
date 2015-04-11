@@ -206,12 +206,13 @@ object Waiting extends Controller{
    * @return
    */
   def assignQuestion(questionId: Long, turkerId: String) : Long = {
-    //TODO: if a question is already assigned and it is not cancelled and there are no answers and the question is still available return -1
+    // if a question is already assigned and it is not cancelled and there are
+    // no answers and the question is still available, return -1
     if(AssignmentDAO.isAnAssignmentAlreadyOpen(turkerId)){
       -1
     } else {
-      val date = (new Date()).getTime / 1000
-      val timeout = config.getInt("reservationTimeForQuestion")
+      val date = new Date().getTime / 1000
+      val timeout = config.getInt("reservationTimeForQuestion_sec")
       val assignment = new Assignment(NotAssigned, date, date + timeout, false, questionId, Turkers2TeamsDAO.findSingleTeamByTurkerId(turkerId).id.get)
       val assignmentId = AssignmentDAO.add(assignment)
       assignmentId
