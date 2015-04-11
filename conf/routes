@@ -52,8 +52,8 @@ POST        /dataset                                       controllers.Dataset.a
 GET         /assignments/:qId                              controllers.Assignment.assignments(qId: Long)
 GET         /assignmentbyanswerid/:ansId                   controllers.Assignment.assignmentOfAnswer(ansId: Long)
 GET         /isAssignmentOpen/:turker_id                   controllers.Assignment.isAssignmentOpen(turker_id: String)
-GET         /getAssignedQuestion/:turker_id                controllers.Assignment.getOpenAssignment(turker_id: String)
-
+GET         /getAssignedQuestion/:turker_id                controllers.Assignment.getViewerUrlOpenAssignment(turker_id: String)
+GET         /openAssignmentId/:turker_id                   controllers.Assignment.getOpenAssignmentId(turker_id: String)
 # Account
 GET         /account                                       controllers.Application.account
 

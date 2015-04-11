@@ -48,7 +48,7 @@ object Assignment extends Controller {
 
   }
 
-  def getOpenAssignment(turker_id: String) = Action {implicit request =>
+  def getViewerUrlOpenAssignment(turker_id: String) = Action {implicit request =>
     try {
       if(AssignmentDAO.isAnAssignmentAlreadyOpen(turker_id)){
         val assignment = AssignmentDAO.getOpenAssignment(turker_id)
@@ -64,5 +64,22 @@ object Assignment extends Controller {
       case e: Exception => InternalServerError("Error: Cannot get open assignment")
     }
 
+  }
+
+  def getOpenAssignmentId(turker_id: String) = Action {
+    try {
+      if(AssignmentDAO.isAnAssignmentAlreadyOpen(turker_id)){
+        val assignment = AssignmentDAO.getOpenAssignment(turker_id)
+        if(assignment != null) {
+          Ok(assignment.id.get.toString)
+        } else {
+          Ok("-1")
+        }
+      } else {
+        Ok("-1")
+      }
+    } catch {
+      case e: Exception => InternalServerError("Error: Cannot get open assignment id")
+    }
   }
 }

@@ -71,20 +71,26 @@ myApp.controller('QuestionCtrl', ['$scope', '$interval', '$timeout', '$http',
 
                     $scope.assigned = d.assigned;
                     if($scope.assigned) {
-                        $scope.expiration_time = d.time - new Date().getTime()/1000;
-                        if($scope.expiration_time - 1 > 0)
-                            $interval(function(){
-                                if($scope.expiration_time > 0) {
-                                    $scope.expiration_time -= 1;
-                                } else {
-                                    $http.get('/getAssignedQuestion/'+turker_id).success(function(data){
-                                        $http.get('/viewer/cancel/' + data.id);
+                        $http.get('/openAssignmentId/'+turker_id).success(function(dd){
+                            $scope.expiration_time = d.time - new Date().getTime()/1000;
+                            if($scope.expiration_time > 0)
+                                var timer = $interval(function(){
+                                    if($scope.expiration_time -1 > 0) {
+                                        $scope.expiration_time -= 1;
+                                    } else {
+                                        $scope.stoptimer(timer);
+                                        $http.get('/viewer/cancel/' + dd);
+                                        alert("Your assigned question ran out of time and will be cancelled.");
                                         $scope.assigned = false;
-                                    });
-                                }
-                            }, 1000);
+                                    }
+                                }, 1000);
+                        });
                     }
-                });
+                })
+        };
+
+        $scope.stoptimer = function(timer){
+            $interval.cancel(timer);
         };
 
         $scope.getAssigned = function(turker_id){
@@ -108,20 +114,27 @@ myApp.controller('PapersCtrl', function ($scope, $http, $timeout, $interval) {
 
                 $scope.assigned = d.assigned;
                 if($scope.assigned) {
-                    $scope.expiration_time = d.time - new Date().getTime()/1000;
-                    if($scope.expiration_time - 1 > 0)
-                        $interval(function(){
-                            if($scope.expiration_time > 0) {
-                                $scope.expiration_time -= 1;
-                            } else {
-                                $http.get('/getAssignedQuestion/'+turker_id).success(function(data){
-                                    $http.get('/viewer/cancel/' + data.id);
-                                    $scope.assigned = false;
-                                });
-                            }
-                        }, 1000);
+                    $http.get('/openAssignmentId/'+turker_id)
+                        .success(function(dd){
+                            $scope.expiration_time = d.time - new Date().getTime()/1000;
+                            if($scope.expiration_time > 0)
+                                var timer = $interval(function(){
+                                    if($scope.expiration_time -1 > 0) {
+                                        $scope.expiration_time -= 1;
+                                    } else {
+                                        $scope.stoptimer(timer);
+                                        $http.get('/viewer/cancel/' + dd);
+                                        alert("Your assigned question ran out of time and will be cancelled.");
+                                        $scope.assigned = false;
+                                    }
+                                }, 1000);
+                    });
                 }
             })
+    };
+
+    $scope.stoptimer = function(timer){
+        $interval.cancel(timer);
     };
 
     $scope.getAssigned = function(turker_id){
