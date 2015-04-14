@@ -1,4 +1,4 @@
-name := "bachelor"
+name := "crowdsaServer"
 
 version := "1.0-SNAPSHOT"
 
