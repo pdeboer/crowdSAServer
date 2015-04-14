@@ -196,7 +196,7 @@ myApp.controller('PapersCtrl', function ($scope, $http, $timeout, $interval) {
 
 });
 
-myApp.controller('ViewerCtrl', function($scope, $http, $timeout){
+myApp.controller('ViewerCtrl', function($scope, $http, $interval){
 
     $scope.turker_id = -1;
 
@@ -228,36 +228,41 @@ myApp.controller('ViewerCtrl', function($scope, $http, $timeout){
         disableBorders(ds[1]);
     };
 
-    $scope.countdown = function() {
+    $scope.countdown = function(assignment_id) {
         $http.get('/isAssignmentOpen/'+$scope.turker_id)
             .success(function(data) {
                 var d = JSON.parse(JSON.stringify(data));
                 var diff = d.time - Math.floor(new Date().getTime() / 1000);
                 $scope.counter_sec = diff;
-                $scope.start_countdown();
                 console.log("Remaining seconds: " + diff);
+                if($scope.counter_sec > 0 && d.assigned){
+                    $scope.start_countdown(assignment_id);
+                } else {
+                    $scope.cancel_assignment(assignment_id);
+                    alert("This assignment has expired.");
+                }
             });
 
     };
 
-    $scope.start_countdown = function() {
-        $timeout(function () {
-            $scope.counter_sec -= 1;
-            if ($scope.counter_sec > 0) {
-                $scope.start_countdown();
-            } else {
-                alert("The time is over!");
-                $('#cancelAnswer').trigger('click');
-            }
-        }, 1000);
+    $scope.start_countdown = function(assignment_id) {
+        $http.get('/openAssignmentId/' + $scope.turker_id).success(function (dd) {
+            var timer = $interval(function () {
+                if ($scope.counter_sec - 1 > 0) {
+                    $scope.counter_sec -= 1;
+                } else {
+                    $scope.stoptimer(timer);
+                    $scope.cancel_assignment(assignment_id);
+                }
+            }, 1000);
+        })
+    };
+
+    $scope.stoptimer = function(timer){
+        $interval.cancel(timer);
     };
 
     $scope.removeAllElementDS = function() {
         $scope.dom_children = "";
     };
-
-    $scope.isAnswerSelected = function() {
-        return $scope.answer!="";
-    };
-
 });

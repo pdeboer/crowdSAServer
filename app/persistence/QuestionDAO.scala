@@ -86,9 +86,12 @@ object QuestionDAO {
     val teamId = Turkers2TeamsDAO.findSingleTeamByTurkerId(turkerId).id.get.toString
     Logger.debug("GETTING ALL ENABLED FOR TEAM ID: " + teamId)
     DB.withConnection { implicit c =>
-      SQL("SELECT * FROM questions AS q WHERE disabled=false AND " +
-        "NOT EXISTS (SELECT * FROM assignments WHERE ( expiration_time_sec < UNIX_TIMESTAMP() OR teams_id = {teamId}) AND questions_id = q.id)" +
-        "AND (SELECT COUNT(*) FROM assignments WHERE questions_id = q.id) < q.maximal_assignments" +
+      SQL("SELECT * FROM questions AS q WHERE " +
+        "AND disabled=false AND NOT EXISTS (SELECT * FROM assignments AS a WHERE " +
+        "( a.expiration_time < UNIX_TIMESTAMP() and a.teams_id = {teamId}) AND " +
+        "a.is_cancelled = false AND (SELECT COUNT(*) FROM answers WHERE assignments_id = a.id) >= 0 AND " +
+        "questions_id = q.id) AND IF(maximal_assignments IS NULL, TRUE," +
+        "(SELECT COUNT(*) FROM assignments WHERE questions_id = q.id) < q.maximal_assignments) " +
         "AND NOT EXISTS (SELECT * FROM qualifications WHERE teams_id={teamId} AND questions_id=q.id)")
         .on('teamId -> teamId.toString)
         .as(questionParser *)
@@ -99,7 +102,7 @@ object QuestionDAO {
     val teamId = Turkers2TeamsDAO.findSingleTeamByTurkerId(turkerId).id.get.toString
     DB.withConnection { implicit c =>
       SQL("SELECT * FROM questions AS q WHERE papers_id = {paperId} AND disabled=false AND " +
-        "NOT EXISTS (SELECT * FROM assignments WHERE ( expiration_time_sec < UNIX_TIMESTAMP() OR teams_id = {teamId}) AND questions_id = q.id) " +
+        "NOT EXISTS (SELECT * FROM assignments WHERE ( expiration_time_sec < UNIX_TIMESTAMP() AND teams_id = {teamId}) AND questions_id = q.id) " +
         "AND (SELECT COUNT(*) FROM assignments WHERE questions_id = q.id) < q.maximal_assignments GROUP BY RAND() LIMIT 1")
         .on('paperId -> paperId,
         'teamId -> teamId)
@@ -113,7 +116,7 @@ object QuestionDAO {
     DB.withConnection { implicit c =>
       SQL("SELECT * FROM questions AS q WHERE " +
         "question_type = {question_type} AND NOT EXISTS " +
-        "(SELECT * FROM assignments WHERE ( expiration_time_sec < UNIX_TIMESTAMP() or teams_id = {teamId}) AND questions_id = q.id) AND disabled=false AND " +
+        "(SELECT * FROM assignments WHERE ( expiration_time_sec < UNIX_TIMESTAMP() AND teams_id = {teamId}) AND questions_id = q.id) AND disabled=false AND " +
         "(SELECT COUNT(*) FROM assignments WHERE questions_id = q.id) < q.maximal_assignments GROUP BY RAND() LIMIT 1")
         .on('question_type
         -> question_type
@@ -204,7 +207,7 @@ object QuestionDAO {
     DB.withConnection { implicit c =>
       SQL("SELECT * FROM questions AS q WHERE papers_id = {paper_id} " +
         "AND disabled=false AND NOT EXISTS (SELECT * FROM assignments AS a WHERE" +
-        " ( a.expiration_time < UNIX_TIMESTAMP() OR a.teams_id = {teamId}) AND" +
+        " ( a.expiration_time < UNIX_TIMESTAMP() AND a.teams_id = {teamId}) AND" +
         " a.is_cancelled = false AND (SELECT COUNT(*) FROM answers WHERE assignments_id = a.id) >= 0 AND" +
         " questions_id = q.id) AND IF(maximal_assignments IS NULL, TRUE, " +
         "(SELECT COUNT(*) FROM assignments WHERE questions_id = q.id) < q.maximal_assignments)"+

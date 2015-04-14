@@ -194,12 +194,20 @@
                                     @if(question.question_type.equalsIgnoreCase("Voting")){
                                         <div>
                                             <div style="font-size: 120%;display: inline-block;"><b>
-                                                Please select the answer you think best represent the question above. All the alternatives are highlighted in the paper on the right.
-                                            </b></div>
+                                                All the relevant information to answer this question are highlighted in the paper on the right.
+                                            </b>
+                                            </div>
+                                            <br><br>
                                             <div ng-init="set_possible_answers('@(question.possible_answers.get)');">
                                                 <div ng-repeat="ds in possible_answers">
-                                                    <input type="radio" value="{{ds}}" ng-model="answer" name="answer">
-                                                    {{ds}}
+                                                    <any ng-if="ds != ''">
+                                                        <input type="radio" value="{{ds}}" ng-model="answer" name="answer">
+                                                        {{ds}}
+                                                    </any>
+                                                    <any ng-if="ds == ''">
+                                                        <input type="radio" ng-value="There exist no dataset for this method" ng-model="answer" name="answer">
+                                                        There exist no dataset for this method
+                                                    </any>
                                                 </div>
                                             </div>
                                         </div>
@@ -210,7 +218,7 @@
                                         <button ng-if="dom_children.length == 0" class="btn btn-warning" id="emptyDataset" onclick="removeSelectedDS();window.onbeforeunload = null;" ng-click="removeAllElementDS()" type="submit">No Dataset found</button>
                                     }
                                     @if(!question.question_type.equalsIgnoreCase("Discovery")){
-                                        <button class="btn btn-success" id="submitAnswer" disabled onclick="window.onbeforeunload = null;" type="submit">Submit Answer</button>
+                                        <button class="btn btn-success" id="submitAnswer" onclick="window.onbeforeunload = null;" type="submit">Submit Answer</button>
                                     }
                                     <button class="btn btn-danger" id="cancelAnswer" type="button" ng-click="cancel_assignment(@assignmentId)">Cancel</button>
 
@@ -222,7 +230,7 @@
                         </td>
 
                         <td>
-                            <div id="header-paper" style="backgroud-color: #FFFFFF;" ng-init="turker_id='@turker.turker_id';countdown();"> <!--(question.expiration_time_sec.getOrElse(600).toString)-->
+                            <div id="header-paper" style="backgroud-color: #FFFFFF;" ng-init="turker_id='@turker.turker_id';countdown('@assignmentId');"> <!--(question.expiration_time_sec.getOrElse(600).toString)-->
                                 <div align="center">
                                     <h3><span ng-if="@showReward=true">Payment for answer: @(question.reward_cts.toDouble/100) $ -</span><span> Remaining time to answer the question: {{ counter_sec*1000 | date:'mm:ss' }}</span></h3>
                                 </div>

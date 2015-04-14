@@ -85,7 +85,12 @@ object Answer extends Controller {
       } else if (question_type.equalsIgnoreCase("Voting")) {
         Logger.debug("Found question type voting")
         try {
-          answer = request.body.asFormUrlEncoded.get("answer").get.head
+          val answerParsed = request.body.asFormUrlEncoded.get("answer").get.head
+          if(answerParsed.equalsIgnoreCase("There exist no dataset for this method")){
+            answer = ""
+          } else {
+            answer = answerParsed
+          }
           Logger.debug("Stored answer: " + answer)
         } catch {
           case e: Exception => {
