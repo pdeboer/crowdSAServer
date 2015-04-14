@@ -35,8 +35,7 @@
                     <div class="row">
                         <div class="col-sm-8">
                             <div>
-                                You selected the paper:<br>
-                                <b>@paper.pdf_title</b>
+                                <h3><b>@paper.pdf_title</b></h3>
                                     <br><br>
                                 You can now choose a question type from the list below.<br>
                                 We recommend to <b>read the abstract</b> of the paper before choosing to answer the questions below by clicking the blue button "Preview Paper".<br>
@@ -50,9 +49,9 @@
                         </div>
                     </div>
                         <h3 ng-init="startIntervalGet();">Available Questions:</h3>
-                        Filter questions:
-                        <input ng-model="input" autofocus>
-
+                        <div style="display:none;">Filter questions:
+                        <input ng-model="input">
+                        </div>
                     <h3 ng-if="questions.length == 0" style="color: red;">There are no available questions right now!</h3>
                     <table class="table table-hover" ng-if="questions.length > 0" style="cursor:hand">
                         <thead>

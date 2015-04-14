@@ -253,6 +253,7 @@ myApp.controller('ViewerCtrl', function($scope, $http, $interval){
                 } else {
                     $scope.stoptimer(timer);
                     $scope.cancel_assignment(assignment_id);
+                    alert("You ran out of time. The question will be now available to other crowd workers.");
                 }
             }, 1000);
         })

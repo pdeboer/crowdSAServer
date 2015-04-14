@@ -27,6 +27,9 @@
 
 'use strict';
 
+var HIGHLIGHT = '';
+var firstTime = true;
+
 var QUESTION_TYPE = '';
 //var domChildren = [];
 var DEFAULT_URL = '';
@@ -3440,6 +3443,13 @@ var PageView = function pageView(container, id, scale, defaultViewport,
                             textLayer.setTextContent(textContent);
                         }
                     );
+                }
+                if(firstTime) {
+                    PDFView.findBar.open();
+                    PDFView.findBar.findField.value = HIGHLIGHT;
+                    PDFView.findBar.findNextButton.click();
+                    //PDFView.findBar.close();
+                    firstTime = false;
                 }
             },
             function pdfPageRenderError(error) {
@@ -6941,4 +6951,3 @@ window.addEventListener('afterprint', function afterPrint(evt) {
             window.requestAnimationFrame(resolve);
         });
 })();
-

@@ -1,4 +1,4 @@
-@(turker: Turker, question: Question, paperBase64: String, teamId: Long, assignmentId: Long, showReward: Boolean)
+@(turker: Turker, question: Question, paperBase64: String, teamId: Long, assignmentId: Long, showReward: Boolean, stringToMatch: String)
 @import play.api.libs.json.Json
 
 <!DOCTYPE html>
@@ -121,7 +121,7 @@
                                 });
                             });
 
-                    </script>
+                  </script>
                     <tr>
                         <td style="width: 30%; vertical-align: top; text-align: left;">
 
@@ -600,13 +600,14 @@
 
             <script>
 
-            QUESTION_TYPE = @Html(Json.toJson(question.question_type).toString)
+            QUESTION_TYPE = @Html(Json.toJson(question.question_type).toString);
+            HIGHLIGHT = @Html(Json.toJson(stringToMatch).toString);
 
             $(document).ready(
                 function() {
                     DEFAULT_URL = "data:application/pdf;base64," + @Html(Json.toJson(paperBase64).toString);
                 }
-            )
+            );
 
             /*function jumpToFirstMatch() {
                 //Find page of match
