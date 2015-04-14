@@ -13,7 +13,9 @@ import play.api.mvc.{Action, Controller}
  */
 object Question extends Controller {
 
-  // GET - get all questions
+  /** GET - get all questions
+    * @return list of questions
+    */
   def questions = Action { implicit request =>
     val session = request.session
 
@@ -25,6 +27,10 @@ object Question extends Controller {
     }
   }
 
+  /**
+   * Post - Create new question
+   * @return id of the new question
+   */
   def addQuestion = Action(parse.multipartFormData) { implicit request =>
     try {
       val question = request.body.asFormUrlEncoded.get("question").get.head
@@ -49,6 +55,10 @@ object Question extends Controller {
     }
   }
 
+  /**
+   * Post - Disable a question
+   * @return Confirmation message
+   */
   def disableQuestion = Action(parse.multipartFormData) { implicit request =>
     try {
       val question_id = request.body.asFormUrlEncoded.get("question_id").get.head.toLong
@@ -59,6 +69,10 @@ object Question extends Controller {
     }
   }
 
+  /**
+   * Post - Add highlight to a question
+   * @return Confirmation message
+   */
   def addHighlight() = Action(parse.multipartFormData) { implicit request =>
     try {
       val questionId = request.body.asFormUrlEncoded.get("questionId").get.head.toLong
@@ -72,6 +86,11 @@ object Question extends Controller {
     }
   }
 
+  /**
+   * Get - Get all questions related to a specific paper
+   * @param paper_id id of the paper
+   * @return List of questions
+   */
   def getAllQuestionsByPaperId(paper_id: Long) = Action { implicit request =>
     val session = request.session
 
@@ -83,6 +102,10 @@ object Question extends Controller {
     }
   }
 
+  /**
+   * Post - Extend number of maximal assignment
+   * @return Confirmation message
+   */
   def extendMaxAssignments() = Action(parse.multipartFormData) {implicit request =>
     try {
       val question_id = request.body.asFormUrlEncoded.get("question_id").get.head.toLong
@@ -97,6 +120,10 @@ object Question extends Controller {
     }
   }
 
+  /**
+   * Post - Extend expiration time of a question
+   * @return Confirmation message
+   */
   def extendExpiration() = Action(parse.multipartFormData) {implicit request =>
     try {
       val question_id = request.body.asFormUrlEncoded.get("question_id").get.head.toLong

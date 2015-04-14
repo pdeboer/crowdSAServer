@@ -13,7 +13,10 @@ import play.api.mvc.{Action, Controller}
  * Created by Mattia on 22.01.2015.
  */
 object Login extends Controller {
-
+  /**
+   * POST - login function
+   * @return redirect to main overview
+   */
   def login = Action { implicit request =>
 
     val username = request.body.asFormUrlEncoded.get("username")(0)
@@ -28,10 +31,18 @@ object Login extends Controller {
     }
   }
 
+  /**
+   * Get - show registration view
+   * @return
+   */
   def registration = Action { implicit request =>
     Ok(views.html.registration(request.flash))
   }
 
+  /**
+   * POST - Create new account
+   * @return redirects to main overview, otherwise ask for corrections
+   */
   def addTurker = Action { implicit request =>
     try {
       val username = request.body.asFormUrlEncoded.get("username")(0)
@@ -69,9 +80,11 @@ object Login extends Controller {
     }
   }
 
+  /**
+   * POST - Logout functionality
+   * @return
+   */
   def logout = Action { implicit request => {
-    println(request.body.asFormUrlEncoded)
-    println(request.body.asFormUrlEncoded.get("turker_id"))
     TurkerDAO.updateLogoutTime(request.body.asFormUrlEncoded.get("turker_id")(0), new Date().getTime/1000)
     Redirect(routes.Application.index()).withNewSession.flashing(
       "success" -> "You are now logged out."

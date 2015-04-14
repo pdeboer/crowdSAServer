@@ -7,7 +7,10 @@ import play.api.mvc.{Action, Controller}
  * Created by mattia on 02.04.15.
  */
 object Qualification extends Controller{
-
+  /**
+   * Post - Create qualification
+   * @return confirmation string
+   */
   def addQualification = Action(parse.multipartFormData) { implicit request =>
     try {
       val question_id = request.body.asFormUrlEncoded.get("question_id").get.head.toLong

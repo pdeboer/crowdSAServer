@@ -10,11 +10,14 @@ import play.api.mvc.{Action, Controller}
  */
 object Dataset extends Controller {
 
+  /**
+   * POST - Create new dataset
+   * @return id of the new dataset, -1 otherwise
+   */
   def addDataset() = Action(parse.multipartFormData) { implicit request =>
     val answer_id = request.body.asFormUrlEncoded.get("answer_id").get.head.toLong
 
     try {
-
       val answer = AnswerDAO.findById(answer_id).get
       val question_id = AssignmentDAO.findByAnswerId(answer_id).get.questions_id
       val question = QuestionDAO.findById(question_id).get.question

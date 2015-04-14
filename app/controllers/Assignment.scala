@@ -22,6 +22,11 @@ object Assignment extends Controller {
    }
   }
 
+  /**
+   * GET - get the assignment of a specific answer
+   * @param ansId
+   * @return
+   */
   def assignmentOfAnswer(ansId: Long) = Action { implicit request =>
     try {
       val assignment = AssignmentDAO.findByAnswerId(ansId).get
@@ -31,6 +36,11 @@ object Assignment extends Controller {
     }
   }
 
+  /**
+   * GET - check if there is an assignment still open for a turker
+   * @param turker_id
+   * @return true if exists an open assignment, false otherwise
+   */
   def isAssignmentOpen(turker_id: String) = Action {implicit request =>
     try {
       val resp = AssignmentDAO.isAnAssignmentAlreadyOpen(turker_id)
@@ -48,6 +58,11 @@ object Assignment extends Controller {
 
   }
 
+  /**
+   * Get - get the url for the open assignment
+   * @param turker_id
+   * @return redirect to the open assignment
+   */
   def getViewerUrlOpenAssignment(turker_id: String) = Action {implicit request =>
     try {
       if(AssignmentDAO.isAnAssignmentAlreadyOpen(turker_id)){
@@ -66,6 +81,11 @@ object Assignment extends Controller {
 
   }
 
+  /**
+   * Get - get only Id of open assignment
+   * @param turker_id
+   * @return id of the assignment, -1 otherwise
+   */
   def getOpenAssignmentId(turker_id: String) = Action {
     try {
       if(AssignmentDAO.isAnAssignmentAlreadyOpen(turker_id)){

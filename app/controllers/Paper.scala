@@ -4,10 +4,8 @@ import java.io.File
 import java.util.Date
 
 import anorm.NotAssigned
-import controllers.Application._
-import controllers.Question._
-import models.{Paper, Question}
-import persistence.{PaperDAO, QuestionDAO}
+import models.Paper
+import persistence.PaperDAO
 import play.api.libs.json.Json
 import play.api.mvc.{Action, Controller}
 
@@ -15,17 +13,23 @@ import play.api.mvc.{Action, Controller}
  * Created by Mattia on 22.01.2015.
  */
 object Paper extends Controller {
-
+  /**
+   * Get - check if paperId exists in database
+   * @param paperId
+   * @return true if found, false otherwise
+   */
   def checkPaper(paperId: Long) = Action { implicit request =>
     try {
-      val paper = PaperDAO.findById(paperId).get
+      PaperDAO.findById(paperId).get
       Ok("true")
     }catch {
       case e: Exception => InternalServerError("false")
     }
   }
 
-  // POST - Stores a paper in the database, as well as the title, the budget and the uploaded time.
+  /** POST - Stores a paper in the database, as well as the title, the budget and the uploaded time.
+    * @return id of the new paper stored in the database
+    */
   def storePaper = Action(parse.multipartFormData) { implicit request =>
 
     request.body.file("source").map { source =>
@@ -43,6 +47,7 @@ object Paper extends Controller {
           case e: Exception => InternalServerError("Wrong request structure. pdf_title, highlight_enabled or source is missing in the request.")
         }
 
+        //Move pdf to public/pdfs folder
         source.ref.moveTo(new File(s"./public/pdfs/$filename"))
         val paper: Paper = new Paper(NotAssigned, "/pdfs/" + filename, title, new Date().getTime/1000, highlight)
         val id = PaperDAO.add(paper)
@@ -56,6 +61,10 @@ object Paper extends Controller {
     }
   }
 
+  /**
+   * Get - get all papers stored in the database
+   * @return List of papers
+   */
   def getAllPapers() = Action { implicit request =>
     val session = request.session
 
@@ -72,6 +81,11 @@ object Paper extends Controller {
 
   }
 
+  /**
+   * Get - Get paper from an answer.
+   * @param answerId
+   * @return paper object
+   */
   def getPaperIdFromAnswerId(answerId: Long) = Action { implicit request =>
     try {
       Ok(Json.toJson(PaperDAO.findByAnswerId(answerId)))

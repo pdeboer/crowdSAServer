@@ -1,8 +1,7 @@
-package util
+package pdf
 
 import java.io.{ByteArrayOutputStream, FileInputStream}
 
-import controllers.TextHighlight
 import org.apache.pdfbox.pdfparser.PDFParser
 import org.apache.pdfbox.pdmodel.PDDocument
 import play.api.Logger
@@ -32,7 +31,7 @@ object HighlightPdf {
       pdfHighlight.highlightDefault(textRegEx)
     }
 
-    var byteArrayOutputStream = new ByteArrayOutputStream()
+    val byteArrayOutputStream = new ByteArrayOutputStream()
     try {
      if (pdDoc != null) {
        pdDoc.save(byteArrayOutputStream)
@@ -50,6 +49,11 @@ object HighlightPdf {
     byteArrayOutputStream.toByteArray()
   }
 
+  /**
+   * Convert pdf to Array[Byte] object
+   * @param pdfPath
+   * @return
+   */
   def getPdfAsArrayByte(pdfPath: String) : Array[Byte] = {
     val file = "./public"+pdfPath
     val parser: PDFParser = new PDFParser(new FileInputStream(file))

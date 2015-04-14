@@ -1,10 +1,7 @@
 package models
 
-import java.util.Date
-
 import anorm.Pk
-import org.joda.time.DateTime
-import play.api.libs.json.{Json, JsValue, Writes}
+import play.api.libs.json.{JsValue, Json, Writes}
 
 /**
  * Created by Mattia on 26.12.2014.

@@ -1,4 +1,4 @@
-package controllers;
+package pdf;
 
 /*
  * Copyright 2014 JoÃ«l Kuiper

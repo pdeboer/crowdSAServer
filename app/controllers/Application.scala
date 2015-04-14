@@ -7,6 +7,10 @@ import play.api.mvc._
 
 object Application extends Controller{
 
+  /**
+   * GET - index of application
+   * @return
+   */
   def index = Action { implicit request =>
     val session = request.session
     request.session.get("turkerId").map {
@@ -17,6 +21,10 @@ object Application extends Controller{
     }
   }
 
+  /**
+   * Get - Account overview with details
+   * @return
+   */
   def account = Action { implicit request =>
     val session = request.session
 
@@ -28,7 +36,10 @@ object Application extends Controller{
     }
   }
 
-  //GET - teams for user
+  /**
+   * Get - Teams overview
+   * @return
+   */
   def teams = Action { implicit request =>
     request.session.get("turkerId").map {
       turkerId =>
@@ -38,7 +49,9 @@ object Application extends Controller{
     }
   }
 
-  //POST - update turker's feedback
+  /**
+   *POST - update turker's feedback
+   */
   def updateFeedback =  Action { implicit request =>
     Logger.debug("Updating feedback")
     request.session.get("turkerId").map {

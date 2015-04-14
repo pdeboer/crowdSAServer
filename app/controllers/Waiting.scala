@@ -6,9 +6,9 @@ import anorm.NotAssigned
 import com.typesafe.config.ConfigFactory
 import models.Assignment
 import org.apache.commons.codec.binary.Base64
+import pdf.HighlightPdf
 import persistence._
 import play.api.mvc._
-import util.HighlightPdf
 
 /**
  * Created by Mattia on 22.01.2015.
@@ -17,6 +17,12 @@ object Waiting extends Controller{
   val config = ConfigFactory.load("application.conf")
   val layoutMode = config.getInt("layoutMode")
 
+  /**
+   * Get - Get the right waiting layout (layout is defined in application.conf)
+   * @param turkerId the id of the turker
+   * @param flash the message to flash in the waiting overview
+   * @return
+   */
   def getWaitingLayout(turkerId: String, flash: Flash): Result = {
     try {
       val mode = layoutMode match {
@@ -34,7 +40,9 @@ object Waiting extends Controller{
     return InternalServerError("Something went wrong!")
   }
 
-  // GET - waiting page
+  /**  GET - waiting page
+   *
+   */
   def waiting = Action { implicit request =>
     val session = request.session
 
@@ -48,12 +56,15 @@ object Waiting extends Controller{
     }
   }
 
+  /**
+   * Get - Get question based on the layout type currently loaded
+   * @return
+   */
   def getQuestion() = Action { implicit request =>
     val session = request.session
 
     request.session.get("turkerId").map {
       turkerId =>
-        //TODO: Get an available question from the DB and create an assignment
         val m = layoutMode match {
           case 1 => getRandomQuestionRandomPaper(turkerId) //RANDOM_QUESTION_RANDOM_PAPER
           case 2 => getRandomQuestionSamePaper(turkerId, request.session) //RANDOM_QUESTION_SAME_PAPER
@@ -68,9 +79,9 @@ object Waiting extends Controller{
   }
 
   /**
-   * Ony used for layout 5
-   * @param questionId
-   * @return
+   * Get - Ony used for layout 5, gets the question that the turker chose
+   * @param questionId id of the question to load
+   * @return Redirect to the PDF Viewer page
    */
   def getDefinedQuestion(questionId: Long) = Action { implicit request =>
     val session = request.session
@@ -92,10 +103,10 @@ object Waiting extends Controller{
   }
 
   /**
-   * Get only one question type from a single paper
-   * @param turkerId
-   * @param session
-   * @return
+   * Get- gets only one question type from a single paper
+   * @param turkerId id of the turker
+   * @param session session of the turker
+   * @return redirects to the PDF Viewer page
    */
   def getSameQuestionTypeSamePaper(turkerId: String, session: Session) : Result = {
     var questionType: String = ""
@@ -116,7 +127,7 @@ object Waiting extends Controller{
       val questionId = QuestionDAO.getSameQuestionTypeRandomPaper(turkerId, questionType)
       val assignmentId = assignQuestion(questionId, turkerId)
 
-      Ok(questionId.toString+"/"+assignmentId.toString).withSession(
+      Ok("/viewer/"+questionId.toString+"/"+assignmentId.toString).withSession(
         session +
           ("paperId" -> paperId.toString) +
           ("questionType" -> questionType)
@@ -202,8 +213,8 @@ object Waiting extends Controller{
 
   /**
    * Assign a question to a team composed only by 1 turker (the requester)
-   * @param questionId
-   * @return
+   * @param questionId id of the question
+   * @return Assignment id that is created
    */
   def assignQuestion(questionId: Long, turkerId: String) : Long = {
     // if a question is already assigned and it is not cancelled and there are
@@ -219,6 +230,10 @@ object Waiting extends Controller{
     }
   }
 
+  /**
+   * Post - Reject/Remove completely from the database the assignment
+   * @return
+   */
   def rejectAssignment = Action { implicit request =>
     val session = request.session
 
@@ -232,6 +247,11 @@ object Waiting extends Controller{
     }
   }
 
+  /**
+   * Get - Open second step a.k.a. Question overview page
+   * @param paper_id id of the paper chosen on the first step
+   * @return
+   */
   def secondStep(paper_id: Long) = Action {implicit request =>
     val session = request.session
 
