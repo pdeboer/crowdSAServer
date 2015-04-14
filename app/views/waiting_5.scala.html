@@ -25,7 +25,7 @@
                     <div>
                         <div ng-if="assigned">
 
-                            <b><span style="cursor:pointer; color:red;" ng-click="getAssigned('@turker.turker_id');">
+                            <b><span style="cursor:hand; color:red;" ng-click="getAssigned('@turker.turker_id');">
                                 You have an assigned question to answer. (Time left: {{expiration_time*1000 | date:'mm:ss'}})</span>
                             </b>
 
@@ -62,7 +62,7 @@
                                 <td align="center">
                                     {{ paper.nQuestions }}
                                 </td>
-                                <td align="right" style="cursor:pointer">
+                                <td align="right" style="cursor:hand">
                                     <span class="badge">Show details</span>
                                 </td>
                             </tr>

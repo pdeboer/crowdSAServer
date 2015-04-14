@@ -3,9 +3,8 @@ package controllers
 import java.util.Date
 
 import anorm.NotAssigned
-import controllers.Viewer._
 import models.Answer
-import persistence.{PaperDAO, AnswerDAO, AssignmentDAO}
+import persistence.{AnswerDAO, AssignmentDAO, PaperDAO}
 import play.api.Logger
 import play.api.libs.json.Json
 import play.api.mvc.{Action, Controller}
@@ -101,7 +100,7 @@ object Answer extends Controller {
 
           for (k <- keys) {
             if (k.startsWith("dom_children")) {
-              answer = request.body.asFormUrlEncoded.get(k).get.mkString("#") //TODO: before ,
+              answer = request.body.asFormUrlEncoded.get(k).get.mkString("#")
             }
           }
         } catch {

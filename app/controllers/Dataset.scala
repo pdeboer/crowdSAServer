@@ -3,7 +3,7 @@ package controllers
 import anorm.NotAssigned
 import models.Dataset
 import persistence._
-import play.api.mvc.{Controller, Action}
+import play.api.mvc.{Action, Controller}
 
 /**
  * Created by mattia on 18.03.15.
@@ -18,7 +18,8 @@ object Dataset extends Controller {
       val answer = AnswerDAO.findById(answer_id).get
       val question_id = AssignmentDAO.findByAnswerId(answer_id).get.questions_id
       val question = QuestionDAO.findById(question_id).get.question
-      val stat_method = question.substring(question.indexOf(":")+2, question.indexOf(" highlighted in the paper"))
+      // FIXME: ugly
+      val stat_method = question.substring(question.indexOf("<i> ") + 4, question.indexOf(" </i>"))
       val paper_id = PaperDAO.findByAnswerId(answer_id)
 
       val dataset_id = DatasetDAO.add(new Dataset(NotAssigned, stat_method, answer.answer.replace("#", ","), answer.hashCode().toString, Some("")), paper_id)

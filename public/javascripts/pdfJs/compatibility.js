@@ -482,6 +482,9 @@ if (typeof PDFJS === 'undefined') {
     if (isSafari || isOldAndroid) {
         PDFJS.disableRange = true;
         PDFJS.disableStream = true;
+        document.addEventListener('DOMContentLoaded', function (e) {
+            PDFJS.disableRange = true;
+        });
     }
 })();
 

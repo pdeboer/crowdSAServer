@@ -57,10 +57,11 @@
                                     <li><a href="/account">Account</a></li>
                                     <li class="divider" />
                                     <li>
-                                        <a style="cursor:pointer"><form action="/logout" method="post">
-                                            <input type="hidden" name="turker_id" value="@turker.turker_id">
-                                            <span onclick="parentNode.submit();">Logout</span>
-                                        </form>
+                                        <a style="cursor:hand">
+                                            <form action="/logout" method="post">
+                                                <input type="hidden" name="turker_id" value="@turker.turker_id">
+                                                <span onclick="parentNode.submit();">Logout</span>
+                                            </form>
                                         </a>
                                     </li>
                                 </ul>

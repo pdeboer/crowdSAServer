@@ -252,4 +252,8 @@ myApp.controller('ViewerCtrl', function($scope, $http, $timeout){
         }, 1000);
     };
 
+    $scope.removeAllElementDS = function() {
+        $scope.dom_children = "";
+    }
+
 });
