@@ -254,6 +254,10 @@ myApp.controller('ViewerCtrl', function($scope, $http, $timeout){
 
     $scope.removeAllElementDS = function() {
         $scope.dom_children = "";
-    }
+    };
+
+    $scope.isAnswerSelected = function() {
+        return $scope.answer!="";
+    };
 
 });

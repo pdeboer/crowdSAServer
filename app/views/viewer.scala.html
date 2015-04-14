@@ -91,6 +91,36 @@
                             function removeSelectedDS(){
                                 $("input[value^='dom_children']").val("");
                             }
+
+                            $(document).ready(function(){
+                                var $radioButtons = $("input:radio");
+
+                                $radioButtons.change(function(){
+                                    var anyRadioButtonHasValue = false;
+
+                                    // iterate through all radio buttons
+                                    $radioButtons.each(function(){
+                                        if(this.checked){
+                                            // indicate we found a radio button which has a value
+                                            anyRadioButtonHasValue = true;
+
+                                            // break out of each loop
+                                            return false;
+                                        }
+                                    });
+
+                                    // check if we found any radio button which has a value
+                                    if(anyRadioButtonHasValue){
+                                        // enable submit button.
+                                        $("#submitAnswer").removeAttr("disabled");
+                                    }
+                                    else{
+                                        // else is kind of redundant unless you somehow can clear the radio button value
+                                        $("#submitAnswer").attr("disabled", "");
+                                    }
+                                });
+                            });
+
                     </script>
                     <tr>
                         <td style="width: 30%; vertical-align: top; text-align: left;">
@@ -142,7 +172,7 @@
                                                 If you happen to select a sentence by mistake,
                                                 you can click on the "delete" icon next to it’s text just below this introduction.
                                                 <br>
-                                                Once you’re done, please click "submit".
+                                                Once you’re done, please click "submit answer" or "no dataset found" depending on your findings.
                                                 Your selection will be compared with the one of other crowd workers.
                                             </b></div>
                                             <a class="btn btn-info" id="showhidetrigger" href="#">How to solve this task?</a>
@@ -175,12 +205,13 @@
                                         </div>
                                         <br><br>
                                     }
-
-                                    <button class="btn btn-success" id="submitAnswer" onclick="window.onbeforeunload = null;" type="submit">Submit Answer</button>
                                     @if(question.question_type.equalsIgnoreCase("Discovery")){
-                                        <button class="btn btn-warning" id="emptyDataset" onclick="removeSelectedDS();window.onbeforeunload = null;" ng-click="removeAllElementDS()" type="submit">No Dataset found</button>
+                                        <button class="btn btn-success" ng-if="dom_children.length > 0" id="submitAnswer" onclick="window.onbeforeunload = null;" type="submit">Submit Answer</button>
+                                        <button ng-if="dom_children.length == 0" class="btn btn-warning" id="emptyDataset" onclick="removeSelectedDS();window.onbeforeunload = null;" ng-click="removeAllElementDS()" type="submit">No Dataset found</button>
                                     }
-                                    <br><br>
+                                    @if(!question.question_type.equalsIgnoreCase("Discovery")){
+                                        <button class="btn btn-success" id="submitAnswer" disabled onclick="window.onbeforeunload = null;" type="submit">Submit Answer</button>
+                                    }
                                     <button class="btn btn-danger" id="cancelAnswer" type="button" ng-click="cancel_assignment(@assignmentId)">Cancel</button>
 
 
