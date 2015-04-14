@@ -240,7 +240,12 @@ object Waiting extends Controller{
         val paper = PaperDAO.findById(paper_id).get
         val config = ConfigFactory.load("application.conf")
         val showReward = config.getBoolean("showReward")
-        Ok(views.html.waiting_5_2nd_step(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), request.flash, paper, Base64.encodeBase64String(HighlightPdf.getPdfAsArrayByte(paper.pdf_path)), showReward))
+        // If there are available questions for the user redirect to these. Otherwise force redirect to paper overview
+        if(QuestionDAO.getQuestionsByPaperId(turkerId, paper.id.get).length > 0){
+          Ok(views.html.waiting_5_2nd_step(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), request.flash, paper, Base64.encodeBase64String(HighlightPdf.getPdfAsArrayByte(paper.pdf_path)), showReward))
+        } else {
+          Redirect(routes.Waiting.waiting())
+        }
     }.getOrElse {
       Redirect(routes.Application.index())
     }
