@@ -87,8 +87,8 @@ object QuestionDAO {
     Logger.debug("GETTING ALL ENABLED FOR TEAM ID: " + teamId)
     DB.withConnection { implicit c =>
       SQL("SELECT * FROM questions AS q WHERE " +
-        "AND disabled=false AND NOT EXISTS (SELECT * FROM assignments AS a WHERE " +
-        "( a.expiration_time < UNIX_TIMESTAMP() and a.teams_id = {teamId}) AND " +
+        "disabled=false AND NOT EXISTS (SELECT * FROM assignments AS a WHERE " +
+        " a.teams_id = {teamId} AND " +
         "a.is_cancelled = false AND (SELECT COUNT(*) FROM answers WHERE assignments_id = a.id) >= 0 AND " +
         "questions_id = q.id) AND IF(maximal_assignments IS NULL, TRUE," +
         "(SELECT COUNT(*) FROM assignments WHERE questions_id = q.id) < q.maximal_assignments) " +
@@ -207,7 +207,7 @@ object QuestionDAO {
     DB.withConnection { implicit c =>
       SQL("SELECT * FROM questions AS q WHERE papers_id = {paper_id} " +
         "AND disabled=false AND NOT EXISTS (SELECT * FROM assignments AS a WHERE" +
-        " ( a.expiration_time < UNIX_TIMESTAMP() AND a.teams_id = {teamId}) AND" +
+        " a.teams_id = {teamId} AND" +
         " a.is_cancelled = false AND (SELECT COUNT(*) FROM answers WHERE assignments_id = a.id) >= 0 AND" +
         " questions_id = q.id) AND IF(maximal_assignments IS NULL, TRUE, " +
         "(SELECT COUNT(*) FROM assignments WHERE questions_id = q.id) < q.maximal_assignments)"+

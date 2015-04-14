@@ -14,7 +14,6 @@ myApp.controller('QuestionCtrl', ['$scope', '$interval', '$timeout', '$http',
         $http.get("/questions/" + $scope.paper_id)
             .success(function (data) {
                 $scope.questions = data;
-
             })
             .error(function (data) {
                 console.error("Error: Cannot get the questions related to paper " + paper_id);

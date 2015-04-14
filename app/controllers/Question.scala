@@ -13,7 +13,7 @@ import play.api.mvc.{Action, Controller}
  */
 object Question extends Controller {
 
-  /** GET - get all questions
+  /** GET - get all questions which the actual turker is able to answer
     * @return list of questions
     */
   def questions = Action { implicit request =>
@@ -92,8 +92,6 @@ object Question extends Controller {
    * @return List of questions
    */
   def getAllQuestionsByPaperId(paper_id: Long) = Action { implicit request =>
-    val session = request.session
-
     request.session.get("turkerId").map {
       turker_id =>
         Ok(Json.toJson(QuestionDAO.getQuestionsByPaperId(turker_id, paper_id)))
