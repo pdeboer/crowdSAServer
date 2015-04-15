@@ -26,7 +26,7 @@
                     <br>
                     <div ng-if="assigned">
 
-                        <b><span style="cursor:hand; color:red;" ng-click="getAssigned('@turker.turker_id');">
+                        <b><span style="cursor:pointer; cursor:hand; color:red;" ng-click="getAssigned('@turker.turker_id');">
                             You have an assigned question to answer. (Time left: {{expiration_time*1000 | date:'mm:ss'}})</span>
                         </b>
 
@@ -55,7 +55,7 @@
                         <input ng-model="input">
                         </div>
                     <h3 ng-if="questions.length == 0" style="color: red;">There are no available questions right now!</h3>
-                    <table class="table table-hover" ng-if="questions.length > 0" style="cursor:hand">
+                    <table class="table table-hover" ng-if="questions.length > 0" style="cursor:pointer; cursor:hand;">
                         <thead>
                             <tr>
                                 <th>#</th>
@@ -65,7 +65,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr ng-repeat="question in questions | filter:input" ng-click="showViewer(question.id)" style="cursor:hand">
+                            <tr ng-repeat="question in questions | filter:input" ng-click="showViewer(question.id)" style="cursor:pointer; cursor:hand;">
                                 <th>
                                     {{ question.id }}
                                 </th>
@@ -81,7 +81,7 @@
                                 <td ng-if="@showReward">
                                     {{ question.reward }}
                                 </td>
-                                <td align="right" style="cursor:hand; width:100px;">
+                                <td align="right" style="cursor:pointer; cursor:hand; width:100px;">
                                     <span class="badge">Answer this question</span>
                                 </td>
                             </tr>

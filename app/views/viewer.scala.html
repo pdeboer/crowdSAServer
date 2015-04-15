@@ -194,7 +194,7 @@
                                                     <div ng-if="dom_children.length == 0"><b>Dataset not yet extracted</b></div>
                                                     <li class="list-group-item" ng-repeat="ds in dom_children" >
                                                             <span class="badge">
-                                                                <span class="glyphicon glyphicon-trash" ng-click="removeElementDS(ds)" aria-hidden="true" style="cursor:hand"></span>
+                                                                <span class="glyphicon glyphicon-trash" ng-click="removeElementDS(ds)" aria-hidden="true" style="cursor:pointer; cursor:hand;"></span>
                                                             </span>
                                                         {{ds[0]}}
                                                         <input type='hidden' name='dom_children[]' ng-value="ds[0]"/>
