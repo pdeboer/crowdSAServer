@@ -55,7 +55,7 @@
                         <input ng-model="input">
                         </div>
                     <h3 ng-if="questions.length == 0" style="color: red;">There are no available questions right now!</h3>
-                    <table class="table table-hover" ng-if="questions.length > 0" style="cursor:pointer; cursor:hand;">
+                    <table class="table table-hover" ng-if="questions.length > 0">
                         <thead>
                             <tr>
                                 <th>#</th>
@@ -65,7 +65,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr ng-repeat="question in questions | filter:input" ng-click="showViewer(question.id)" style="cursor:pointer; cursor:hand;">
+                            <tr ng-repeat="question in questions | filter:input" ng-click="showViewer(question.id)">
                                 <th>
                                     {{ question.id }}
                                 </th>
