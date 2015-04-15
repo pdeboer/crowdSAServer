@@ -65,7 +65,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr ng-repeat="question in questions | filter:input" ng-click="showViewer(question.id)">
+                            <tr ng-repeat="question in questions | filter:input" ng-click="showViewer(question.id)" style="cursor:pointer; cursor:hand;">
                                 <th>
                                     {{ question.id }}
                                 </th>
@@ -81,7 +81,7 @@
                                 <td ng-if="@showReward">
                                     {{ question.reward }}
                                 </td>
-                                <td align="right" style="cursor:pointer; cursor:hand; width:100px;">
+                                <td align="right" style="width:100px;">
                                     <span class="badge">Answer this question</span>
                                 </td>
                             </tr>

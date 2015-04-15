@@ -56,7 +56,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr ng-repeat="paper in papers | filter:input " ng-click="second_step(paper.id)">
+                            <tr ng-repeat="paper in papers | filter:input " style="cursor:pointer; cursor:hand;" ng-click="second_step(paper.id)">
                                 <th>
                                     {{ paper.id }}
                                 </th>
@@ -67,7 +67,7 @@
                                     {{ paper.nQuestions }}
                                 </td>
                                 <td align="right">
-                                    <span class="badge" style="cursor:pointer; cursor:hand;">Show details</span>
+                                    <span class="badge">Show details</span>
                                 </td>
                             </tr>
                         </tbody>

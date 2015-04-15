@@ -53,13 +53,17 @@ object Viewer extends Controller{
 
               var jumpTo = ""
               if(highlights.length>0 && question.question_type == "Discovery"){
-                jumpTo = question.question.substring(question.question.indexOf("<i> ") + 4, question.question.indexOf("</i>")-1)
+                jumpTo = highlights.head
+                //jumpTo = question.question.substring(question.question.indexOf("<i> ") + 4, question.question.indexOf("</i>")-1)
               }else if(highlights.length>0) {
                 jumpTo = highlights.head
               }
 
               if (!contentCsv.isEmpty) {
-                Ok(views.html.viewer(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), question, Base64.encodeBase64String(HighlightPdf.highlight(pdfPath, highlights.toList)), AssignmentDAO.findById(assignmentId).get.teams_id, assignmentId, showReward, jumpTo, highlights.mkString("#")))
+                Ok(views.html.viewer(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), question,
+                  Base64.encodeBase64String(HighlightPdf.highlight(pdfPath, highlights.toList)),
+                  AssignmentDAO.findById(assignmentId).get.teams_id, assignmentId, showReward,
+                  jumpTo, highlights.mkString("#") ))
               } else {
                 Ok(views.html.viewer(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), question, Base64.encodeBase64String(HighlightPdf.getPdfAsArrayByte(pdfPath)), AssignmentDAO.findById(assignmentId).get.teams_id, assignmentId, showReward, jumpTo, highlights.mkString("#")))
               }

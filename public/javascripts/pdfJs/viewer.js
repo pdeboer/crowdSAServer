@@ -393,7 +393,7 @@ var Cache = function cacheCache(size) {
 
 var DEFAULT_PREFERENCES = {
     showPreviousViewOnLoad: true,
-    defaultZoomValue: '',
+    defaultZoomValue: '100',
     sidebarViewOnLoad: 0,
     enableHandToolOnLoad: false,
     enableWebGL: false,
@@ -3448,7 +3448,8 @@ var PageView = function pageView(container, id, scale, defaultViewport,
                     PDFView.findBar.open();
                     PDFView.findBar.findField.value = HIGHLIGHT;
                     PDFView.findBar.findNextButton.click();
-                    //PDFView.findBar.close();
+                    //  PDFView.findBar.close();
+                    $('.innerCenter').hide();
                     firstTime = false;
                 }
             },
@@ -6374,12 +6375,12 @@ function webViewerInitialized() {
 
     document.getElementById('zoomIn').addEventListener('click',
         function() {
-            PDFViewerApplication.zoomIn();
+            //PDFViewerApplication.zoomIn();
         });
 
     document.getElementById('zoomOut').addEventListener('click',
         function() {
-            PDFViewerApplication.zoomOut();
+            //PDFViewerApplication.zoomOut();
         });
 
     document.getElementById('pageNumber').addEventListener('click', function() {
@@ -6676,7 +6677,7 @@ function handleMouseWheel(evt) {
 }
 
 window.addEventListener('DOMMouseScroll', handleMouseWheel);
-window.addEventListener('mousewheel', handleMouseWheel);
+//window.addEventListener('mousewheel', handleMouseWheel);
 
 window.addEventListener('click', function click(evt) {
     if (!PresentationMode.active) {
@@ -6730,7 +6731,7 @@ window.addEventListener('keydown', function keydown(evt) {
             case 187: // Chrome '+'
             case 171: // FF with German keyboard
                 if (!inPresentationMode) {
-                    PDFViewerApplication.zoomIn();
+                    //PDFViewerApplication.zoomIn();
                 }
                 handled = true;
                 break;
@@ -6738,7 +6739,7 @@ window.addEventListener('keydown', function keydown(evt) {
             case 109: // FF '-'
             case 189: // Chrome '-'
                 if (!inPresentationMode) {
-                    PDFViewerApplication.zoomOut();
+                    //PDFViewerApplication.zoomOut();
                 }
                 handled = true;
                 break;
