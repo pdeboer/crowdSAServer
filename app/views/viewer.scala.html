@@ -205,9 +205,9 @@
                                     }
                                     @if(question.question_type.equalsIgnoreCase("Voting")){
                                         <div>
-                                            <div style="font-size: 120%;display: inline-block;"><b>
-                                                All the relevant information to answer this question are highlighted in the paper on the right.
-                                            </b>
+                                            <b>
+                                            <div style="font-size: 120%;display: inline-block;">
+                                                You will find, on the paper highlighted in yellow, all the alternatives as well as all the elements which may help you to choose the best answer.<br>
                                             </div>
                                             <br><br>
                                             <div ng-init="set_possible_answers('@(question.possible_answers.get)');">
@@ -222,6 +222,7 @@
                                                     </any>
                                                 </div>
                                             </div>
+                                            </b>
                                         </div>
                                         <br><br>
                                     }
