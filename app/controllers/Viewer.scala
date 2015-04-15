@@ -52,10 +52,10 @@ object Viewer extends Controller{
               val contentCsv = highlights.toList
 
               var jumpTo = ""
-              if(highlights.length>0){
+              if(highlights.length>0 && question.question_type == "Discovery"){
+                jumpTo = question.question.substring(question.question.indexOf("<i> ") + 4, question.question.indexOf("</i>")-1)
+              }else if(highlights.length>0) {
                 jumpTo = highlights.head
-              }else {
-                jumpTo = ""
               }
 
               if (!contentCsv.isEmpty) {
