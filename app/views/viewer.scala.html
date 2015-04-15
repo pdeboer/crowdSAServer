@@ -1,4 +1,4 @@
-@(turker: Turker, question: Question, paperBase64: String, teamId: Long, assignmentId: Long, showReward: Boolean, stringToMatch: String)
+@(turker: Turker, question: Question, paperBase64: String, teamId: Long, assignmentId: Long, showReward: Boolean, stringToMatch: String, hints: String)
 @import play.api.libs.json.Json
 
 <!DOCTYPE html>
@@ -81,10 +81,12 @@
                         }
 
                             $(document).ready(function () {
-                                $('#showhidetarget').hide();
+                                $('#showhidetarget1').hide();
+                                $('#showhidetarget2').show();
 
                                 $('a#showhidetrigger').click(function () {
-                                    $('#showhidetarget').toggle(500);
+                                    $('#showhidetarget1').toggle(500);
+                                    $('#showhidetarget2').toggle(500);
                                 });
                             });
 
@@ -94,6 +96,9 @@
 
                             $(document).ready(function(){
                                 var $radioButtons = $("input:radio");
+                                if($radioButtons.length>0){
+                                    $("#submitAnswer").attr("disabled", "");
+                                }
 
                                 $radioButtons.change(function(){
                                     var anyRadioButtonHasValue = false;
@@ -133,9 +138,10 @@
                                     @if(question.question_type.equalsIgnoreCase("Boolean")){
                                         <div>
                                             <b><div style="font-size: 120%;display: inline-block;">
-                                                Please read through the paper and select <div style="font-size: 130%;display: inline-block;">YES</div> or <div style="font-size: 130%;display: inline-block;">NO</div> to answer the question.
-                                            </div></b>
-                                            <b>
+                                                Please answer the question above by analyzing the highlighted elements in the paper and by looking for the presence of the above mentioned tests/characteristics.<br>
+                                                Notice that the highlighted elements may be present on different pages of the paper.<br>
+                                                Once you are done, select <div style="font-size: 130%;display: inline-block;">YES</div> or <div style="font-size: 130%;display: inline-block;">NO</div> and "submit answer" to answer the question.
+                                            </div>
                                             <h2>
                                             <div class="radio">
                                                 <label>
@@ -155,7 +161,13 @@
                                     }
                                     @if(question.question_type.equalsIgnoreCase("Discovery")) {
                                         <div>
-                                            <div style="font-size: 120%;display: inline-block;" id="showhidetarget"><b>
+                                            <div style="font-size: 120%;display: inline-block;" id="showhidetarget2">
+                                                <b>
+                                                    Please identify, by clicking on all the relevant lines in the paper on the right, to which data is applied the above statistical method.<br>
+                                                    To get more information about this kind of questions please click on the blue button.<br><br>
+                                                </b>
+                                            </div>
+                                            <div style="font-size: 120%;display: inline-block;" id="showhidetarget1"><b>
                                                 The paper shown on the right hand side uses the statistical method shown above.
                                                 Every statistical method is applied to a certain kind of data to draw conclusions from it.
                                                 Please identify the lines in the paper that describe the data on which the above method was applied by reading the immediate surroundings of the method
@@ -221,7 +233,22 @@
                                         <button class="btn btn-success" id="submitAnswer" onclick="window.onbeforeunload = null;" type="submit">Submit Answer</button>
                                     }
                                     <button class="btn btn-danger" id="cancelAnswer" type="button" ng-click="cancel_assignment(@assignmentId)">Cancel</button>
-
+                                    @if(question.question_type.equalsIgnoreCase("Boolean")){
+                                        <br>
+                                        <div style="font-size: 120%;">
+                                            <b>
+                                        <any ng-if="@hints.split('#').length>0">
+                                            <br>
+                                            A list of possible words/expressions which may help you to answer this question is given below:<br><br>
+                                            <ul style="padding-left:20px;">
+                                                <li ng-repeat="hit in @Html(hints.split('#').mkString("[\"","\",\"","\"]")).toString()">
+                                                    {{hit}}
+                                                </li>
+                                            </ul>
+                                        </any>
+                                            </b>
+                                        </div>
+                                    }
 
 
                                 </form>
