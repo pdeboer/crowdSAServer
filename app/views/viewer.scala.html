@@ -241,7 +241,7 @@
                                             <b><hr style="border-color: black;">
                                             Or you can choose an already exising dataset from the list below.<br>
                                                 <div ng-repeat="dataset in datasets" id="existingDatasets">
-                                                    <input type="radio" name="dom_children[]" ng-value="dataset.dom_children" onclick="eventExistingDS();" ng-click="eventExistingDS();"> {{ dataset.dom_children}}
+                                                    <input type="radio" name="dom_children[]" ng-value="dataset.dom_children" onclick="eventExistingDS();" ng-click="eventExistingDS();">Method: <u>{{dataset.statistical_method}}</u> <br> Dataset: <u>{{ dataset.dom_children}}</u>
                                                 </div>
                                             </b>
                                             <br>
