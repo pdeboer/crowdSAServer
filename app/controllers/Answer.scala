@@ -100,14 +100,9 @@ object Answer extends Controller {
         }
       } else if (question_type.equalsIgnoreCase("Discovery")) {
         Logger.debug("Found question type discovery")
-        try {
-          val keys = request.body.asFormUrlEncoded.keySet //get("dom_children").get.head
 
-          for (k <- keys) {
-            if (k.startsWith("dom_children")) {
-              answer = request.body.asFormUrlEncoded.get(k).get.mkString("#")
-            }
-          }
+        try {
+          answer = "{\"dataset\":["+request.body.asFormUrlEncoded.get("dom_children[]").get.mkString(",")+"],\"refined_dataset\":\""+ request.body.asFormUrlEncoded.get("refined_dataset").get(0) +"\"}"
         } catch {
           case e: Exception => {
             Logger.error("Cannot get the answer from dom_children")

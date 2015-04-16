@@ -205,9 +205,19 @@ myApp.controller('ViewerCtrl', function($scope, $http, $interval){
     };
 
     $scope.possible_answers = [];
+    $scope.isVotingFromDiscoveryStep = false;
     $scope.set_possible_answers = function(possibilities){
-        var possibilities = possibilities.split("$$");
-        $scope.possible_answers = possibilities;
+        var allPossibilities = possibilities.split("$$");
+
+        if(allPossibilities[0].startsWith("{")){
+            $scope.isVotingFromDiscoveryStep = true;
+            allPossibilities.forEach(function(poss){
+                $scope.possible_answers.push(JSON.parse(poss));
+            });
+        } else {
+            $scope.isVotingFromDiscoveryStep = false;
+            $scope.possible_answers = allPossibilities;
+        }
     };
 
     $scope.dom_children = [];
@@ -222,9 +232,19 @@ myApp.controller('ViewerCtrl', function($scope, $http, $interval){
         }
     };
 
+    $scope.addDomChildren = function(json){
+        $scope.dom_children.push(json);
+    };
+
     $scope.removeElementDS = function(ds) {
         $scope.dom_children.splice($scope.dom_children.indexOf(ds), 1);
-        disableBorders(ds[1]);
+        disableBorders(ds.element);
+    };
+
+    $scope.refined_dataset = "";
+
+    $scope.getJson = function(ds){
+       return JSON.stringify({content: ds.content, position: ds.position});
     };
 
     $scope.countdown = function(assignment_id) {

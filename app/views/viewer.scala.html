@@ -58,21 +58,21 @@
             <div class="container-fluid" style="width: 100%; height: 100%;">
                 <table style="width: 100%; height: 100%;" ng-controller="ViewerCtrl">
                     <script>
-                        function manageClick(txt, elem){
+                        function manageClick(txt, elem, pagenr, divnr){
                             var scope = angular.element($('#datasetChildren')).scope();
-                            scope.$apply(function(){
+                            //scope.$apply(function(){
                                 var found = false;
                                 scope.dom_children.forEach(function(a){
-                                    if( a[0] == txt){
+                                    if( a.content == txt){
                                         found = true;
                                     }
                                 });
                                 if(!found) {
-                                    scope.dom_children.push([txt, elem]);
+                                    scope.addDomChildren({content: txt,element: elem, position: parseFloat(pagenr+"."+divnr)});
                                     elem.style.backgroundColor = "#FF0000";
                                     elem.style.opacity = 0.9;
                                 }
-                            });
+                            //});
                         }
 
                         function disableBorders(elem){
@@ -192,14 +192,19 @@
                                             <div id="datasetChildren" >
                                                 <ul class="list-group" style="padding: 20px" ng-init="getDsToRefine('@(question.possible_answers.get)');">
                                                     <div ng-if="dom_children.length == 0"><b>Dataset not yet extracted</b></div>
-                                                    <li class="list-group-item" ng-repeat="ds in dom_children" >
+                                                    <li class="list-group-item" ng-repeat="ds in dom_children | orderBy:'position'" >
                                                             <span class="badge">
                                                                 <span class="glyphicon glyphicon-trash" ng-click="removeElementDS(ds)" aria-hidden="true" style="cursor:pointer; cursor:hand;"></span>
                                                             </span>
-                                                        {{ds[0]}}
-                                                        <input type='hidden' name='dom_children[]' ng-value="ds[0]"/>
+                                                        {{ds.content}}
+                                                        <input type='hidden' name='dom_children[]' ng-value='getJson(ds);'/>
                                                     </li>
                                                 </ul>
+                                            </div>
+                                            <div style="font-size: 120%;" ng-if="dom_children.length > 0">
+                                                <b>Please rewrite the sentences you selected, in a short and complete text <u>before submitting your answer</u>.</b>
+                                                <br>
+                                                <textarea id="refinedText" name="refined_dataset" class="form-control"></textarea>
                                             </div>
                                         </div>
                                     }
@@ -209,14 +214,28 @@
                                             <div style="font-size: 120%;display: inline-block;">
                                                 You will find, on the paper highlighted in yellow, all the alternatives as well as all the elements which may help you to choose the best answer.<br>
                                             </div>
-                                            <br><br>
+                                            <br>
                                             <div ng-init="set_possible_answers('@(question.possible_answers.get)');">
                                                 <div ng-repeat="ds in possible_answers">
                                                     <any ng-if="ds != ''">
-                                                        <input type="radio" value="{{ds}}" ng-model="answer" name="answer">
-                                                        {{ds}}
+                                                        <any ng-if="isVotingFromDiscoveryStep">
+                                                            <br>
+                                                            <input type="radio" value="{{ds}}" ng-model="answer" name="answer">
+                                                            <ul style="padding-left:20px;">
+                                                                <li ng-repeat="data in ds.dataset">{{data.content}}</li>
+                                                            </ul>
+                                                            <b> refined to </b><br><u>{{ds.refined_dataset}}</u>
+                                                            <br>
+                                                        </any>
+                                                        <any ng-if="!isVotingFromDiscoveryStep">
+                                                            <br>
+                                                            <input type="radio" value="{{ds}}" ng-model="answer" name="answer">
+                                                            {{ds}}
+                                                        </any>
+
                                                     </any>
                                                     <any ng-if="ds == ''">
+                                                        <br>
                                                         <input type="radio" ng-value="There exist no dataset for this method" ng-model="answer" name="answer">
                                                         There exist no dataset for this method
                                                     </any>

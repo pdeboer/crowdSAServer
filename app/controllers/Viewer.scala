@@ -54,7 +54,8 @@ object Viewer extends Controller{
               var jumpTo = ""
               if(highlights.length>0 && question.question_type == "Discovery"){
                 jumpTo = highlights.head
-                //jumpTo = question.question.substring(question.question.indexOf("<i> ") + 4, question.question.indexOf("</i>")-1)
+                // Not needed but this will jump to the first occurrence of the method under analysis:
+                // jumpTo = question.question.substring(question.question.indexOf("<i> ") + 4, question.question.indexOf("</i>")-1)
               }else if(highlights.length>0) {
                 jumpTo = highlights.head
               }
