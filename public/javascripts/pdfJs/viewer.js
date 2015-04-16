@@ -3636,14 +3636,14 @@ var TextLayerBuilder = (function TextLayerBuilderClosure() {
              * Add functionality only for questions of type DISCOVERY!
              */
             if(QUESTION_TYPE.toUpperCase() === 'DISCOVERY') {
+                var pageNr = this.pageIdx + 1;
                 $('#pageContainer' + (this.pageIdx + 1)).find('.textLayer').children()
                     .click(function () {
                         var index = $(this).index();
-                        var pageContainer = $(this.parentNode.parentNode.id).selector.split("pageContainer")[1];
+                        //var pageContainer = $(this.parentNode.parentNode.id).selector.split("pageContainer")[1];
 
                         var txt = this.innerText;
-
-                        manageClick(txt, this);
+                        manageClick(txt, this, pageNr, index);
 
                         /*    ...
                         if(domChildren.indexOf(pageContainer+":"+index) == -1) {

@@ -58,9 +58,9 @@
             <div class="container-fluid" style="width: 100%; height: 100%;">
                 <table style="width: 100%; height: 100%;" ng-controller="ViewerCtrl">
                     <script>
-                        function manageClick(txt, elem){
+                        function manageClick(txt, elem, pageNr, divNr){
                             var scope = angular.element($('#datasetChildren')).scope();
-                            scope.$apply(function(){
+                            //scope.$apply(function(){
                                 var found = false;
                                 scope.dom_children.forEach(function(a){
                                     if( a[0] == txt){
@@ -68,11 +68,12 @@
                                     }
                                 });
                                 if(!found) {
-                                    scope.dom_children.push([txt, elem]);
+                                    scope.push_dom_children(txt, elem, pageNr, divNr);
+                                    //scope.dom_children.push([txt, elem]);
                                     elem.style.backgroundColor = "#FF0000";
                                     elem.style.opacity = 0.9;
                                 }
-                            });
+                            //});
                         }
 
                         function disableBorders(elem){
@@ -192,12 +193,12 @@
                                             <div id="datasetChildren" >
                                                 <ul class="list-group" style="padding: 20px" ng-init="getDsToRefine('@(question.possible_answers.get)');">
                                                     <div ng-if="dom_children.length == 0"><b>Dataset not yet extracted</b></div>
-                                                    <li class="list-group-item" ng-repeat="ds in dom_children" >
+                                                    <li class="list-group-item" ng-repeat="ds in dom_children | orderBy:['page','div']" >
                                                             <span class="badge">
                                                                 <span class="glyphicon glyphicon-trash" ng-click="removeElementDS(ds)" aria-hidden="true" style="cursor:pointer; cursor:hand;"></span>
                                                             </span>
-                                                        {{ds[0]}}
-                                                        <input type='hidden' name='dom_children[]' ng-value="ds[0]"/>
+                                                        {{ds.text}}
+                                                        <input type='hidden' name='dom_children[]' ng-value="ds.text"/>
                                                     </li>
                                                 </ul>
                                             </div>
