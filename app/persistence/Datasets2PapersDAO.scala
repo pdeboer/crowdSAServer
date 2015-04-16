@@ -2,7 +2,7 @@ package persistence
 
 import anorm.SqlParser._
 import anorm._
-import models.{Paper, Dataset, Team, Datasets2Papers}
+import models.{Dataset, Datasets2Papers, Paper}
 import play.api.Play.current
 import play.api.db.DB
 
@@ -31,10 +31,10 @@ object Datasets2PapersDAO {
       val datasets2papers = SQL("SELECT * FROM datasets2papers WHERE papers_id = {id}").on(
         'id -> paperId
       ).as(datasets2papersParser *)
-      var result : mutable.MutableList[Dataset] = new mutable.MutableList[Dataset]
-      for(dataset <- datasets2papers){
-        result += DatasetDAO.findById(dataset.id.get).get
-      }
+      val result : mutable.MutableList[Dataset] = new mutable.MutableList[Dataset]
+      datasets2papers.foreach( d2p => {
+        result.+=:(DatasetDAO.findById(d2p.datasets_id).get)
+      })
       result.toList
     }
   }
@@ -46,7 +46,7 @@ object Datasets2PapersDAO {
       ).as(datasets2papersParser *)
       var result : mutable.MutableList[Paper] = new mutable.MutableList[Paper]
       for(paper <- datasets2papers){
-        result += PaperDAO.findById(paper.id.get).get
+        result += PaperDAO.findById(paper.papers_id).get
       }
       result.toList
     }

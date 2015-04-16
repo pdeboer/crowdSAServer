@@ -3640,17 +3640,10 @@ var TextLayerBuilder = (function TextLayerBuilderClosure() {
                 $('#pageContainer' + (this.pageIdx + 1)).find('.textLayer').children()
                     .click(function () {
                         var index = $(this).index();
-                        //var pageContainer = $(this.parentNode.parentNode.id).selector.split("pageContainer")[1];
 
                         var txt = this.innerText;
                         manageClick(txt, this, pageNr, index);
 
-                        /*    ...
-                        if(domChildren.indexOf(pageContainer+":"+index) == -1) {
-                            domChildren.push(pageContainer+":"+index);
-                            $('#datasetChildren ul').append("<li><i>'" + this.innerText + "'</i><input type='hidden' name='dom_children[]' value='"+this.innerText+"'/></li>");// + pageContainer+":"+index + "'/></li>");
-                            this.style.border = "3px solid #FF0000";
-                        }*/
                     });
                 $('#pageContainer' + (this.pageIdx + 1)).find('.textLayer').children()
                     .mouseover(function () {

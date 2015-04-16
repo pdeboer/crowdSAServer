@@ -210,6 +210,26 @@ myApp.controller('ViewerCtrl', function($scope, $http, $interval){
         $scope.possible_answers = possibilities;
     };
 
+    $scope.datasets = [];
+    $scope.loadAvailableDatasets = function(paperId){
+        $http.get('/datasets/'+paperId)
+            .success(function(data){
+                JSON.parse(JSON.stringify(data))
+                    .forEach(function(dd) {
+
+                        var parsed = JSON.parse(JSON.stringify(dd));
+                        console.log(parsed);
+                        if(parsed.dom_children!=""){
+                            $scope.datasets.push(parsed);
+                        }
+                        console.log("Datasets loaded: " + parsed);
+
+                    });
+            }).error(function(error){
+                $scope.datasets = [];
+            });
+    };
+
     $scope.dom_children = [];
     $scope.getDsToRefine = function(possibilities){
         var dss = possibilities.split("#");

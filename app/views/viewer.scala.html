@@ -52,16 +52,14 @@
 
             </script>
 
-
         </head>
         <body ng-app="myApp">
             <div class="container-fluid" style="width: 100%; height: 100%;">
-                <table style="width: 100%; height: 100%;" ng-controller="ViewerCtrl">
+                <table style="width: 100%; height: 100%;" ng-controller="ViewerCtrl" ng-init="loadAvailableDatasets('@question.papers_id');">
                     <script>
                         function manageClick(txt, elem, pageNr, divNr){
                             var scope = angular.element($('#datasetChildren')).scope();
-                            //scope.$apply(function(){
-                                var found = false;
+                            var found = false;
                                 scope.dom_children.forEach(function(a){
                                     if( a[0] == txt){
                                         found = true;
@@ -73,8 +71,7 @@
                                     elem.style.backgroundColor = "#FF0000";
                                     elem.style.opacity = 0.9;
                                 }
-                            //});
-                        }
+                            }
 
                         function disableBorders(elem){
                             elem.style.backgroundColor = "";
@@ -96,6 +93,7 @@
                             }
 
                             $(document).ready(function(){
+
                                 var $radioButtons = $("input:radio");
                                 if($radioButtons.length>0){
                                     $("#submitAnswer").attr("disabled", "");
@@ -128,6 +126,7 @@
                             });
 
                   </script>
+
                     <tr>
                         <td style="width: 30%; vertical-align: top; text-align: left;">
 
@@ -229,12 +228,37 @@
                                     }
                                     @if(question.question_type.equalsIgnoreCase("Discovery")){
                                         <button class="btn btn-success" ng-if="dom_children.length > 0" id="submitAnswer" onclick="window.onbeforeunload = null;" type="submit">Submit Answer</button>
-                                        <button ng-if="dom_children.length == 0" class="btn btn-warning" id="emptyDataset" onclick="removeSelectedDS();window.onbeforeunload = null;" ng-click="removeAllElementDS()" type="submit">No Dataset found</button>
+                                        <button ng-if="dom_children.length == 0" class="btn btn-warning" id="emptyDataset" onclick="window.onbeforeunload = null;removeSelectedDS();emptyDomChildren();" ng-click="window.onbeforeunload = null;emptyDomChildren(); removeAllElementDS();" type="submit">No Dataset found</button>
                                     }
                                     @if(!question.question_type.equalsIgnoreCase("Discovery")){
                                         <button class="btn btn-success" id="submitAnswer" onclick="window.onbeforeunload = null;" type="submit">Submit Answer</button>
                                     }
                                     <button class="btn btn-danger" id="cancelAnswer" type="button" ng-click="cancel_assignment(@assignmentId)">Cancel</button>
+
+                                    @if(question.question_type.equalsIgnoreCase("Discovery")){
+
+                                        <div ng-if="datasets.length > 0 && dom_children.length == 0">
+                                            <b><hr style="border-color: black;">
+                                            Or you can choose an already exising dataset from the list below.<br>
+                                                <div ng-repeat="dataset in datasets" id="existingDatasets">
+                                                    <input type="radio" name="dom_children[]" ng-value="dataset.dom_children" onclick="eventExistingDS();" ng-click="eventExistingDS();"> {{ dataset.dom_children}}
+                                                </div>
+                                            </b>
+                                            <br>
+
+                                            <button class="btn btn-success" id="submitAnswer1" disabled onclick="window.onbeforeunload = null;" type="submit">Submit existing dataset</button>
+                                            <script language="text/javascript">
+                                                function eventExistingDS() {
+                                                    $("#submitAnswer1").removeAttr("disabled");
+                                                };
+
+                                                function emptyDomChildren() {
+                                                    $("input[name='dom_children[]']").val("");
+                                                };
+                                            </script>
+                                        </div>
+                                    }
+
                                     @if(question.question_type.equalsIgnoreCase("Boolean")){
                                         <br>
                                         <div style="font-size: 120%;">

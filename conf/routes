@@ -46,6 +46,7 @@ POST        /answer/add                                    controllers.Answer.ad
 POST        /evaluateanswer                                controllers.Answer.evaluateAnswer
 
 # Datasets
+GET         /datasets/:paperId                             controllers.Dataset.getAllByPaperId(paperId: Long)
 POST        /dataset                                       controllers.Dataset.addDataset
 
 # Assignment

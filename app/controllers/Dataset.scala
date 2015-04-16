@@ -3,6 +3,7 @@ package controllers
 import anorm.NotAssigned
 import models.Dataset
 import persistence._
+import play.api.libs.json.Json
 import play.api.mvc.{Action, Controller}
 
 /**
@@ -11,7 +12,24 @@ import play.api.mvc.{Action, Controller}
 object Dataset extends Controller {
 
   /**
-   * POST - Create new dataset
+   * GET - Get all available dataset for a paper Id
+   * @param paperId if of the paper
+   */
+  def getAllByPaperId(paperId: Long) = Action { implicit request =>
+    try {
+
+      val datasets = Datasets2PapersDAO.findDatasetsByPaperId(paperId)
+      Ok(Json.toJson(datasets))
+    } catch {
+      case e: Exception => {
+        e.printStackTrace()
+        InternalServerError("Wrong request format.")
+      }
+    }
+  }
+
+  /**
+   * POST - Create new dataset if it doesn't exists yet
    * @return id of the new dataset, -1 otherwise
    */
   def addDataset() = Action(parse.multipartFormData) { implicit request =>
