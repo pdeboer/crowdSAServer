@@ -11,7 +11,7 @@ CREATE TABLE papers (
 CREATE TABLE datasets (
   id                 BIGINT PRIMARY KEY NOT NULL auto_increment,
   statistical_method VARCHAR(255)       NOT NULL,
-  dom_children       LONGTEXT           NOT NULL,
+  dom_children       TEXT           NOT NULL,
   name               VARCHAR(255)       NOT NULL UNIQUE,
   url                VARCHAR(1000)      NULL
 ) ENGINE = InnoDB CHARSET = utf8;
@@ -73,7 +73,7 @@ CREATE TABLE assignments (
 
 CREATE TABLE answers (
   id             BIGINT PRIMARY KEY NOT NULL auto_increment,
-  answer         VARCHAR(2000),
+  answer         TEXT,
   created_at     BIGINT             NOT NULL,
   accepted       BIT                NULL,
   bonus_cts      INT                NULL,

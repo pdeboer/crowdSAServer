@@ -53,13 +53,20 @@ object Datasets2PapersDAO {
   }
 
    def add(datasets_id: Long, papers_id: Long): Long = {
-     val id: Option[Long] =
-       DB.withConnection { implicit c =>
+     var id: Option[Long] = None
+     getAll().foreach(dataset => {
+       if(dataset.datasets_id == datasets_id && dataset.papers_id == papers_id){
+         id = Some(dataset.id.get)
+       }
+     })
+     if(id == None) {
+       id = DB.withConnection { implicit c =>
          SQL("INSERT INTO datasets2papers(datasets_id, papers_id) VALUES ({datasets_id}, {papers_id})").on(
            'datasets_id -> datasets_id,
            'papers_id -> papers_id
          ).executeInsert()
        }
+     }
      id.get
    }
 
