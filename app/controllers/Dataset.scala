@@ -43,7 +43,7 @@ object Dataset extends Controller {
       val stat_method = question.substring(question.indexOf("<i> ") + 4, question.indexOf(" </i>"))
       val paper_id = PaperDAO.findByAnswerId(answer_id)
 
-      val dataset_id = DatasetDAO.add(new Dataset(NotAssigned, stat_method, answer.answer.replace("#", ","), answer.hashCode().toString, Some("")), paper_id)
+      val dataset_id = DatasetDAO.add(new Dataset(NotAssigned, stat_method, answer.answer, answer.hashCode().toString, Some("")), paper_id)
 
       Datasets2PapersDAO.add(dataset_id, paper_id)
 
@@ -52,6 +52,18 @@ object Dataset extends Controller {
       case e: Exception => {
         e.printStackTrace()
         InternalServerError("-1")
+      }
+    }
+  }
+
+  def getDataset(datasetId: Long) = Action { implicit request =>
+    try {
+      val dataset = DatasetDAO.findById(datasetId)
+      Ok(Json.toJson(dataset))
+    } catch {
+      case e: Exception => {
+        e.printStackTrace()
+        InternalServerError("Wrong request format.")
       }
     }
   }

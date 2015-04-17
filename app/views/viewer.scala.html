@@ -138,8 +138,8 @@
                                     @if(question.question_type.equalsIgnoreCase("Boolean")){
                                         <div>
                                             <b><div style="font-size: 120%;display: inline-block;">
-                                                Please answer the question above by analyzing the highlighted elements in the paper and by looking for the presence of the above mentioned tests/characteristics.<br>
-                                                Notice that the highlighted elements may be present on different pages of the paper.<br>
+                                                Please answer the question above by analyzing the highlighted elements in the paper and by looking for <u>the presence of the above mentioned test/characteristics.</u><br>
+                                                Be aware that the highlighted elements may be present on different pages of the paper.<br>
                                                 Once you are done, select <div style="font-size: 130%;display: inline-block;">YES</div> or <div style="font-size: 130%;display: inline-block;">NO</div> and "submit answer" to answer the question.
                                                 <br><br>An example of this task is provided on <a href="https://youtu.be/NVhHViEtP58" target="_blank">YouTube</a>
 
@@ -160,7 +160,7 @@
                                                 <b>
                                                     Please identify, by clicking on all the relevant lines in the paper on the right,
                                                     to which data is applied the above statistical method.<br>
-                                                        Below you will find a list containing all the dataset already found by other crowd workers.<br>
+                                                    <span ng-if="datasets.length > 0"> Below you will find a list containing all the datasets already identified by other crowd workers.</span><br>
                                                     To get more information about this kind of questions please click on the blue button.<br><br>
                                                 </b>
                                             </div>
@@ -207,6 +207,8 @@
                                             <b>
                                             <div style="font-size: 120%;display: inline-block;">
                                                 You will find, on the paper highlighted in yellow, all the alternatives as well as all the elements which may help you to choose the best answer.<br>
+                                                    Please read carefully the question and once you know what you are looking for, search for this information in the paper.<br>
+                                                    A search funcitonality is also present on the header of the paper viewer.<br>
                                                     <br>An example of this task is provided on <a href="https://youtu.be/iAcPNcd4JQw" target="_blank">YouTube</a><br>
                                             </div>
                                             <br><br>
@@ -239,7 +241,10 @@
 
                                         <div ng-if="datasets.length > 0 && dom_children.length == 0">
                                             <b><hr style="border-color: black;">
-                                            Or you can choose an already exising dataset from the list below.<br>
+                                            Here are listed all the identified datsets for this paper.<br>
+                                                You will also see in this list below, which method was identified for which dataset.<br>
+                                                Once you are sure the dataset you are trying to identify corresponds on an existing one, click on it and then submit your answer.<br>
+                                                <br>
                                                 <div ng-repeat="dataset in datasets" id="existingDatasets">
                                                     <input type="radio" name="dom_children[]" value="{{dataset.dom_children}}" ng-value="dataset.dom_children" onclick="eventExistingDS();" ng-click="eventExistingDS();">Method: <u>{{dataset.statistical_method}}</u> <br> Dataset: <u>{{ dataset.dom_children}}</u>
                                                 </div>
@@ -265,7 +270,8 @@
                                             <b>
                                         <any ng-if="@hints.split('#').length>0">
                                             <br>
-                                            A list of possible words/expressions which may help you to answer this question is given below:<br><br>
+                                            A list of possible words/expressions which may help you to answer this question is given below.<br>
+                                            Try to search for these terms using the search functionality and read in the immediate surrounding of the match to get more information.<br><br>
                                             <ul style="padding-left:20px;">
                                                 <li ng-repeat="hit in @Html(hints.split('#').mkString("[\"","\",\"","\"]")).toString()">
                                                     {{hit}}
