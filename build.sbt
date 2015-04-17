@@ -16,5 +16,8 @@ libraryDependencies += "mysql" % "mysql-connector-java" % "5.1.21"
 
 libraryDependencies += "org.apache.pdfbox" % "pdfbox" % "1.8.7"
 
+
+play.PlayImport.PlayKeys.playDefaultPort := 80
+
 lazy val bachelor = (project in file(".")).enablePlugins(PlayScala)
 
