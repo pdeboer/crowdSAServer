@@ -61,7 +61,7 @@
                             var scope = angular.element($('#datasetChildren')).scope();
                             var found = false;
                                 scope.dom_children.forEach(function(a){
-                                    if( a[0] == txt){
+                                    if(a.text == txt){
                                         found = true;
                                     }
                                 });
