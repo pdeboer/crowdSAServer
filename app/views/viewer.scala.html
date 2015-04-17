@@ -141,20 +141,15 @@
                                                 Please answer the question above by analyzing the highlighted elements in the paper and by looking for the presence of the above mentioned tests/characteristics.<br>
                                                 Notice that the highlighted elements may be present on different pages of the paper.<br>
                                                 Once you are done, select <div style="font-size: 130%;display: inline-block;">YES</div> or <div style="font-size: 130%;display: inline-block;">NO</div> and "submit answer" to answer the question.
+                                                <br><br>An example of this task is provided on <a href="https://youtu.be/NVhHViEtP58" target="_blank">YouTube</a>
+
                                             </div>
                                             <h2>
-                                            <div class="radio">
-                                                <label>
-                                                    <input type="radio" name="answer" ng-model="answer" id="yes" value="yes">
-                                                    Yes
-                                                </label>
-                                            </div>
-                                            <div class="radio">
-                                                <label>
-                                                    <input type="radio" name="answer" ng-model="answer" id="no" value="no">
-                                                    No
-                                                </label>
-                                            </div>
+                                                <input type="radio" name="answer" value="yes">
+                                                Yes
+                                                <br>
+                                                <input type="radio" name="answer" value="no">
+                                                No
                                             </h2>
                                             </b>
                                         </div>
@@ -178,7 +173,7 @@
                                                 try the first part of the paper (Abstract / Introduction).<br>
                                                     Try also to check in the available datasets if some of them corresponds to what you are looking for.<br>
                                                 <br>
-                                                An example of this task is provided on YouTube<br>
+                                                An example of this task is provided on <a href="https://youtu.be/NVhHViEtP58" target="_blank">YouTube</a><br>
                                                 <br>
                                                 In order to tell us about the data for this method,
                                                 please click on all lines in the paper that talk about it, or select an existing dataset in the list below.
@@ -212,16 +207,17 @@
                                             <b>
                                             <div style="font-size: 120%;display: inline-block;">
                                                 You will find, on the paper highlighted in yellow, all the alternatives as well as all the elements which may help you to choose the best answer.<br>
+                                                    <br>An example of this task is provided on <a href="https://youtu.be/iAcPNcd4JQw" target="_blank">YouTube</a><br>
                                             </div>
                                             <br><br>
                                             <div ng-init="set_possible_answers('@(question.possible_answers.get)');">
                                                 <div ng-repeat="ds in possible_answers">
                                                     <any ng-if="ds != ''">
-                                                        <input type="radio" value="{{ds}}" ng-model="answer" name="answer">
+                                                        <input type="radio" value="{{ds}}" ng-model="answer" name="answer" ng-value="{{ds}}">
                                                         {{ds}}
                                                     </any>
                                                     <any ng-if="ds == ''">
-                                                        <input type="radio" ng-value="There exist no dataset for this method" ng-model="answer" name="answer">
+                                                        <input type="radio" ng-value="There exist no dataset for this method" ng-model="answer" name="answer" value="">
                                                         There exist no dataset for this method
                                                     </any>
                                                 </div>
@@ -245,7 +241,7 @@
                                             <b><hr style="border-color: black;">
                                             Or you can choose an already exising dataset from the list below.<br>
                                                 <div ng-repeat="dataset in datasets" id="existingDatasets">
-                                                    <input type="radio" name="dom_children[]" ng-value="dataset.dom_children" onclick="eventExistingDS();" ng-click="eventExistingDS();">Method: <u>{{dataset.statistical_method}}</u> <br> Dataset: <u>{{ dataset.dom_children}}</u>
+                                                    <input type="radio" name="dom_children[]" value="{{dataset.dom_children}}" ng-value="dataset.dom_children" onclick="eventExistingDS();" ng-click="eventExistingDS();">Method: <u>{{dataset.statistical_method}}</u> <br> Dataset: <u>{{ dataset.dom_children}}</u>
                                                 </div>
                                             </b>
                                             <br>

@@ -70,7 +70,8 @@ object Answer extends Controller {
       if (question_type.equalsIgnoreCase("Boolean")) {
         Logger.debug("Found question type boolean")
         try {
-          val answerElem = request.body.asFormUrlEncoded.get("answer").get.head
+          Logger.debug("RESPONSE!!"+request.body.asFormUrlEncoded.get("answer").get(0))
+          val answerElem = request.body.asFormUrlEncoded.get("answer").get(0)
           if (answerElem.equalsIgnoreCase("YES")) {
             answer = "true"
           } else {
