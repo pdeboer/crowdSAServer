@@ -71,7 +71,7 @@ myApp.controller('QuestionCtrl', ['$scope', '$interval', '$timeout', '$http',
                     $scope.assigned = d.assigned;
                     if($scope.assigned) {
                         $http.get('/openAssignmentId/'+turker_id).success(function(dd){
-                            $scope.expiration_time = d.time - (new Date().getTime()/1000+ (new Date().getTimezoneOffset())+60);
+                            $scope.expiration_time = d.time - (new Date().getTime()/1000 + (new Date().getTimezoneOffset()) +120);
                             if($scope.expiration_time > 0)
                                 var timer = $interval(function(){
                                     if($scope.expiration_time -1 > 0) {
@@ -115,7 +115,7 @@ myApp.controller('PapersCtrl', function ($scope, $http, $timeout, $interval) {
                 if($scope.assigned) {
                     $http.get('/openAssignmentId/'+turker_id)
                         .success(function(dd){
-                            $scope.expiration_time = d.time - (new Date().getTime()/1000+ (new Date().getTimezoneOffset())+60);
+                            $scope.expiration_time = d.time - (new Date().getTime()/1000+ (new Date().getTimezoneOffset())+120);
                             if($scope.expiration_time > 0)
                                 var timer = $interval(function(){
                                     if($scope.expiration_time -1 > 0) {
@@ -255,7 +255,7 @@ myApp.controller('ViewerCtrl', function($scope, $http, $interval){
         $http.get('/isAssignmentOpen/'+$scope.turker_id)
             .success(function(data) {
                 var d = JSON.parse(JSON.stringify(data));
-                var diff = d.time - Math.floor(((new Date().getTime()/1000) + (new Date().getTimezoneOffset())+60));
+                var diff = d.time - Math.floor(((new Date().getTime()/1000) + (new Date().getTimezoneOffset())+120));
                 $scope.counter_sec = diff;
                 console.log("Remaining seconds: " + diff);
                 if($scope.counter_sec > 0 && d.assigned){
