@@ -160,7 +160,9 @@
                                                 <b>
                                                     Please identify, by clicking on all the relevant lines in the paper on the right,
                                                     to which data is applied the above statistical method.<br>
-                                                    <span ng-if="datasets.length > 0"> Below you will find a list containing all the datasets already identified by other crowd workers.</span><br>
+                                                        <u>Don't worry if you don't know what the above method exactly does, and remember you have 10 minutes to solve this task.</u>
+                                                    <br>If there is nothing highlighted on the page of the paper, scroll and look for the highlighted sentences on other pages.<br>
+                                                        <span ng-if="datasets.length > 0"> Below you will find a list containing all the datasets already identified by other crowd workers.</span><br>
                                                     To get more information about this kind of questions please click on the blue button.<br><br>
                                                 </b>
                                             </div>
@@ -206,9 +208,9 @@
                                         <div>
                                             <b>
                                             <div style="font-size: 120%;display: inline-block;">
-                                                You will find, on the paper highlighted in yellow, all the alternatives as well as all the elements which may help you to choose the best answer.<br>
+                                                On the paper you will find, highlighted in yellow, all the alternatives as well as all the elements which may help you to choose the best answer.<br>
                                                     Please read carefully the question and once you know what you are looking for, search for this information in the paper.<br>
-                                                    A search funcitonality is also present on the header of the paper viewer.<br>
+                                                    A search functionality is also present on the header of the paper viewer.<br>
                                                     <br>An example of this task is provided on <a href="https://youtu.be/iAcPNcd4JQw" target="_blank">YouTube</a><br>
                                             </div>
                                             <br><br>
@@ -216,8 +218,15 @@
                                                 <div ng-repeat="ds in possible_answers">
                                                     <any ng-if="ds != ''">
                                                         <input type="radio" value="{{ds}}" ng-model="answer" name="answer" ng-value="{{ds}}">
-                                                        {{ds}}
-                                                    </any>
+                                                        <any ng-if="ds == 'false' || ds =='true'">
+                                                            <any ng-if="ds!= 'false' && ds == 'true'">Yes</any>
+                                                            <any ng-if="ds!= 'true' && ds == 'false'">No</any>
+                                                        </any>
+                                                        <any ng-if="ds != 'false' && ds !='true'">
+                                                            {{ds}}
+                                                        </any>
+
+                                                        </any>
                                                     <any ng-if="ds == ''">
                                                         <input type="radio" ng-value="There exist no dataset for this method" ng-model="answer" name="answer" value="">
                                                         There exist no dataset for this method
@@ -242,7 +251,7 @@
                                         <div ng-if="datasets.length > 0 && dom_children.length == 0">
                                             <b><hr style="border-color: black;">
                                             Here are listed all the identified datsets for this paper.<br>
-                                                You will also see in this list below, which method was identified for which dataset.<br>
+                                                You will also see in the list below, which method was identified for which dataset.<br>
                                                 Once you are sure the dataset you are trying to identify corresponds on an existing one, click on it and then submit your answer.<br>
                                                 <br>
                                                 <div ng-repeat="dataset in datasets" id="existingDatasets">
@@ -291,7 +300,7 @@
                         <td>
                             <div id="header-paper" style="backgroud-color: #FFFFFF;" ng-init="turker_id='@turker.turker_id';countdown('@assignmentId');"> <!--(question.expiration_time_sec.getOrElse(600).toString)-->
                                 <div align="center">
-                                    <h3><span ng-if="@showReward=true">Payment for answer: @(question.reward_cts.toDouble/100) $ -</span><span> Remaining time to answer the question: {{ counter_sec*1000 | date:'mm:ss' }}</span></h3>
+                                    <h3><span ng-if="@showReward=true">Payment for answer: @(question.reward_cts.toDouble/100) $ -</span><span><b><u>Remaining time to answer the question: <span style="color:red;">{{ counter_sec*1000 | date:'mm:ss' }}</span></u></b></span></h3>
                                 </div>
                             </div>
 
