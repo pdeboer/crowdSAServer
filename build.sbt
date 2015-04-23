@@ -19,5 +19,5 @@ libraryDependencies += "org.apache.pdfbox" % "pdfbox" % "1.8.7"
 
 play.PlayImport.PlayKeys.playDefaultPort := 8000
 
-lazy val bachelor = (project in file(".")).enablePlugins(PlayScala)
+lazy val crowdSAServer = (project in file(".")).enablePlugins(PlayScala)
 
