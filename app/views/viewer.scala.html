@@ -137,14 +137,14 @@
                                     <input type="hidden" id="question_type" name="question_type" value="@question.question_type">
                                     @if(question.question_type.equalsIgnoreCase("Boolean")){
                                         <div>
-                                            <b><div style="font-size: 120%;display: inline-block;">
-                                                We have highlighted the terms that might help you to answer the presented above question. The highlighted terms might help you to find a relevant paragrphs to answer the question, however those are just hints, and you might need to read other parts of the paper to be able to answer.</u><br>
+                                            <span style="font-size: 120%;display: inline-block;">
+                                                We have highlighted the terms that might help you to answer the presented above question. These terms might help you to find the relevant paragraphs to answer the question above, however those are just hints, and you might need to read other parts of the paper to be able to answer.<br>
                                                 Be aware that the highlighted methods may be present on different pages of the paper.<br>
-                                                Once you are done, select <div style="font-size: 130%;display: inline-block;">YES</div> or <div style="font-size: 130%;display: inline-block;">NO</div> and "submit answer" to answer the question.
+                                                Once you are done, select <span style="font-size: 130%;display: inline-block;">YES</span> or <span style="font-size: 130%;display: inline-block;">NO</span> and "submit answer" to answer the question.
                                                 <br><br>An example of this task is provided on <a href="https://youtu.be/NVhHViEtP58" target="_blank">YouTube</a>
                                                  
 
-                                            </div>
+                                            </span>
                                             <h2>
                                                 <input type="radio" name="answer" value="yes">
                                                 Yes
@@ -152,19 +152,18 @@
                                                 <input type="radio" name="answer" value="no">
                                                 No
                                             </h2>
-                                            </b>
+
                                         </div>
                                     }
                                     @if(question.question_type.equalsIgnoreCase("Discovery")) {
                                         <div>
                                             <div style="font-size: 120%;display: inline-block;" id="showhidetarget2">
                                                 <b>
-                                                    Please identify, by clicking on all the relevant lines in the paper on the right,
-                                                    to which data is applied to the above statistical method.<br>
+                                                    Please identify the relevant lines of the paper that describe the data onto which the statistical method mentioned above is applied by clicking on them.<br>
                                                         <u>Don't worry if you don't know what the above method exactly does, and remember you have 10 minutes to solve this task.</u>
-                                                    <br>If there is nothing highlighted on the page of the paper, scroll and look for the highlighted sentences on other pages.<br>
+                                                    <br>If there is nothing highlighted in the paper on the right, scroll up/down and look for the highlighted sentences on other pages.<br>
                                                         <span ng-if="datasets.length > 0"> Below you will find a list containing all the datasets already identified by other crowd workers.</span><br>
-                                                    To get more information about this kind of questions please click on the blue button.<br><br>
+                                                    To get more information about this kind of questions, please click on the blue button.<br><br>
                                                 </b>
                                             </div>
                                             <div style="font-size: 120%;display: inline-block;" id="showhidetarget1"><b>
@@ -207,13 +206,12 @@
                                     }
                                     @if(question.question_type.equalsIgnoreCase("Voting")){
                                         <div>
-                                            <b>
-                                            <div style="font-size: 120%;display: inline-block;">
-                                                On the paper you will find, highlighted in yellow, all the alternatives as well as all the methods which may help you to choose the best answer.<br>
-                                                    Please read carefully the question and once you know what you are looking for, search for this information in the paper.<br>
-                                                    A search functionality is also present on the header of the paper viewer.<br>
+
+                                            <span style="font-size: 120%;display: inline-block;">
+                                                On the paper you will find all choices you have, as well as all the methods, highlighted in yellow. This may help you to choose the best answer.<br>
+                                                    Please read the question carefully and once you know what you are looking for, search for this information in the paper (feel free to use the search function if you need it).<br><br>
                                                     <br>An example of this task is provided on <a href="https://youtu.be/iAcPNcd4JQw" target="_blank">YouTube</a><br>
-                                            </div>
+                                            </span>
                                             <br><br>
                                             <div ng-init="set_possible_answers('@(question.possible_answers.get)');">
                                                 <div ng-repeat="ds in possible_answers">
@@ -230,11 +228,10 @@
                                                         </any>
                                                     <any ng-if="ds == ''">
                                                         <input type="radio" ng-value="There exist no dataset for this method" ng-model="answer" name="answer" value="">
-                                                        There exist no dataset for this method
+                                                        There exists no dataset for this method
                                                     </any>
                                                 </div>
                                             </div>
-                                            </b>
                                         </div>
                                         <br><br>
                                     }
@@ -251,9 +248,8 @@
 
                                         <div ng-if="datasets.length > 0 && dom_children.length == 0">
                                             <b><hr style="border-color: black;">
-                                            Here are listed all the identified datsets for this paper.<br>
-                                                You will also see in the list below, which method was identified for which dataset.<br>
-                                                Once you are sure the dataset you are trying to identify corresponds on an existing one, click on it and then submit your answer.<br>
+                                            As you know, statistical methods are applied to data. It could be that the method you are currently working on uses data that has already been identified. The table below contains all identified data sets so far, please check if one of them is
+                                                the one used by your statistical method. If so, select it as your answer; if not, please mark the relevant regions of the paper (as described above).
                                                 <br>
                                                 <div ng-repeat="dataset in datasets" id="existingDatasets">
                                                     <input type="radio" name="dom_children[]" value="{{dataset.dom_children}}" ng-value="dataset.dom_children" onclick="eventExistingDS();" ng-click="eventExistingDS();">Method: <u>{{dataset.statistical_method}}</u> <br> Dataset: <u>{{ dataset.dom_children}}</u>
@@ -281,7 +277,7 @@
                                         <any ng-if="@hints.split('#').length>0">
                                             <br>
                                             A list of possible words/expressions which may help you to answer this question is given below.<br>
-                                            Try to search for these terms using the search functionality and read in the immediate surrounding of the match to get more information.<br><br>
+                                           You could search for these terms using the search functionality and read in the immediate surrounding of the match to get more information for your decision.<br><br>
                                             <ul style="padding-left:20px;">
                                                 <li ng-repeat="hit in @Html(hints.split('#').mkString("[\"","\",\"","\"]")).toString()">
                                                     {{hit}}

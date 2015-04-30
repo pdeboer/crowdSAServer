@@ -1990,3 +1990,7 @@ html[dir='rtl'] #documentPropertiesOverlay .row > * {
 {
     background-color: #ffff00;
 }
+
+h2 {
+    font-size:25px;
+}
