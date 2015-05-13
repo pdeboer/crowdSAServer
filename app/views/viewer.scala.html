@@ -192,7 +192,7 @@
 
                                             <div id="datasetChildren" >
                                                 <ul class="list-group" style="padding: 20px" ng-init="getDsToRefine('@(question.possible_answers.get)');">
-                                                    <div ng-if="dom_children.length == 0"><b>Dataset not yet extracted</b></div>
+                                                    <div ng-if="dom_children.length == 0" style="color:red;"><b>Dataset not yet extracted</b></div>
                                                     <li class="list-group-item" ng-repeat="ds in dom_children | orderBy:['page','div']" >
                                                             <span class="badge">
                                                                 <span class="glyphicon glyphicon-trash" ng-click="removeElementDS(ds)" aria-hidden="true" style="cursor:pointer; cursor:hand;"></span>
@@ -238,6 +238,8 @@
                                     @if(question.question_type.equalsIgnoreCase("Discovery")){
                                         <button class="btn btn-success" ng-if="dom_children.length > 0" id="submitAnswer" onclick="window.onbeforeunload = null;" type="submit">Submit Answer</button>
                                         <button ng-if="dom_children.length == 0" class="btn btn-warning" id="emptyDataset" onclick="window.onbeforeunload = null;removeSelectedDS();emptyDomChildren();" ng-click="window.onbeforeunload = null;emptyDomChildren(); removeAllElementDS();" type="submit">No Dataset found</button>
+                                        <button ng-if="dom_children.length == 0" class="btn btn-warning" id="methodNotUsed" onclick="window.onbeforeunload = null;removeSelectedDS();emptyDomChildren();" ng-click="window.onbeforeunload = null;emptyDomChildren(); removeAllElementDS();" type="submit">Method was not used</button>
+                                        <span ng-if="dom_children.length == 0"><br><br></span>
                                     }
                                     @if(!question.question_type.equalsIgnoreCase("Discovery")){
                                         <button class="btn btn-success" id="submitAnswer" onclick="window.onbeforeunload = null;" type="submit">Submit Answer</button>
