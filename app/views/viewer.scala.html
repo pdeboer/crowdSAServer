@@ -92,6 +92,10 @@
                                 $("input[value^='dom_children']").val("");
                             }
 
+                            function setMethodNotUsed() {
+                                $("#notUsed").val("false");
+                            }
+
                             $(document).ready(function(){
 
                                 var $radioButtons = $("input:radio");
@@ -237,8 +241,9 @@
                                     }
                                     @if(question.question_type.equalsIgnoreCase("Discovery")){
                                         <button class="btn btn-success" ng-if="dom_children.length > 0" id="submitAnswer" onclick="window.onbeforeunload = null;" type="submit">Submit Answer</button>
+                                        <input type="hidden" id="notUsed" name="is_method_used" value="true">
                                         <button ng-if="dom_children.length == 0" class="btn btn-warning" id="emptyDataset" onclick="window.onbeforeunload = null;removeSelectedDS();emptyDomChildren();" ng-click="window.onbeforeunload = null;emptyDomChildren(); removeAllElementDS();" type="submit">No Dataset found</button>
-                                        <button ng-if="dom_children.length == 0" class="btn btn-warning" id="methodNotUsed" onclick="window.onbeforeunload = null;removeSelectedDS();emptyDomChildren();" ng-click="window.onbeforeunload = null;emptyDomChildren(); removeAllElementDS();" type="submit">Method was not used</button>
+                                        <button ng-if="dom_children.length == 0" class="btn btn-warning" id="methodNotUsed" onclick="setMethodNotUsed();window.onbeforeunload = null;removeSelectedDS();emptyDomChildren();" ng-click="setMethodNotUsed();window.onbeforeunload = null;emptyDomChildren();removeAllElementDS();" type="submit">Method was not used</button>
                                         <span ng-if="dom_children.length == 0"><br><br></span>
                                     }
                                     @if(!question.question_type.equalsIgnoreCase("Discovery")){
@@ -263,11 +268,11 @@
                                             <script language="text/javascript">
                                                 function eventExistingDS() {
                                                     $("#submitAnswer1").removeAttr("disabled");
-                                                };
+                                                }
 
                                                 function emptyDomChildren() {
                                                     $("input[name='dom_children[]']").val("");
-                                                };
+                                                }
                                             </script>
                                         </div>
                                     }

@@ -4,6 +4,7 @@ import java.util.Date
 import anorm._
 import anorm.SqlParser._
 import models.{Assignment, Answer, Paper}
+import play.Logger
 import play.api.db.DB
 import play.api.Play.current
 
@@ -17,12 +18,15 @@ object AnswerDAO {
   private val answerParser: RowParser[Answer] =
     get[Pk[Long]]("id") ~
       get[String]("answer") ~
+      get[Option[String]]("motivation") ~
       get[Long]("created_at") ~
+      get[Boolean]("is_method_used") ~
       get[Option[Boolean]]("accepted") ~
       get[Option[Int]]("bonus_cts") ~
       get[Option[Boolean]]("rejected") ~
       get[Long]("assignments_id") map {
-      case id ~answer ~completed_at ~accepted ~bonus_cts ~rejected ~assignments_id => Answer(id, answer, completed_at, accepted, bonus_cts, rejected, assignments_id)
+      case id ~answer ~motivation ~completed_at ~is_method_used ~accepted ~bonus_cts ~rejected ~assignments_id =>
+        Answer(id, answer, motivation, completed_at, is_method_used, accepted, bonus_cts, rejected, assignments_id)
     }
 
   def findById(id: Long): Option[Answer] =
@@ -52,15 +56,22 @@ object AnswerDAO {
     try {
       val id: Option[Long] =
         DB.withConnection { implicit c =>
-          SQL("INSERT INTO answers(answer, created_at, accepted, bonus_cts, rejected, assignments_id) VALUES ({answer}, {created_at}, NULL, NULL, NULL, {assignments_id})").on(
+          SQL("INSERT INTO answers(answer, motivation, created_at, is_method_used, accepted, bonus_cts, rejected," +
+            " assignments_id) VALUES ({answer}, {motivation}, {created_at}, {is_method_used}, NULL, NULL, NULL, " +
+            "{assignments_id})").on(
             'answer -> a.answer,
+            'motivation -> a.motivation,
             'created_at -> a.created_at,
+            'is_method_used -> a.is_method_used,
             'assignments_id -> a.assignments_id
           ).executeInsert()
         }
       id.get
     }catch{
-      case e: Exception => return -1
+      case e: Exception => {
+        e.printStackTrace()
+        return -1
+      }
     }
   }
 

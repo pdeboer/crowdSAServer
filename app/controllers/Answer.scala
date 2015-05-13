@@ -70,7 +70,7 @@ object Answer extends Controller {
       if (question_type.equalsIgnoreCase("Boolean")) {
         Logger.debug("Found question type boolean")
         try {
-          Logger.debug("RESPONSE!!"+request.body.asFormUrlEncoded.get("answer").get(0))
+          Logger.debug("RESPONSE!! "+request.body.asFormUrlEncoded.get("answer").get(0))
           val answerElem = request.body.asFormUrlEncoded.get("answer").get(0)
           if (answerElem.equalsIgnoreCase("YES")) {
             answer = "true"
@@ -116,8 +116,9 @@ object Answer extends Controller {
           }
         }
       }
-
-      val answerId = AnswerDAO.add(new Answer(NotAssigned, answer, new Date().getTime / 1000, null, null, null, assignments_id))
+      val is_method_used = request.body.asFormUrlEncoded.get("is_method_used").get.head.toBoolean
+      Logger.debug("Is method used: " + is_method_used)
+      val answerId = AnswerDAO.add(new Answer(NotAssigned, answer, Some(""), new Date().getTime / 1000, is_method_used, null, null, null, assignments_id))
       Logger.debug("Answer stored with id: " + answerId)
 
       if (answerId != -1) {
