@@ -67,11 +67,28 @@ object Answer extends Controller {
     }
     else {
       var answer = ""
+      var motivation = ""
       if (question_type.equalsIgnoreCase("Boolean")) {
         Logger.debug("Found question type boolean")
         try {
           Logger.debug("RESPONSE!! "+request.body.asFormUrlEncoded.get("answer").get(0))
           val answerElem = request.body.asFormUrlEncoded.get("answer").get(0)
+
+          try {
+            val keys = request.body.asFormUrlEncoded.keySet
+
+            for (k <- keys) {
+              if (k.startsWith("motivation")) {
+                motivation = request.body.asFormUrlEncoded.get(k).get.mkString("#")
+              }
+            }
+          } catch {
+            case e: Exception => {
+              Logger.error("Cannot get the motivation from answer")
+              motivation = ""
+            }
+          }
+
           if (answerElem.equalsIgnoreCase("YES")) {
             answer = "true"
           } else {
@@ -87,6 +104,22 @@ object Answer extends Controller {
         Logger.debug("Found question type voting")
         try {
           val answerParsed = request.body.asFormUrlEncoded.get("answer").get.head
+
+          try {
+            val keys = request.body.asFormUrlEncoded.keySet
+
+            for (k <- keys) {
+              if (k.startsWith("motivation")) {
+                motivation = request.body.asFormUrlEncoded.get(k).get.mkString("#")
+              }
+            }
+          } catch {
+            case e: Exception => {
+              Logger.error("Cannot get the motivation from answer")
+              motivation = ""
+            }
+          }
+
           if(answerParsed.equalsIgnoreCase("There exist no dataset for this method")){
             answer = ""
           } else {
@@ -118,7 +151,7 @@ object Answer extends Controller {
       }
       val is_method_used = request.body.asFormUrlEncoded.get("is_method_used").get.head.toBoolean
       Logger.debug("Is method used: " + is_method_used)
-      val answerId = AnswerDAO.add(new Answer(NotAssigned, answer, Some(""), new Date().getTime / 1000, is_method_used, null, null, null, assignments_id))
+      val answerId = AnswerDAO.add(new Answer(NotAssigned, answer, Some(motivation), new Date().getTime / 1000, is_method_used, null, null, null, assignments_id))
       Logger.debug("Answer stored with id: " + answerId)
 
       if (answerId != -1) {

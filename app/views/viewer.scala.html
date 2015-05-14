@@ -60,18 +60,18 @@
                         function manageClick(txt, elem, pageNr, divNr){
                             var scope = angular.element($('#datasetChildren')).scope();
                             var found = false;
-                                scope.dom_children.forEach(function(a){
-                                    if(a.text == txt){
-                                        found = true;
-                                    }
-                                });
-                                if(!found) {
-                                    scope.push_dom_children(txt, elem, pageNr, divNr);
-                                    //scope.dom_children.push([txt, elem]);
-                                    elem.style.backgroundColor = "#FF0000";
-                                    elem.style.opacity = 0.9;
+                            scope.dom_children.forEach(function(a){
+                                if(a.text == txt){
+                                    found = true;
                                 }
+                            });
+                            if(!found) {
+                                scope.push_dom_children(txt, elem, pageNr, divNr);
+                                //scope.dom_children.push([txt, elem]);
+                                elem.style.backgroundColor = "#FF0000";
+                                elem.style.opacity = 0.9;
                             }
+                        }
 
                         function disableBorders(elem){
                             elem.style.backgroundColor = "";
@@ -156,7 +156,22 @@
                                                 <input type="radio" name="answer" value="no">
                                                 No
                                             </h2>
+                                        </div>
 
+                                        <input type="hidden" id="notUsed" name="is_method_used" value="true">
+
+                                        <div id="datasetChildren">
+                                            <b>Please click on all the sentences which motivated you to answer this way:</b><br>
+                                            <ul class="list-group" style="padding: 20px" ng-init="getDsToRefine('');">
+                                                <div ng-if="dom_children.length == 0" style="color:red;"><b>Motivation not yet extracted</b></div>
+                                                <li class="list-group-item" ng-repeat="ds in dom_children | orderBy:['page','div']" >
+                                                    <span class="badge">
+                                                        <span class="glyphicon glyphicon-trash" ng-click="removeElementDS(ds)" aria-hidden="true" style="cursor:pointer; cursor:hand;"></span>
+                                                    </span>
+                                                    {{ds.text}}
+                                                    <input type='hidden' name='motivation[]' ng-value="ds.text"/>
+                                                </li>
+                                            </ul>
                                         </div>
                                     }
                                     @if(question.question_type.equalsIgnoreCase("Discovery")) {
@@ -229,12 +244,29 @@
                                                             {{ds}}
                                                         </any>
 
-                                                        </any>
+                                                    </any>
+
                                                     <any ng-if="ds == ''">
                                                         <input type="radio" ng-value="There exist no dataset for this method" ng-model="answer" name="answer" value="">
                                                         There exists no dataset for this method
                                                     </any>
                                                 </div>
+                                            </div>
+
+                                            <input type="hidden" id="notUsed" name="is_method_used" value="true">
+
+                                            <div id="datasetChildren">
+                                                <b>Please click on all the sentences which motivated you to answer this way:</b><br>
+                                                <ul class="list-group" style="padding: 20px" ng-init="getDsToRefine('');">
+                                                    <div ng-if="dom_children.length == 0" style="color:red;"><b>Motivation not yet extracted</b></div>
+                                                    <li class="list-group-item" ng-repeat="ds in dom_children | orderBy:['page','div']" >
+                                                        <span class="badge">
+                                                            <span class="glyphicon glyphicon-trash" ng-click="removeElementDS(ds)" aria-hidden="true" style="cursor:pointer; cursor:hand;"></span>
+                                                        </span>
+                                                        {{ds.text}}
+                                                        <input type='hidden' name='motivation[]' ng-value="ds.text"/>
+                                                    </li>
+                                                </ul>
                                             </div>
                                         </div>
                                         <br><br>

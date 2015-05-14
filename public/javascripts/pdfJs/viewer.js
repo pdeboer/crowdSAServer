@@ -3635,7 +3635,7 @@ var TextLayerBuilder = (function TextLayerBuilderClosure() {
             /**
              * Add functionality only for questions of type DISCOVERY!
              */
-            if(QUESTION_TYPE.toUpperCase() === 'DISCOVERY') {
+            if(true){//QUESTION_TYPE.toUpperCase() === 'DISCOVERY') {
                 var pageNr = this.pageIdx + 1;
                 $('#pageContainer' + (this.pageIdx + 1)).find('.textLayer').children()
                     .click(function () {
