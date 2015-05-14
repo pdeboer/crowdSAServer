@@ -310,33 +310,32 @@
                                     }
 
                                     @if(question.question_type.equalsIgnoreCase("Boolean")){
-                                        <br>
+
                                         <div style="font-size: 120%;">
-                                            <b>
-                                                <br>
-                                                A list of possible words/expressions which may help you to answer this question is given below.<br>
-                                                You could search for these terms using the search functionality and read in the immediate surrounding of the match to get more information for your decision.<br><br>
-                                                <hr>
-                                                Dataset<br>
-                                                <any ng-if="@dataset_hint.split('#').length>0">
-                                                    <ul style="padding-left:20px;">
-                                                        <li ng-repeat="ds_hit in @Html(dataset_hint.split('#').mkString("[\"","\",\"","\"]")).toString()">
-                                                            {{ds_hit}}
-                                                        </li>
-                                                    </ul>
-                                                </any>
+                                            <hr style="color:black; background-color: black;height: 1px; margin-right: 20px;">
+                                            A list of possible words/expressions which may help you to answer this question is given below.<br>
+                                            You could search for these terms using the search functionality and read in the immediate surrounding of the match to get more information for your decision.
+                                            <hr style="color:black; background-color: black;height: 1px; margin-right: 20px;">
+                                            <h3>Dataset</h3><br>
+                                            <any ng-if="@dataset_hint.split('#').length>0">
+                                                <ul style="padding-left:20px;">
+                                                    <li ng-repeat="ds_hit in @Html(dataset_hint.split('#').mkString("[\"","\",\"","\"]")).toString()">
+                                                        {{ds_hit}}
+                                                    </li>
+                                                </ul>
+                                            </any>
 
-                                                <hr>
-                                                General<br>
+                                            <hr style="color:black; background-color: black;height: 1px; margin-right: 20px;">
+                                            <h3>General</h3><br>
 
-                                                <any ng-if="@hints.split('#').length>0">
-                                                    <ul style="padding-left:20px;">
-                                                        <li ng-repeat="hit in @Html(hints.split('#').mkString("[\"","\",\"","\"]")).toString()">
-                                                            {{hit}}
-                                                        </li>
-                                                    </ul>
-                                                </any>
-                                            </b>
+                                            <any ng-if="@hints.split('#').length>0">
+                                                <ul style="padding-left:20px;">
+                                                    <li ng-repeat="hit in @Html(hints.split('#').mkString("[\"","\",\"","\"]")).toString()">
+                                                        {{hit}}
+                                                    </li>
+                                                </ul>
+                                            </any>
+
                                         </div>
                                     }
 
