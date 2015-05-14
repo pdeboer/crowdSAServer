@@ -15,8 +15,9 @@ object HighlightDAO {
     get[Pk[Long]]("id") ~
       get[String]("assumption") ~
       get[String]("terms") ~
+      get[String]("dataset") ~
       get[Long]("questions_id") map {
-      case id ~assumption ~terms ~questions_id => Highlight(id, assumption, terms, questions_id)
+      case id ~assumption ~terms ~dataset ~questions_id => Highlight(id, assumption, terms, dataset, questions_id)
     }
 
   def findById(id: Long): Option[Highlight] =
@@ -36,9 +37,10 @@ object HighlightDAO {
   def add(h: Highlight): Long = {
     val id: Option[Long] =
       DB.withConnection { implicit c =>
-        SQL("INSERT INTO highlights(assumption, terms, questions_id) VALUES ({assumption}, {terms}, {questions_id})").on(
+        SQL("INSERT INTO highlights(assumption, terms, dataset, questions_id) VALUES ({assumption}, {terms}, {dataset}, {questions_id})").on(
           'assumption-> h.assumption,
           'terms-> h.terms,
+          'dataset-> h.dataset,
           'questions_id -> h.questions_id
         ).executeInsert()
       }

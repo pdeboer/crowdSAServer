@@ -1,4 +1,4 @@
-@(turker: Turker, question: Question, paperBase64: String, teamId: Long, assignmentId: Long, showReward: Boolean, stringToMatch: String, hints: String)
+@(turker: Turker, question: Question, paperBase64: String, teamId: Long, assignmentId: Long, showReward: Boolean, stringToMatch: String, hints: String, dataset_hint: String)
 @import play.api.libs.json.Json
 
 <!DOCTYPE html>
@@ -313,16 +313,29 @@
                                         <br>
                                         <div style="font-size: 120%;">
                                             <b>
-                                        <any ng-if="@hints.split('#').length>0">
-                                            <br>
-                                            A list of possible words/expressions which may help you to answer this question is given below.<br>
-                                           You could search for these terms using the search functionality and read in the immediate surrounding of the match to get more information for your decision.<br><br>
-                                            <ul style="padding-left:20px;">
-                                                <li ng-repeat="hit in @Html(hints.split('#').mkString("[\"","\",\"","\"]")).toString()">
-                                                    {{hit}}
-                                                </li>
-                                            </ul>
-                                        </any>
+                                                <br>
+                                                A list of possible words/expressions which may help you to answer this question is given below.<br>
+                                                You could search for these terms using the search functionality and read in the immediate surrounding of the match to get more information for your decision.<br><br>
+                                                <hr>
+                                                Dataset<br>
+                                                <any ng-if="@dataset_hint.split('#').length>0">
+                                                    <ul style="padding-left:20px;">
+                                                        <li ng-repeat="ds_hit in @Html(dataset_hint.split('#').mkString("[\"","\",\"","\"]")).toString()">
+                                                            {{ds_hit}}
+                                                        </li>
+                                                    </ul>
+                                                </any>
+
+                                                <hr>
+                                                General<br>
+
+                                                <any ng-if="@hints.split('#').length>0">
+                                                    <ul style="padding-left:20px;">
+                                                        <li ng-repeat="hit in @Html(hints.split('#').mkString("[\"","\",\"","\"]")).toString()">
+                                                            {{hit}}
+                                                        </li>
+                                                    </ul>
+                                                </any>
                                             </b>
                                         </div>
                                     }

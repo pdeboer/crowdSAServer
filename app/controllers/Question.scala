@@ -78,7 +78,8 @@ object Question extends Controller {
       val questionId = request.body.asFormUrlEncoded.get("questionId").get.head.toLong
       val assumption = request.body.asFormUrlEncoded.get("assumption").get.head
       val terms = request.body.asFormUrlEncoded.get("terms").get.head
-      val h = new Highlight(NotAssigned, assumption, terms, questionId)
+      val dataset = request.body.asFormUrlEncoded.get("dataset").get.head
+      val h = new Highlight(NotAssigned, assumption, terms, dataset, questionId)
       HighlightDAO.add(h)
       Ok("Success!")
     } catch {

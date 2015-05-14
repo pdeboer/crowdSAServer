@@ -39,7 +39,16 @@ object Viewer extends Controller{
             // Highlight paper only if requested
             if (paper.highlight_enabled) {
               val highlights: mutable.MutableList[String] = new mutable.MutableList[String]
+              val dataset_highlight: mutable.MutableList[String] = new mutable.MutableList[String]
               HighlightDAO.filterByQuestionId(questionId).map(h => {
+
+                //Add the dataset into a saparated variable in order to identify it from the rest of the terms
+                h.dataset.split("#").map(ds => {
+                  if(ds != "" & ds != " " && ds.length > 2) {
+                    dataset_highlight += ds
+                  }
+                })
+
                 h.terms.split("#").map(term => {
                   //Highlight only the words that contain more than 2 characters and are not empty spaces
                   // Words like or, an, to, in .. won't be highlighted if selected on their own.
@@ -63,12 +72,12 @@ object Viewer extends Controller{
                 Ok(views.html.viewer(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), question,
                   Base64.encodeBase64String(HighlightPdf.highlight(pdfPath, highlights.toList)),
                   AssignmentDAO.findById(assignmentId).get.teams_id, assignmentId, showReward,
-                  jumpTo, highlights.mkString("#") ))
+                  jumpTo, highlights.mkString("#"), dataset_highlight.mkString("#")))
               } else {
-                Ok(views.html.viewer(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), question, Base64.encodeBase64String(HighlightPdf.getPdfAsArrayByte(pdfPath)), AssignmentDAO.findById(assignmentId).get.teams_id, assignmentId, showReward, jumpTo, highlights.mkString("#")))
+                Ok(views.html.viewer(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), question, Base64.encodeBase64String(HighlightPdf.getPdfAsArrayByte(pdfPath)), AssignmentDAO.findById(assignmentId).get.teams_id, assignmentId, showReward, jumpTo, highlights.mkString("#"), dataset_highlight.mkString("#")))
               }
             } else {
-              Ok(views.html.viewer(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), question, Base64.encodeBase64String(HighlightPdf.getPdfAsArrayByte(pdfPath)), AssignmentDAO.findById(assignmentId).get.teams_id, assignmentId, showReward, "", ""))
+              Ok(views.html.viewer(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), question, Base64.encodeBase64String(HighlightPdf.getPdfAsArrayByte(pdfPath)), AssignmentDAO.findById(assignmentId).get.teams_id, assignmentId, showReward, "", "", ""))
             }
           }
         } catch {

@@ -42,6 +42,7 @@ CREATE TABLE highlights (
   id           BIGINT PRIMARY KEY NOT NULL auto_increment,
   assumption   VARCHAR(255)       NOT NULL,
   terms        VARCHAR(1000)      NOT NULL,
+  dataset      VARCHAR(1000)      NOT NULL,
   questions_id BIGINT             NOT NULL,
   FOREIGN KEY (questions_id) REFERENCES questions (id)
 ) ENGINE = InnoDB CHARSET = utf8;
