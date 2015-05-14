@@ -246,6 +246,10 @@ myApp.controller('ViewerCtrl', function($scope, $http, $interval){
         $scope.dom_children.push({text: txt, elem: elem, page: pageNr, div: divNr});
     };
 
+    $scope.jumpTo = function(word) {
+       findWord(word);
+    };
+
     $scope.removeElementDS = function(ds) {
         $scope.dom_children.splice($scope.dom_children.indexOf(ds), 1);
         disableBorders(ds.elem);

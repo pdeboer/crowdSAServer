@@ -30,6 +30,19 @@
 var HIGHLIGHT = '';
 var firstTime = true;
 
+function findWord(word){
+    console.log("Jump to: " + word);
+    PDFView.findBar.open();
+
+    HIGHLIGHT = word;
+    PDFView.findBar.findField.value = HIGHLIGHT;
+    PDFView.findBar.dispatchEvent('', true);
+    PDFView.findBar.findNextButton.click();
+    //  PDFView.findBar.close();
+    $('.innerCenter').hide();
+    firstTime = false;
+}
+
 var QUESTION_TYPE = '';
 //var domChildren = [];
 var DEFAULT_URL = '';
@@ -3445,12 +3458,7 @@ var PageView = function pageView(container, id, scale, defaultViewport,
                     );
                 }
                 if(firstTime) {
-                    PDFView.findBar.open();
-                    PDFView.findBar.findField.value = HIGHLIGHT;
-                    PDFView.findBar.findNextButton.click();
-                    //  PDFView.findBar.close();
-                    $('.innerCenter').hide();
-                    firstTime = false;
+                    findWord(HIGHLIGHT);
                 }
             },
             function pdfPageRenderError(error) {
