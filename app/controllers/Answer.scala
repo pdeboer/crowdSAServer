@@ -68,6 +68,8 @@ object Answer extends Controller {
     else {
       var answer = ""
       var motivation = ""
+
+      //Extract answer from boolean question
       if (question_type.equalsIgnoreCase("Boolean")) {
         Logger.debug("Found question type boolean")
         try {
@@ -100,7 +102,9 @@ object Answer extends Controller {
             answer = ""
           }
         }
-      } else if (question_type.equalsIgnoreCase("Voting")) {
+      }
+      // Extract anwer from voting question
+      else if (question_type.equalsIgnoreCase("Voting")) {
         Logger.debug("Found question type voting")
         try {
           val answerParsed = request.body.asFormUrlEncoded.get("answer").get.head
@@ -132,7 +136,9 @@ object Answer extends Controller {
             answer = ""
           }
         }
-      } else if (question_type.equalsIgnoreCase("Discovery")) {
+      }
+      // Extract answer from discovery question
+      else if (question_type.equalsIgnoreCase("Discovery")) {
         Logger.debug("Found question type discovery")
         try {
           val keys = request.body.asFormUrlEncoded.keySet //get("dom_children").get.head
@@ -149,8 +155,28 @@ object Answer extends Controller {
           }
         }
       }
+      // Extract answer from Missing question
+      else if (question_type.equalsIgnoreCase("Missing")) {
+        Logger.debug("Found question type missing")
+        try {
+          val keys = request.body.asFormUrlEncoded.keySet //get("dom_children").get.head
+
+          for (k <- keys) {
+            if (k.startsWith("missing")) {
+              answer = request.body.asFormUrlEncoded.get(k).get.mkString("#")
+            }
+          }
+        } catch {
+          case e: Exception => {
+            Logger.error("Cannot get the answer from missing array")
+            answer = ""
+          }
+        }
+      }
+
+      // Other variables which need to be extracted from any question type
       val is_method_used = request.body.asFormUrlEncoded.get("is_method_used").get.head.toBoolean
-      Logger.debug("Is method used: " + is_method_used)
+
       val answerId = AnswerDAO.add(new Answer(NotAssigned, answer, Some(motivation), new Date().getTime / 1000, is_method_used, null, null, null, assignments_id))
       Logger.debug("Answer stored with id: " + answerId)
 

@@ -78,6 +78,9 @@
                                 <td ng-if="question.question_type == 'Boolean'">
                                     Yes/No question
                                 </td>
+                                <td ng-if="question.question_type == 'Missing'">
+                                    Find Methods question
+                                </td>
                                 <td ng-if="@showReward">
                                     {{ question.reward }}
                                 </td>

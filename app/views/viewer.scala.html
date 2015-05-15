@@ -138,6 +138,8 @@
                                 <form action="/answer/add" method="POST" accept-charset="utf-8" enctype="multipart/form-data" ng-submit="submit(@question.question_type)">
                                     <input type="hidden" id="assignments_id" name="assignments_id" value="@assignmentId">
                                     <input type="hidden" id="question_type" name="question_type" value="@question.question_type">
+
+                                        <!-- BOOLEAN QUESTION -->
                                     @if(question.question_type.equalsIgnoreCase("Boolean")){
                                         <div>
                                             <span style="font-size: 120%;display: inline-block;">
@@ -173,6 +175,7 @@
                                             </ul>
                                         </div>
                                     }
+                                        <!-- DISCOVERY QUESTION -->
                                     @if(question.question_type.equalsIgnoreCase("Discovery")) {
                                         <div>
                                             <div style="font-size: 120%;display: inline-block;" id="showhidetarget2">
@@ -222,6 +225,8 @@
                                             </div>
                                         </div>
                                     }
+
+                                        <!-- VOTING QUESTION -->
                                     @if(question.question_type.equalsIgnoreCase("Voting")){
                                         <div>
 
@@ -270,6 +275,45 @@
                                         </div>
                                         <br><br>
                                     }
+                                        <!-- MISSING QUESTION -->
+                                    @if(question.question_type.equalsIgnoreCase("Missing")) {
+                                        <div>
+                                            <span style="font-size: 120%;display: inline-block;">
+                                                We have highlighted all the terms that were automatically identified in the paper.<br>
+                                                You are kindly requested to search for methods which were not automatically found. Once you find one,
+                                                please click on the sentence containing the method.<br>
+                                                Once you are done, click the green button "submit answer" to answer the question.
+                                            </span>
+                                        </div>
+
+                                        <input type="hidden" id="notUsed" name="is_method_used" value="true">
+
+                                        <div id="datasetChildren">
+                                            <b>Please click on all the sentences which contain a non-highlighted method:</b><br>
+                                            <ul class="list-group" style="padding: 20px" ng-init="getDsToRefine('');">
+                                                <div ng-if="dom_children.length == 0" style="color:red;"><b>Method not yet extracted</b></div>
+                                                <li class="list-group-item" ng-repeat="ds in dom_children | orderBy:['page','div']" >
+                                                    <span class="badge">
+                                                        <span class="glyphicon glyphicon-trash" ng-click="removeElementDS(ds)" aria-hidden="true" style="cursor:pointer; cursor:hand;"></span>
+                                                    </span>
+                                                    {{ds.text}}
+                                                    <input type='hidden' name='missing[]' ng-value="ds.text"/>
+                                                </li>
+                                            </ul>
+                                        </div>
+
+                                        <hr style="color:black; background-color: black;height: 1px; margin-right: 20px;">
+                                        <h3>Methods</h3><br>
+                                        <any ng-if="@hints.split('#').length>0">
+                                            <ul style="padding-left:20px;">
+                                                <li ng-repeat="hit in @Html(hints.split('#').mkString("[\"","\",\"","\"]")).toString()">
+                                                    <span ng-click="jumpTo(hit)" style="cursor:hand; cursor:pointer;">{{hit}}</span>
+                                                </li>
+                                            </ul>
+                                        </any>
+                                    }
+
+                                        <!-- ADDITIONAL CONTROLLERS - DISCOVERY -->
                                     @if(question.question_type.equalsIgnoreCase("Discovery")){
                                         <button class="btn btn-success" ng-if="dom_children.length > 0" id="submitAnswer" onclick="window.onbeforeunload = null;" type="submit">Submit Answer</button>
                                         <input type="hidden" id="notUsed" name="is_method_used" value="true">
@@ -282,8 +326,8 @@
                                     }
                                     <button class="btn btn-danger" id="cancelAnswer" type="button" ng-click="cancel_assignment(@assignmentId)">Cancel</button>
 
+                                        <!-- DISCOVERY - DATASET ALREADY EXTRACTED -->
                                     @if(question.question_type.equalsIgnoreCase("Discovery")){
-
                                         <div ng-if="datasets.length > 0 && dom_children.length == 0">
                                             <b><hr style="border-color: black;">
                                             As you know, statistical methods are applied to data. It could be that the method you are currently working on uses data that has already been identified. The table below contains all identified data sets so far, please check if one of them is
@@ -308,6 +352,7 @@
                                         </div>
                                     }
 
+                                        <!-- ADDITINAL CONTROLLERS - BOOLEAN (HINTS) -->
                                     @if(question.question_type.equalsIgnoreCase("Boolean")){
 
                                         <div style="font-size: 120%;">
