@@ -62,10 +62,10 @@ object Viewer extends Controller{
 
               var jumpTo = ""
               if(highlights.length>0 && question.question_type == "Discovery"){
-                jumpTo = dataset_highlight.head
-                //jumpTo = question.question.substring(question.question.indexOf("<i> ") + 4, question.question.indexOf("</i>")-1)
-              }else if(highlights.length>0 && question.question_type != "Discovery") {
                 jumpTo = highlights.head
+                //jumpTo = question.question.substring(question.question.indexOf("<i> ") + 4, question.question.indexOf("</i>")-1)
+              }else if(highlights.length>0 && question.question_type != "Discovery" && question.question_type != "Missing") {
+                jumpTo = dataset_highlight.head
               } else {
                 jumpTo = ""
               }
