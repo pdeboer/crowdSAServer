@@ -19,14 +19,15 @@ object AnswerDAO {
     get[Pk[Long]]("id") ~
       get[String]("answer") ~
       get[Option[String]]("motivation") ~
+      get[Option[String]]("observation") ~
       get[Long]("created_at") ~
       get[Boolean]("is_method_used") ~
       get[Option[Boolean]]("accepted") ~
       get[Option[Int]]("bonus_cts") ~
       get[Option[Boolean]]("rejected") ~
       get[Long]("assignments_id") map {
-      case id ~answer ~motivation ~completed_at ~is_method_used ~accepted ~bonus_cts ~rejected ~assignments_id =>
-        Answer(id, answer, motivation, completed_at, is_method_used, accepted, bonus_cts, rejected, assignments_id)
+      case id ~answer ~motivation ~observation ~completed_at ~is_method_used ~accepted ~bonus_cts ~rejected ~assignments_id =>
+        Answer(id, answer, motivation, observation, completed_at, is_method_used, accepted, bonus_cts, rejected, assignments_id)
     }
 
   def findById(id: Long): Option[Answer] =
@@ -56,14 +57,15 @@ object AnswerDAO {
     try {
       val id: Option[Long] =
         DB.withConnection { implicit c =>
-          SQL("INSERT INTO answers(answer, motivation, created_at, is_method_used, accepted, bonus_cts, rejected," +
-            " assignments_id) VALUES ({answer}, {motivation}, {created_at}, {is_method_used}, NULL, NULL, NULL, " +
+          SQL("INSERT INTO answers(answer, motivation, observation, created_at, is_method_used, accepted, bonus_cts, rejected," +
+            " assignments_id) VALUES ({answer}, {motivation}, {observation}, {created_at}, {is_method_used}, NULL, NULL, NULL, " +
             "{assignments_id})").on(
             'answer -> a.answer,
             'motivation -> a.motivation,
-            'created_at -> a.created_at,
-            'is_method_used -> a.is_method_used,
-            'assignments_id -> a.assignments_id
+            'observation -> a.observation,
+            'created_at -> a.createdAt,
+            'is_method_used -> a.isMethodUsed,
+            'assignments_id -> a.assignmentsId
           ).executeInsert()
         }
       id.get

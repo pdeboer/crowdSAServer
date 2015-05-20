@@ -174,6 +174,12 @@
                                                 </li>
                                             </ul>
                                         </div>
+
+                                        <div id="observations">
+                                            <b>Please write in the box below the problems/difficulties you faced with this question:</b>
+                                            <textarea autofocus class="form-control" name="observation" style="width:95%;margin-right:20px;" maxlength="1000" rows="4" placeholder="Insert text here..."></textarea>
+                                        </div>
+                                        <br>
                                     }
                                         <!-- DISCOVERY QUESTION -->
                                     @if(question.question_type.equalsIgnoreCase("Discovery")) {
@@ -223,6 +229,12 @@
                                                     </li>
                                                 </ul>
                                             </div>
+
+                                            <div id="observations">
+                                                <b>Please write in the box below the problems/difficulties you faced with this question:</b>
+                                                <textarea autofocus class="form-control" name="observation" style="width:95%;margin-right:20px;resize:none;" maxlength="1000" rows="4" placeholder="Insert text here..."></textarea>
+                                            </div>
+                                            <br>
                                         </div>
                                     }
 
@@ -272,6 +284,12 @@
                                                     </li>
                                                 </ul>
                                             </div>
+
+                                            <div id="observations">
+                                                <b>Please write in the box below the problems/difficulties you faced with this question:</b>
+                                                <textarea autofocus class="form-control" name="observation" style="width:95%;margin-right:20px;resize:none;" maxlength="1000" rows="4" placeholder="Insert text here..."></textarea>
+                                            </div>
+
                                         </div>
                                         <br><br>
                                     }
@@ -302,17 +320,24 @@
                                             </ul>
                                         </div>
 
-                                        <hr style="color:black; background-color: black;height: 1px; margin-right: 20px;">
-                                        <h3>Methods</h3><br>
-                                        <any ng-if="@hints.split('#').length>0">
-                                            <ul style="padding-left:20px;">
-                                                <li ng-repeat="hit in @Html(hints.split('#').mkString("[\"","\",\"","\"]")).toString()">
-                                                    <span ng-click="jumpTo(hit)" style="cursor:hand; cursor:pointer;">{{hit}}</span>
-                                                </li>
-                                            </ul>
-                                        </any>
-                                    }
+                                        <div id="observations">
+                                            <b>Please write in the box below the problems/difficulties you faced with this question:</b>
+                                            <textarea autofocus class="form-control" name="observation" style="width:95%;margin-right:20px;resize:none;" maxlength="1000" rows="4" placeholder="Insert text here..."></textarea>
+                                        </div>
 
+                                        <br>
+                                            <!-- ADDITIONAL CONTROLLERS - MISSING -->
+                                            <button class="btn btn-success" ng-if="dom_children.length > 0"
+                                            id="submitAnswer" onclick="window.onbeforeunload = null;" type="submit">
+                                                Submit Answer</button>
+                                            <input type="hidden" id="notUsed" name="is_method_used" value="true">
+                                            <button ng-if="dom_children.length == 0" class="btn btn-warning"
+                                            id="methodNotUsed" onclick="setMethodNotUsed();window.onbeforeunload = null;
+                                            removeSelectedDS();emptyDomChildren();"
+                                            ng-click="setMethodNotUsed();window.onbeforeunload = null;
+                                            emptyDomChildren();removeAllElementDS();" type="submit">
+                                                No extra method found</button>
+                                    }
                                         <!-- ADDITIONAL CONTROLLERS - DISCOVERY -->
                                     @if(question.question_type.equalsIgnoreCase("Discovery")){
                                         <button class="btn btn-success" ng-if="dom_children.length > 0" id="submitAnswer" onclick="window.onbeforeunload = null;" type="submit">Submit Answer</button>
@@ -321,11 +346,23 @@
                                         <button ng-if="dom_children.length == 0" class="btn btn-warning" id="methodNotUsed" onclick="setMethodNotUsed();window.onbeforeunload = null;removeSelectedDS();emptyDomChildren();" ng-click="setMethodNotUsed();window.onbeforeunload = null;emptyDomChildren();removeAllElementDS();" type="submit">Method was not used</button>
                                         <span ng-if="dom_children.length == 0"><br><br></span>
                                     }
-                                    @if(!question.question_type.equalsIgnoreCase("Discovery")){
+                                    @if(!question.question_type.equalsIgnoreCase("Discovery") && !question.question_type.equalsIgnoreCase("Missing")){
                                         <button class="btn btn-success" id="submitAnswer" onclick="window.onbeforeunload = null;" type="submit">Submit Answer</button>
                                     }
                                     <button class="btn btn-danger" id="cancelAnswer" type="button" ng-click="cancel_assignment(@assignmentId)">Cancel</button>
 
+                                        <!-- Missing - all Methods identified in the paper -->
+                                    @if(question.question_type.equalsIgnoreCase("Missing")){
+                                        <hr style="color:black; background-color: black;height: 1px; margin-right: 20px;">
+                                        <h3>Methods</h3><br>
+                                        <any ng-if="@hints.split('#').length>0">
+                                            <ul style="padding-left:20px;">
+                                                <li ng-repeat="hit in @Html(hints.split('#').mkString("[\"","\",\"","\"]")).toString()">
+                                                    <span ng-click="jumpTo(hit)" style="cursor:hand; cursor:pointer;">{{hit}}</span>
+                                                </li>
+                                            </ul>
+                                    </any>
+                                    }
                                         <!-- DISCOVERY - DATASET ALREADY EXTRACTED -->
                                     @if(question.question_type.equalsIgnoreCase("Discovery")){
                                         <div ng-if="datasets.length > 0 && dom_children.length == 0">

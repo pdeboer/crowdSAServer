@@ -7,8 +7,8 @@ import play.api.libs.json._
  * Created by Mattia on 04.01.2015.
  */
 
-case class Answer(id: Pk[Long], answer: String, motivation: Option[String], created_at: Long, is_method_used: Boolean,
-                  accepted: Option[Boolean], bonus_cts: Option[Int], rejected: Option[Boolean], assignments_id: Long)
+case class Answer(id: Pk[Long], answer: String, motivation: Option[String], observation: Option[String], createdAt: Long, isMethodUsed: Boolean,
+                  accepted: Option[Boolean], bonusCts: Option[Int], rejected: Option[Boolean], assignmentsId: Long)
 
 object Answer {
   implicit val answerWrites = new Writes[Answer] {
@@ -17,12 +17,12 @@ object Answer {
         "id" -> a.id.get,
         "answer" -> a.answer,
         "motivation" -> a.motivation,
-        "created_at" -> a.created_at,
-        "is_method_used" -> a.is_method_used,
+        "created_at" -> a.createdAt,
+        "is_method_used" -> a.isMethodUsed,
         "accepted" -> a.accepted,
-        "bonus_cts" -> a.bonus_cts,
+        "bonus_cts" -> a.bonusCts,
         "rejected" -> a.rejected,
-        "assignments_id" -> a.assignments_id
+        "assignments_id" -> a.assignmentsId
       )
     }
   }

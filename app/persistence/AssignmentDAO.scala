@@ -41,7 +41,7 @@ object AssignmentDAO {
     DB.withConnection { implicit c =>
       val answer = AnswerDAO.findById(ansId).get
       SQL("SELECT * FROM assignments WHERE id = {assignments_id}").on(
-        'assignments_id -> answer.assignments_id
+        'assignments_id -> answer.assignmentsId
       ).as(assignmentParser.singleOpt)
     }
   }

@@ -76,6 +76,7 @@ CREATE TABLE answers (
   id             BIGINT PRIMARY KEY NOT NULL auto_increment,
   answer         TEXT               NOT NULL,
   motivation     TEXT               NULL,
+  observation    VARCHAR(1000)      NULL,
   created_at     BIGINT             NOT NULL,
   is_method_used BIT                NOT NULL,
   accepted       BIT                NULL,

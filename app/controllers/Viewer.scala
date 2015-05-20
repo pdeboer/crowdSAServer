@@ -76,10 +76,15 @@ object Viewer extends Controller{
                   AssignmentDAO.findById(assignmentId).get.teams_id, assignmentId, showReward,
                   jumpTo, highlights.mkString("#"), dataset_highlight.mkString("#")))
               } else {
-                Ok(views.html.viewer(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), question, Base64.encodeBase64String(HighlightPdf.getPdfAsArrayByte(pdfPath)), AssignmentDAO.findById(assignmentId).get.teams_id, assignmentId, showReward, jumpTo, highlights.mkString("#"), dataset_highlight.mkString("#")))
+                Ok(views.html.viewer(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), question,
+                  Base64.encodeBase64String(HighlightPdf.getPdfAsArrayByte(pdfPath)),
+                  AssignmentDAO.findById(assignmentId).get.teams_id, assignmentId, showReward, jumpTo,
+                  highlights.mkString("#"), dataset_highlight.mkString("#")))
               }
             } else {
-              Ok(views.html.viewer(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), question, Base64.encodeBase64String(HighlightPdf.getPdfAsArrayByte(pdfPath)), AssignmentDAO.findById(assignmentId).get.teams_id, assignmentId, showReward, "", "", ""))
+              Ok(views.html.viewer(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), question,
+                Base64.encodeBase64String(HighlightPdf.getPdfAsArrayByte(pdfPath)),
+                AssignmentDAO.findById(assignmentId).get.teams_id, assignmentId, showReward, "", "", ""))
             }
           }
         } catch {
