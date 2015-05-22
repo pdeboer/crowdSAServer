@@ -245,32 +245,34 @@
                                             <span style="font-size: 120%;display: inline-block;">
                                                 On the paper you will find all choices you have, as well as all the methods, highlighted in yellow. This may help you to choose the best answer.<br>
                                                     Please read the question carefully and once you know what you are looking for, search for this information in the paper (feel free to use the search function if you need it).<br><br>
-                                                    <br>An example of this task is provided on <a href="https://youtu.be/iAcPNcd4JQw" target="_blank">YouTube</a><br>
+                                                    An example of this task is provided on <a href="https://youtu.be/iAcPNcd4JQw" target="_blank">YouTube</a><br>
                                             </span>
                                             <br><br>
-                                            <div ng-init="set_possible_answers('@(question.possible_answers.get)');">
-                                                <div ng-repeat="ds in possible_answers">
-                                                    <any ng-if="ds != ''">
-                                                        <input type="radio" value="{{ds}}" ng-model="answer" name="answer" ng-value="{{ds}}">
-                                                        <any ng-if="ds == 'false' || ds =='true'">
-                                                            <any ng-if="ds!= 'false' && ds == 'true'">Yes</any>
-                                                            <any ng-if="ds!= 'true' && ds == 'false'">No</any>
-                                                        </any>
-                                                        <any ng-if="ds != 'false' && ds !='true'">
-                                                            {{ds}}
+                                            <b>
+                                                <div ng-init="set_possible_answers('@(question.possible_answers.get)');">
+                                                    <div ng-repeat="ds in possible_answers">
+                                                        <any ng-if="ds != ''">
+                                                            <input type="radio" value="{{ds}}" ng-model="answer" name="answer" ng-value="{{ds}}">
+                                                            <any ng-if="ds == 'false' || ds =='true'">
+                                                                <any ng-if="ds!= 'false' && ds == 'true'">Yes</any>
+                                                                <any ng-if="ds!= 'true' && ds == 'false'">No</any>
+                                                            </any>
+                                                            <any ng-if="ds != 'false' && ds !='true'">
+                                                                {{ds}}
+                                                            </any>
+
                                                         </any>
 
-                                                    </any>
-
-                                                    <any ng-if="ds == ''">
-                                                        <input type="radio" ng-value="There exist no dataset for this method" ng-model="answer" name="answer" value="">
-                                                        There exists no dataset for this method
-                                                    </any>
+                                                        <any ng-if="ds == ''">
+                                                            <input type="radio" ng-value="There exist no dataset for this method" ng-model="answer" name="answer" value="">
+                                                            There exists no dataset for this method
+                                                        </any>
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            </b>
 
                                             <input type="hidden" id="notUsed" name="is_method_used" value="true">
-
+                                            <br><br>
                                             <div id="datasetChildren">
                                                 <b>Please click on all the sentences which motivated you to answer this way:</b><br>
                                                 <ul class="list-group" style="padding: 20px" ng-init="getDsToRefine('');">
