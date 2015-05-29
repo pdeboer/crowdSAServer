@@ -4,6 +4,8 @@ import com.typesafe.config.ConfigFactory
 import org.apache.commons.codec.binary.Base64
 import pdf.HighlightPdf
 import persistence._
+import play.api.Logger
+import play.api.libs.json.Json
 import play.api.mvc.{Action, Controller}
 
 import scala.collection.mutable
@@ -40,6 +42,7 @@ object Viewer extends Controller{
             if (paper.highlight_enabled) {
               val highlights: mutable.MutableList[String] = new mutable.MutableList[String]
               val dataset_highlight: mutable.MutableList[String] = new mutable.MutableList[String]
+
               HighlightDAO.filterByQuestionId(questionId).map(h => {
 
                 //Add the dataset into a saparated variable in order to identify it from the rest of the terms
@@ -49,37 +52,65 @@ object Viewer extends Controller{
                   }
                 })
 
-                h.terms.split("#").map(term => {
-                  //Highlight only the words that contain more than 2 characters and are not empty spaces
-                  // Words like or, an, to, in .. won't be highlighted if selected on their own.
-                  if(term != "" & term != " " && term.length > 2){
-                    highlights += term
-                  }
-                })
+                // If Missing question skip this step (already parsed as JSON)[{method:'xx', matches:['yy', 'cc', ...]}]
+                if(question.question_type.equalsIgnoreCase("Missing")){
+                  highlights += h.terms
+                } else {
+                  h.terms.split("#").map(term => {
+                    //Highlight only the words that contain more than 2 characters and are not empty spaces
+                    // Words like or, an, to, in .. won't be highlighted if selected on their own.
+                    if (term != "" & term != " " && term.length > 2) {
+                      highlights += term
+                    }
+                  })
+                }
               })
 
-              val contentCsv = highlights.toList
+              if(question.question_type.equalsIgnoreCase("Missing")){
 
-              var jumpTo = ""
-              if(highlights.length>0 && question.question_type == "Discovery"){
-                jumpTo = highlights.head
-                //jumpTo = question.question.substring(question.question.indexOf("<i> ") + 4, question.question.indexOf("</i>")-1)
-              }else if(dataset_highlight.length>0 && question.question_type != "Discovery" && question.question_type != "Missing") {
-                jumpTo = dataset_highlight.head
-              } else {
-                jumpTo = ""
-              }
+                Logger.debug(Json.parse(highlights.head).toString())
 
-              if (!contentCsv.isEmpty) {
+                val allMethods = (Json.parse(highlights.head) \\ "matches").toList
+                Logger.debug(allMethods.toString)
+
+                var allMatches = new mutable.MutableList[String]
+                allMethods.foreach(a => {
+                  val all = a.toString.substring(2, a.toString.length-2).split("\",\"")
+                  all.foreach(b => {
+                      allMatches += b
+                  })
+                })
+
+                Logger.debug("Load Missing Question view with: " + allMatches.toList)
+
                 Ok(views.html.viewer(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), question,
-                  Base64.encodeBase64String(HighlightPdf.highlight(pdfPath, highlights.toList)),
+                  Base64.encodeBase64String(HighlightPdf.highlight(pdfPath, allMatches.toList)),
                   AssignmentDAO.findById(assignmentId).get.teams_id, assignmentId, showReward,
-                  jumpTo, highlights.mkString("#"), dataset_highlight.mkString("#")))
+                  "", highlights.head.toString, dataset_highlight.mkString("#")))
+
               } else {
-                Ok(views.html.viewer(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), question,
-                  Base64.encodeBase64String(HighlightPdf.getPdfAsArrayByte(pdfPath)),
-                  AssignmentDAO.findById(assignmentId).get.teams_id, assignmentId, showReward, jumpTo,
-                  highlights.mkString("#"), dataset_highlight.mkString("#")))
+
+                var jumpTo = ""
+                if (highlights.length > 0 && question.question_type == "Discovery") {
+                  jumpTo = highlights.head
+                  //jumpTo = question.question.substring(question.question.indexOf("<i> ") + 4, question.question.indexOf("</i>")-1)
+                } else if (dataset_highlight.length > 0 && question.question_type != "Discovery" && question.question_type != "Missing") {
+                  jumpTo = dataset_highlight.head
+                } else {
+                  jumpTo = ""
+                }
+
+                if (!highlights.toList.isEmpty) {
+                  Ok(views.html.viewer(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), question,
+                    Base64.encodeBase64String(HighlightPdf.highlight(pdfPath, highlights.toList)),
+                    AssignmentDAO.findById(assignmentId).get.teams_id, assignmentId, showReward,
+                    jumpTo, highlights.mkString("#"), dataset_highlight.mkString("#")))
+                } else {
+                  Ok(views.html.viewer(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), question,
+                    Base64.encodeBase64String(HighlightPdf.getPdfAsArrayByte(pdfPath)),
+                    AssignmentDAO.findById(assignmentId).get.teams_id, assignmentId, showReward, jumpTo,
+                    highlights.mkString("#"), dataset_highlight.mkString("#")))
+                }
               }
             } else {
               Ok(views.html.viewer(TurkerDAO.findByTurkerId(turkerId).getOrElse(null), question,

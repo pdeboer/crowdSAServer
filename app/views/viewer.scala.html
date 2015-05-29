@@ -3,39 +3,39 @@
 
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/html">
-        <head>
-            <title>Solving question</title>
+    <head>
+        <title>Solving question</title>
 
-            <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("../../public/stylesheets/imagess/favicon.png")">
+        <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("../../public/stylesheets/imagess/favicon.png")">
 
             <!-- Bootstrap -->
-            <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet">
+        <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet">
 
-                <!-- CSV reader -->
-            <script src="@routes.Assets.at("/javascripts/papaparser.js")" type="text/javascript"></script>
+            <!-- CSV reader -->
+        <script src="@routes.Assets.at("/javascripts/papaparser.js")" type="text/javascript"></script>
 
             <!-- PDF.js -->
-            <script src="@routes.Assets.at("javascripts/pdfJs/compatibility.js")" type="text/javascript"></script>
-            <script src="@routes.Assets.at("javascripts/pdfJs/pdf.js")" type="text/javascript"></script>
-            <script src="@routes.Assets.at("javascripts/pdfJs/pdf.worker.js")" type="text/javascript"></script>
+        <script src="@routes.Assets.at("javascripts/pdfJs/compatibility.js")" type="text/javascript"></script>
+        <script src="@routes.Assets.at("javascripts/pdfJs/pdf.js")" type="text/javascript"></script>
+        <script src="@routes.Assets.at("javascripts/pdfJs/pdf.worker.js")" type="text/javascript"></script>
 
 
-            <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-            <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.5/angular.min.js"></script>
-            <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.5/angular.min.js"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
 
-            <script src="@routes.Assets.at("javascripts/pdfJs/compatibility.js")" type="text/javascript"></script>
-            <link rel="resource" type="application/l10n" href="@routes.Assets.at("/locale/locale.properties")"/>
-            <script src="@routes.Assets.at("javascripts/pdfJs/l10n.js")" type="text/javascript"></script>
-            <script src="@routes.Assets.at("javascripts/pdfJs/debugger.js")" type="text/javascript"></script>
-            <link rel="stylesheet" media="screen" href="@routes.Assets.at("/stylesheets/viewer.css")">
-            <script src="@routes.Assets.at("javascripts/pdfJs/viewer.js")" type="text/javascript"></script>
+        <script src="@routes.Assets.at("javascripts/pdfJs/compatibility.js")" type="text/javascript"></script>
+        <link rel="resource" type="application/l10n" href="@routes.Assets.at("/locale/locale.properties")"/>
+        <script src="@routes.Assets.at("javascripts/pdfJs/l10n.js")" type="text/javascript"></script>
+        <script src="@routes.Assets.at("javascripts/pdfJs/debugger.js")" type="text/javascript"></script>
+        <link rel="stylesheet" media="screen" href="@routes.Assets.at("/stylesheets/viewer.css")">
+        <script src="@routes.Assets.at("javascripts/pdfJs/viewer.js")" type="text/javascript"></script>
 
 
-            <script src="@routes.Assets.at("/js/app.js")" type="text/javascript"></script>
-            <script src="@routes.Assets.at("/js/controllers.js")" type="text/javascript"></script>
+        <script src="@routes.Assets.at("/js/app.js")" type="text/javascript"></script>
+        <script src="@routes.Assets.at("/js/controllers.js")" type="text/javascript"></script>
 
-            <script type="text/javascript">
+        <script type="text/javascript">
                 window.onbeforeunload = function(e){
                     // If we haven't been passed the event get the window.event
                     e = e || window.event;
@@ -52,11 +52,11 @@
 
             </script>
 
-        </head>
-        <body ng-app="myApp">
-            <div class="container-fluid" style="width: 100%; height: 100%;">
-                <table style="width: 100%; height: 100%;" ng-controller="ViewerCtrl" ng-init="loadAvailableDatasets('@question.papers_id');">
-                    <script>
+    </head>
+    <body ng-app="myApp">
+        <div class="container-fluid" style="width:100%; height:100%;">
+            <table style="width:100%; height:100%;" ng-controller="ViewerCtrl" ng-init="loadAvailableDatasets('@question.papers_id');">
+                <script>
                         function manageClick(txt, elem, pageNr, divNr){
                             var scope = angular.element($('#datasetChildren')).scope();
                             var found = false;
@@ -130,41 +130,164 @@
 
                   </script>
 
-                    <tr>
-                        <td style="width: 30%; vertical-align: top; text-align: left;">
+                <tr>
+                    <td style="width:30%; vertical-align:top; text-align:left;">
 
-                            <div>
-                                <h2>@Html(question.question)</h2>
-                                <form action="/answer/add" method="POST" accept-charset="utf-8" enctype="multipart/form-data" ng-submit="submit(@question.question_type)">
-                                    <input type="hidden" id="assignments_id" name="assignments_id" value="@assignmentId">
-                                    <input type="hidden" id="question_type" name="question_type" value="@question.question_type">
+                        <div>
+                            <h2>@Html(question.question)</h2>
+                            <form action="/answer/add" method="POST" accept-charset="utf-8" enctype="multipart/form-data" ng-submit="submit(@question.question_type)">
+                                <input type="hidden" id="assignments_id" name="assignments_id" value="@assignmentId">
+                                <input type="hidden" id="question_type" name="question_type" value="@question.question_type">
 
-                                        <!-- BOOLEAN QUESTION -->
-                                    @if(question.question_type.equalsIgnoreCase("Boolean")){
-                                        <div>
-                                            <span style="font-size: 120%;display: inline-block;">
-                                                We have highlighted the terms that might help you to answer the presented above question. These terms might help you to find the relevant paragraphs to answer the question above, however those are just hints, and you might need to read other parts of the paper to be able to answer.<br>
-                                                Be aware that the highlighted methods may be present on different pages of the paper.<br>
-                                                Once you are done, select <span style="font-size: 130%;display: inline-block;">YES</span> or <span style="font-size: 130%;display: inline-block;">NO</span> and "submit answer" to answer the question.
-                                                <br><br>An example of this task is provided on <a href="https://www.youtube.com/watch?v=pFz0Ua195tg" target="_blank">YouTube</a>
-                                                 
+                                    <!-- BOOLEAN QUESTION -->
+                                @if(question.question_type.equalsIgnoreCase("Boolean")) {
+                                    <div>
+                                        <span style="font-size:120%; display:inline-block;">
+                                            We have highlighted the terms that might help you to answer the presented above question. These terms might help you to find the relevant paragraphs to answer the question above, however those are just hints, and you might need to read other parts of the paper to be able to answer.<br>
+                                            Be aware that the highlighted methods may be present on different pages of the paper.<br>
+                                            Once you are done, select <span style="font-size:130%; display:inline-block;">
+                                            YES</span> or <span style="font-size:130%; display:inline-block;">
+                                            NO</span> and "submit answer" to answer the question.
+                                            <br><br>
+                                            An example of this task is provided on <a href="https://www.youtube.com/watch?v=pFz0Ua195tg" target="_blank">
+                                            YouTube</a>
 
-                                            </span>
-                                            <h2>
-                                                <input type="radio" name="answer" value="yes">
-                                                Yes
+
+                                        </span>
+                                        <h2>
+                                            <input type="radio" name="answer" value="yes">
+                                            Yes
+                                            <br>
+                                            <input type="radio" name="answer" value="no">
+                                            No
+                                        </h2>
+                                    </div>
+
+                                    <input type="hidden" id="notUsed" name="is_method_used" value="true">
+
+                                    <div id="datasetChildren">
+                                        <b>Please click on all the sentences which motivated you to answer this way:</b><br>
+                                        <ul class="list-group" style="padding:20px" ng-init="getDsToRefine('');">
+                                            <div ng-if="dom_children.length == 0" style="color:red;"><b>
+                                                Motivation not yet extracted</b></div>
+                                            <li class="list-group-item" ng-repeat="ds in dom_children | orderBy:['page','div']" >
+                                                <span class="badge">
+                                                    <span class="glyphicon glyphicon-trash" ng-click="removeElementDS(ds)" aria-hidden="true" style="cursor:pointer; cursor:hand;"></span>
+                                                </span>
+                                                {{ds.text}}
+                                                <input type='hidden' name='motivation[]' ng-value="ds.text"/>
+                                            </li>
+                                        </ul>
+                                    </div>
+
+                                    <div id="observations">
+                                        <b>Please write in the box below the problems/difficulties you faced with this question:</b>
+                                        <textarea autofocus class="form-control" name="observation" style="width:95%; margin-right:20px;" maxlength="1000" rows="4" placeholder="Insert text here..."></textarea>
+                                    </div>
+                                    <br>
+                                }
+                                    <!-- DISCOVERY QUESTION -->
+                                @if(question.question_type.equalsIgnoreCase("Discovery")) {
+                                    <div>
+                                        <div style="font-size:120%; display:inline-block;" id="showhidetarget2">
+                                            <b>
+                                                Please identify the relevant lines of the paper that describe the data onto which the statistical method mentioned above is applied by clicking on them.<br>
+                                                <u>Don't worry if you don't know what the above method exactly does, and remember you have 10 minutes to solve this task.</u>
                                                 <br>
-                                                <input type="radio" name="answer" value="no">
-                                                No
-                                            </h2>
+                                                If there is nothing highlighted in the paper on the right, scroll up/down and look for the highlighted sentences on other pages.<br>
+                                                <span ng-if="datasets.length > 0">
+                                                    Below you will find a list containing all the datasets already identified by other crowd workers.</span><br>
+                                                To get more information about this kind of questions, please click on the blue button.<br><br>
+                                            </b>
+                                        </div>
+                                        <div style="font-size:120%; display:inline-block;" id="showhidetarget1"><b>
+                                            The paper shown on the right hand side uses the statistical method shown above.
+                                            Every statistical method is applied to a certain kind of data to draw conclusions from it.
+                                            Please identify the lines in the paper that describe the data on which the above method was applied by reading the immediate surroundings of the method
+                                            (you’ll see it marked yellow in the PDF if you scroll down).
+                                            If you can’t find information about the data in the immediate surroundings,
+                                            try the first part of the paper (Abstract / Introduction).<br>
+                                            Try also to check in the available datasets if some of them corresponds to what you are looking for.<br>
+                                            <br>
+                                            An example of this task is provided on <a href="https://youtu.be/NVhHViEtP58" target="_blank">
+                                            YouTube</a><br>
+                                            <br>
+                                            In order to tell us about the data for this method,
+                                            please click on all lines in the paper that talk about it, or select an existing dataset in the list below.
+                                            It’s ok if there is other information on a line as well, as long as it is part of a sentence that describes the data.
+                                            <br>
+                                            If you happen to select a sentence by mistake,
+                                            you can click on the "delete" icon next to it’s text just below this introduction.
+                                            <br>
+                                            Once you’re done, please click "submit answer" or "no dataset found" depending on your findings.<br>
+                                            If there is a correspondence in the list of existing dataset, please select it and click the button "Submit existing dataset".<br>
+                                            Your selection will be compared with the one of other crowd workers.
+                                        </b></div>
+                                        <a class="btn btn-info" id="showhidetrigger" href="#">How to solve this task?</a>
+
+                                        <div id="datasetChildren" >
+                                            <ul class="list-group" style="padding:20px" ng-init="getDsToRefine('@(question.possible_answers.get)');">
+                                                <div ng-if="dom_children.length == 0" style="color:red;"><b>
+                                                    Dataset not yet extracted</b></div>
+                                                <li class="list-group-item" ng-repeat="ds in dom_children | orderBy:['page','div']" >
+                                                    <span class="badge">
+                                                        <span class="glyphicon glyphicon-trash" ng-click="removeElementDS(ds)" aria-hidden="true" style="cursor:pointer; cursor:hand;"></span>
+                                                    </span>
+                                                    {{ds.text}}
+                                                    <input type='hidden' name='dom_children[]' ng-value="ds.text"/>
+                                                </li>
+                                            </ul>
                                         </div>
 
-                                        <input type="hidden" id="notUsed" name="is_method_used" value="true">
+                                        <div id="observations">
+                                            <b>Please write in the box below the problems/difficulties you faced with this question:</b>
+                                            <textarea autofocus class="form-control" name="observation" style="width:95%; margin-right:20px; resize:none;" maxlength="1000" rows="4" placeholder="Insert text here..."></textarea>
+                                        </div>
+                                        <br>
+                                    </div>
+                                }
 
+                                    <!-- VOTING QUESTION -->
+                                @if(question.question_type.equalsIgnoreCase("Voting")) {
+                                    <div>
+
+                                        <span style="font-size:120%; display:inline-block;">
+                                            On the paper you will find all choices you have, as well as all the methods, highlighted in yellow. This may help you to choose the best answer.<br>
+                                            Please read the question carefully and once you know what you are looking for, search for this information in the paper (feel free to use the search function if you need it).<br><br>
+                                            An example of this task is provided on <a href="https://youtu.be/iAcPNcd4JQw" target="_blank">
+                                            YouTube</a><br>
+                                        </span>
+                                        <br><br>
+                                        <b>
+                                            <div ng-init="set_possible_answers('@(question.possible_answers.get)');">
+                                                <div ng-repeat="ds in possible_answers">
+                                                    <any ng-if="ds != ''">
+                                                        <input type="radio" value="{{ds}}" ng-model="answer" name="answer" ng-value="{{ds}}">
+                                                        <any ng-if="ds == 'false' || ds =='true'">
+                                                            <any ng-if="ds!= 'false' && ds == 'true'">Yes</any>
+                                                            <any ng-if="ds!= 'true' && ds == 'false'">No</any>
+                                                        </any>
+                                                        <any ng-if="ds != 'false' && ds !='true'">
+                                                            {{ds}}
+                                                        </any>
+
+                                                    </any>
+
+                                                    <any ng-if="ds == ''">
+                                                        <input type="radio" ng-value="There exist no dataset for this method" ng-model="answer" name="answer" value="">
+                                                        There exists no dataset for this method
+                                                    </any>
+                                                </div>
+                                            </div>
+                                        </b>
+
+                                        <input type="hidden" id="notUsed" name="is_method_used" value="true">
+                                        <br><br>
                                         <div id="datasetChildren">
                                             <b>Please click on all the sentences which motivated you to answer this way:</b><br>
-                                            <ul class="list-group" style="padding: 20px" ng-init="getDsToRefine('');">
-                                                <div ng-if="dom_children.length == 0" style="color:red;"><b>Motivation not yet extracted</b></div>
+                                            <ul class="list-group" style="padding:20px" ng-init="getDsToRefine('');">
+                                                <div ng-if="dom_children.length == 0" style="color:red;"><b>
+                                                    Motivation not yet extracted</b></div>
                                                 <li class="list-group-item" ng-repeat="ds in dom_children | orderBy:['page','div']" >
                                                     <span class="badge">
                                                         <span class="glyphicon glyphicon-trash" ng-click="removeElementDS(ds)" aria-hidden="true" style="cursor:pointer; cursor:hand;"></span>
@@ -177,209 +300,113 @@
 
                                         <div id="observations">
                                             <b>Please write in the box below the problems/difficulties you faced with this question:</b>
-                                            <textarea autofocus class="form-control" name="observation" style="width:95%;margin-right:20px;" maxlength="1000" rows="4" placeholder="Insert text here..."></textarea>
-                                        </div>
-                                        <br>
-                                    }
-                                        <!-- DISCOVERY QUESTION -->
-                                    @if(question.question_type.equalsIgnoreCase("Discovery")) {
-                                        <div>
-                                            <div style="font-size: 120%;display: inline-block;" id="showhidetarget2">
-                                                <b>
-                                                    Please identify the relevant lines of the paper that describe the data onto which the statistical method mentioned above is applied by clicking on them.<br>
-                                                        <u>Don't worry if you don't know what the above method exactly does, and remember you have 10 minutes to solve this task.</u>
-                                                    <br>If there is nothing highlighted in the paper on the right, scroll up/down and look for the highlighted sentences on other pages.<br>
-                                                        <span ng-if="datasets.length > 0"> Below you will find a list containing all the datasets already identified by other crowd workers.</span><br>
-                                                    To get more information about this kind of questions, please click on the blue button.<br><br>
-                                                </b>
-                                            </div>
-                                            <div style="font-size: 120%;display: inline-block;" id="showhidetarget1"><b>
-                                                The paper shown on the right hand side uses the statistical method shown above.
-                                                Every statistical method is applied to a certain kind of data to draw conclusions from it.
-                                                Please identify the lines in the paper that describe the data on which the above method was applied by reading the immediate surroundings of the method
-                                                (you’ll see it marked yellow in the PDF if you scroll down).
-                                                If you can’t find information about the data in the immediate surroundings,
-                                                try the first part of the paper (Abstract / Introduction).<br>
-                                                    Try also to check in the available datasets if some of them corresponds to what you are looking for.<br>
-                                                <br>
-                                                An example of this task is provided on <a href="https://youtu.be/NVhHViEtP58" target="_blank">YouTube</a><br>
-                                                <br>
-                                                In order to tell us about the data for this method,
-                                                please click on all lines in the paper that talk about it, or select an existing dataset in the list below.
-                                                It’s ok if there is other information on a line as well, as long as it is part of a sentence that describes the data.
-                                                <br>
-                                                If you happen to select a sentence by mistake,
-                                                you can click on the "delete" icon next to it’s text just below this introduction.
-                                                <br>
-                                                Once you’re done, please click "submit answer" or "no dataset found" depending on your findings.<br>
-                                                    If there is a correspondence in the list of existing dataset, please select it and click the button "Submit existing dataset".<br>
-                                                Your selection will be compared with the one of other crowd workers.
-                                            </b></div>
-                                            <a class="btn btn-info" id="showhidetrigger" href="#">How to solve this task?</a>
-
-                                            <div id="datasetChildren" >
-                                                <ul class="list-group" style="padding: 20px" ng-init="getDsToRefine('@(question.possible_answers.get)');">
-                                                    <div ng-if="dom_children.length == 0" style="color:red;"><b>Dataset not yet extracted</b></div>
-                                                    <li class="list-group-item" ng-repeat="ds in dom_children | orderBy:['page','div']" >
-                                                            <span class="badge">
-                                                                <span class="glyphicon glyphicon-trash" ng-click="removeElementDS(ds)" aria-hidden="true" style="cursor:pointer; cursor:hand;"></span>
-                                                            </span>
-                                                        {{ds.text}}
-                                                        <input type='hidden' name='dom_children[]' ng-value="ds.text"/>
-                                                    </li>
-                                                </ul>
-                                            </div>
-
-                                            <div id="observations">
-                                                <b>Please write in the box below the problems/difficulties you faced with this question:</b>
-                                                <textarea autofocus class="form-control" name="observation" style="width:95%;margin-right:20px;resize:none;" maxlength="1000" rows="4" placeholder="Insert text here..."></textarea>
-                                            </div>
-                                            <br>
-                                        </div>
-                                    }
-
-                                        <!-- VOTING QUESTION -->
-                                    @if(question.question_type.equalsIgnoreCase("Voting")){
-                                        <div>
-
-                                            <span style="font-size: 120%;display: inline-block;">
-                                                On the paper you will find all choices you have, as well as all the methods, highlighted in yellow. This may help you to choose the best answer.<br>
-                                                    Please read the question carefully and once you know what you are looking for, search for this information in the paper (feel free to use the search function if you need it).<br><br>
-                                                    An example of this task is provided on <a href="https://youtu.be/iAcPNcd4JQw" target="_blank">YouTube</a><br>
-                                            </span>
-                                            <br><br>
-                                            <b>
-                                                <div ng-init="set_possible_answers('@(question.possible_answers.get)');">
-                                                    <div ng-repeat="ds in possible_answers">
-                                                        <any ng-if="ds != ''">
-                                                            <input type="radio" value="{{ds}}" ng-model="answer" name="answer" ng-value="{{ds}}">
-                                                            <any ng-if="ds == 'false' || ds =='true'">
-                                                                <any ng-if="ds!= 'false' && ds == 'true'">Yes</any>
-                                                                <any ng-if="ds!= 'true' && ds == 'false'">No</any>
-                                                            </any>
-                                                            <any ng-if="ds != 'false' && ds !='true'">
-                                                                {{ds}}
-                                                            </any>
-
-                                                        </any>
-
-                                                        <any ng-if="ds == ''">
-                                                            <input type="radio" ng-value="There exist no dataset for this method" ng-model="answer" name="answer" value="">
-                                                            There exists no dataset for this method
-                                                        </any>
-                                                    </div>
-                                                </div>
-                                            </b>
-
-                                            <input type="hidden" id="notUsed" name="is_method_used" value="true">
-                                            <br><br>
-                                            <div id="datasetChildren">
-                                                <b>Please click on all the sentences which motivated you to answer this way:</b><br>
-                                                <ul class="list-group" style="padding: 20px" ng-init="getDsToRefine('');">
-                                                    <div ng-if="dom_children.length == 0" style="color:red;"><b>Motivation not yet extracted</b></div>
-                                                    <li class="list-group-item" ng-repeat="ds in dom_children | orderBy:['page','div']" >
-                                                        <span class="badge">
-                                                            <span class="glyphicon glyphicon-trash" ng-click="removeElementDS(ds)" aria-hidden="true" style="cursor:pointer; cursor:hand;"></span>
-                                                        </span>
-                                                        {{ds.text}}
-                                                        <input type='hidden' name='motivation[]' ng-value="ds.text"/>
-                                                    </li>
-                                                </ul>
-                                            </div>
-
-                                            <div id="observations">
-                                                <b>Please write in the box below the problems/difficulties you faced with this question:</b>
-                                                <textarea autofocus class="form-control" name="observation" style="width:95%;margin-right:20px;resize:none;" maxlength="1000" rows="4" placeholder="Insert text here..."></textarea>
-                                            </div>
-
-                                        </div>
-                                        <br><br>
-                                    }
-                                        <!-- MISSING QUESTION -->
-                                    @if(question.question_type.equalsIgnoreCase("Missing")) {
-                                        <div>
-                                            <span style="font-size: 120%;display: inline-block;">
-                                                We have highlighted all the terms that were automatically identified in the paper.<br>
-                                                You are kindly requested to search for methods which were not automatically found. Once you find one,
-                                                please click on the sentence containing the method.<br>
-                                                Once you are done, click the green button "submit answer" to answer the question.
-                                            </span>
+                                            <textarea autofocus class="form-control" name="observation" style="width:95%; margin-right:20px; resize:none;" maxlength="1000" rows="4" placeholder="Insert text here..."></textarea>
                                         </div>
 
-                                        <input type="hidden" id="notUsed" name="is_method_used" value="true">
+                                    </div>
+                                    <br> <br>
+                                }
+                                    <!-- MISSING QUESTION -->
+                                @if(question.question_type.equalsIgnoreCase("Missing")) {
+                                    <div>
+                                        <span style="font-size:120%; display:inline-block;">
+                                            We have highlighted all the terms that were automatically identified in the paper.<br>
+                                            You are kindly requested to search for methods which were not automatically found. Once you find one,
+                                            please click on the sentence containing the method.<br>
+                                            Once you are done, click the green button "submit answer" to answer the question.
+                                        </span>
+                                    </div>
 
-                                        <div id="datasetChildren">
-                                            <b>Please click on all the sentences which contain a non-highlighted method:</b><br>
-                                            <ul class="list-group" style="padding: 20px" ng-init="getDsToRefine('');">
-                                                <div ng-if="dom_children.length == 0" style="color:red;"><b>Method not yet extracted</b></div>
-                                                <li class="list-group-item" ng-repeat="ds in dom_children | orderBy:['page','div']" >
-                                                    <span class="badge">
-                                                        <span class="glyphicon glyphicon-trash" ng-click="removeElementDS(ds)" aria-hidden="true" style="cursor:pointer; cursor:hand;"></span>
-                                                    </span>
-                                                    {{ds.text}}
-                                                    <input type='hidden' name='missing[]' ng-value="ds.text"/>
-                                                </li>
-                                            </ul>
-                                        </div>
+                                    <input type="hidden" id="notUsed" name="is_method_used" value="true">
 
-                                        <div id="observations">
-                                            <b>Please write in the box below the problems/difficulties you faced with this question:</b>
-                                            <textarea autofocus class="form-control" name="observation" style="width:95%;margin-right:20px;resize:none;" maxlength="1000" rows="4" placeholder="Insert text here..."></textarea>
-                                        </div>
+                                    <div id="datasetChildren">
+                                        <b>Please click on all the sentences which contain a non-highlighted method:</b><br>
+                                        <ul class="list-group" style="padding:20px" ng-init="getDsToRefine('');">
+                                            <div ng-if="dom_children.length == 0" style="color:red;"><b>
+                                                Method not yet extracted</b></div>
+                                            <li class="list-group-item" ng-repeat="ds in dom_children | orderBy:['page','div']" >
+                                                <span class="badge">
+                                                    <span class="glyphicon glyphicon-trash" ng-click="removeElementDS(ds)" aria-hidden="true" style="cursor:pointer; cursor:hand;"></span>
+                                                </span>
+                                                {{ds.text}}
+                                                <input type='hidden' name='missing[]' ng-value="ds.text"/>
+                                            </li>
+                                        </ul>
+                                    </div>
 
-                                        <br>
-                                            <!-- ADDITIONAL CONTROLLERS - MISSING -->
-                                            <button class="btn btn-success" ng-if="dom_children.length > 0"
-                                            id="submitAnswer" onclick="window.onbeforeunload = null;" type="submit">
-                                                Submit Answer</button>
-                                            <input type="hidden" id="notUsed" name="is_method_used" value="true">
-                                            <button ng-if="dom_children.length == 0" class="btn btn-warning"
-                                            id="methodNotUsed" onclick="setMethodNotUsed();window.onbeforeunload = null;
+                                    <div id="observations">
+                                        <b>Please write in the box below the problems/difficulties you faced with this question:</b>
+                                        <textarea autofocus class="form-control" name="observation" style="width:95%; margin-right:20px; resize:none;" maxlength="1000" rows="4" placeholder="Insert text here..."></textarea>
+                                    </div>
+
+                                    <br>
+                                        <!-- ADDITIONAL CONTROLLERS - MISSING -->
+                                    <button class="btn btn-success" ng-if="dom_children.length > 0"
+                                    id="submitAnswer" onclick="window.onbeforeunload = null;" type="submit">
+                                        Submit Answer</button>
+                                    <input type="hidden" id="notUsed" name="is_method_used" value="true">
+                                    <button ng-if="dom_children.length == 0" class="btn btn-warning"
+                                    id="methodNotUsed" onclick="setMethodNotUsed();window.onbeforeunload = null;
                                             removeSelectedDS();emptyDomChildren();"
-                                            ng-click="setMethodNotUsed();window.onbeforeunload = null;
+                                    ng-click="setMethodNotUsed();window.onbeforeunload = null;
                                             emptyDomChildren();removeAllElementDS();" type="submit">
-                                                No extra method found</button>
-                                    }
-                                        <!-- ADDITIONAL CONTROLLERS - DISCOVERY -->
-                                    @if(question.question_type.equalsIgnoreCase("Discovery")){
-                                        <button class="btn btn-success" ng-if="dom_children.length > 0" id="submitAnswer" onclick="window.onbeforeunload = null;" type="submit">Submit Answer</button>
-                                        <input type="hidden" id="notUsed" name="is_method_used" value="true">
-                                        <button ng-if="dom_children.length == 0" class="btn btn-warning" id="emptyDataset" onclick="window.onbeforeunload = null;removeSelectedDS();emptyDomChildren();" ng-click="window.onbeforeunload = null;emptyDomChildren(); removeAllElementDS();" type="submit">No Dataset found</button>
-                                        <button ng-if="dom_children.length == 0" class="btn btn-warning" id="methodNotUsed" onclick="setMethodNotUsed();window.onbeforeunload = null;removeSelectedDS();emptyDomChildren();" ng-click="setMethodNotUsed();window.onbeforeunload = null;emptyDomChildren();removeAllElementDS();" type="submit">Method was not used</button>
-                                        <span ng-if="dom_children.length == 0"><br><br></span>
-                                    }
-                                    @if(!question.question_type.equalsIgnoreCase("Discovery") && !question.question_type.equalsIgnoreCase("Missing")){
-                                        <button class="btn btn-success" id="submitAnswer" onclick="window.onbeforeunload = null;" type="submit">Submit Answer</button>
-                                    }
-                                    <button class="btn btn-danger" id="cancelAnswer" type="button" ng-click="cancel_assignment(@assignmentId)">Cancel</button>
+                                        No extra method found</button>
+                                }
+                                    <!-- ADDITIONAL CONTROLLERS - DISCOVERY -->
+                                @if(question.question_type.equalsIgnoreCase("Discovery")) {
+                                    <button class="btn btn-success" ng-if="dom_children.length > 0" id="submitAnswer" onclick="window.onbeforeunload = null;" type="submit">
+                                        Submit Answer</button>
+                                    <input type="hidden" id="notUsed" name="is_method_used" value="true">
+                                    <button ng-if="dom_children.length == 0" class="btn btn-warning" id="emptyDataset" onclick="window.onbeforeunload = null;removeSelectedDS();emptyDomChildren();" ng-click="window.onbeforeunload = null;emptyDomChildren(); removeAllElementDS();" type="submit">
+                                        No Dataset found</button>
+                                    <button ng-if="dom_children.length == 0" class="btn btn-warning" id="methodNotUsed" onclick="setMethodNotUsed();window.onbeforeunload = null;removeSelectedDS();emptyDomChildren();" ng-click="setMethodNotUsed();window.onbeforeunload = null;emptyDomChildren();removeAllElementDS();" type="submit">
+                                        Method was not used</button>
+                                    <span ng-if="dom_children.length == 0"><br><br></span>
+                                }
+                                @if(!question.question_type.equalsIgnoreCase("Discovery") && !question.question_type.equalsIgnoreCase("Missing")) {
+                                    <button class="btn btn-success" id="submitAnswer" onclick="window.onbeforeunload = null;" type="submit">
+                                        Submit Answer</button>
+                                }
+                                <button class="btn btn-danger" id="cancelAnswer" type="button" ng-click="cancel_assignment(@assignmentId)">
+                                    Cancel</button>
 
-                                        <!-- Missing - all Methods identified in the paper -->
-                                    @if(question.question_type.equalsIgnoreCase("Missing")){
-                                        <hr style="color:black; background-color: black;height: 1px; margin-right: 20px;">
-                                        <h3>Methods</h3><br>
-                                        <any ng-if="@hints.split('#').length>0">
-                                            <ul style="padding-left:20px;">
-                                                <li ng-repeat="hit in @Html(hints.split('#').mkString("[\"","\",\"","\"]")).toString()">
-                                                    <span ng-click="jumpTo(hit)" style="cursor:hand; cursor:pointer;">{{hit}}</span>
-                                                </li>
-                                            </ul>
+                                    <!-- MISSING - all Methods identified in the paper -->
+                                @if(question.question_type.equalsIgnoreCase("Missing")) {
+                                    <hr style="color:black; background-color:black; height:1px; margin-right:20px;">
+
+                                    <any ng-if="@hints.split('#').length>0">
+                                        <h3>Methods:</h3> <br>
+                                        <ul style="padding-left:20px;" ng-init="hints=@Html(hints).toString();">
+                                            <!-- Html(hints.split('#').mkString("[\"", "\",\"", "\"]")).toString()">
+                                            <span ng-click="jumpTo(hit)" style="cursor:hand; cursor:pointer;"> -->
+                                            {{hits}}
+                                            <li ng-repeat="hint in hints">
+                                                {{hint.method}}
+                                                <span ng-repeat="match in hint.matches" ng-click="jumpTo(match)" style="cursor: pointer; cursor: hand;color:blue;">
+                                                    <u>{{$index}}</u>
+                                                </span>
+                                            </li>
+                                        </ul>
                                     </any>
-                                    }
-                                        <!-- DISCOVERY - DATASET ALREADY EXTRACTED -->
-                                    @if(question.question_type.equalsIgnoreCase("Discovery")){
-                                        <div ng-if="datasets.length > 0 && dom_children.length == 0">
-                                            <b><hr style="border-color: black;">
+                                }
+                                    <!-- DISCOVERY - DATASET ALREADY EXTRACTED -->
+                                @if(question.question_type.equalsIgnoreCase("Discovery")) {
+                                    <div ng-if="datasets.length > 0 && dom_children.length == 0">
+                                        <b><hr style="border-color:black;">
                                             As you know, statistical methods are applied to data. It could be that the method you are currently working on uses data that has already been identified. The table below contains all identified data sets so far, please check if one of them is
-                                                the one used by your statistical method. If so, select it as your answer; if not, please mark the relevant regions of the paper (as described above).
-                                                <br>
-                                                <div ng-repeat="dataset in datasets" id="existingDatasets">
-                                                    <input type="radio" name="dom_children[]" value="{{dataset.dom_children}}" ng-value="dataset.dom_children" onclick="eventExistingDS();" ng-click="eventExistingDS();">Method: <u>{{dataset.statistical_method}}</u> <br> Dataset: <u>{{ dataset.dom_children}}</u>
-                                                </div>
-                                            </b>
+                                            the one used by your statistical method. If so, select it as your answer; if not, please mark the relevant regions of the paper (as described above).
                                             <br>
+                                            <div ng-repeat="dataset in datasets" id="existingDatasets">
+                                                <input type="radio" name="dom_children[]" value="{{dataset.dom_children}}" ng-value="dataset.dom_children" onclick="eventExistingDS();" ng-click="eventExistingDS();">
+                                                Method: <u>{{dataset.statistical_method}}</u> <br> Dataset: <u>
+                                                {{ dataset.dom_children}}</u>
+                                            </div>
+                                        </b>
+                                        <br>
 
-                                            <button class="btn btn-success" id="submitAnswer1" disabled onclick="window.onbeforeunload = null;" type="submit">Submit existing dataset</button>
-                                            <script language="text/javascript">
+                                        <button class="btn btn-success" id="submitAnswer1" disabled onclick="window.onbeforeunload = null;" type="submit">
+                                            Submit existing dataset</button>
+                                        <script language="text/javascript">
                                                 function eventExistingDS() {
                                                     $("#submitAnswer1").removeAttr("disabled");
                                                 }
@@ -388,416 +415,444 @@
                                                     $("input[name='dom_children[]']").val("");
                                                 }
                                           </script>
-                                        </div>
-                                    }
+                                    </div>
+                                }
 
-                                        <!-- ADDITINAL CONTROLLERS - BOOLEAN (HINTS) -->
-                                    @if(question.question_type.equalsIgnoreCase("Boolean")){
+                                    <!-- ADDITINAL CONTROLLERS - BOOLEAN (HINTS) -->
+                                @if(question.question_type.equalsIgnoreCase("Boolean")) {
 
-                                        <div style="font-size: 120%;">
-                                            <hr style="color:black; background-color: black;height: 1px; margin-right: 20px;">
-                                            A list of possible words/expressions which may help you to answer this question is given below.<br>
-                                            You could search for these terms using the search functionality and read in the immediate surrounding of the match to get more information for your decision.
-                                            <hr style="color:black; background-color: black;height: 1px; margin-right: 20px;">
-                                            <h3>Dataset</h3><br>
-                                            <any ng-if="@dataset_hint.split('#').length>0">
-                                                <ul style="padding-left:20px;">
-                                                    <li ng-repeat="ds_hit in @Html(dataset_hint.split('#').mkString("[\"","\",\"","\"]")).toString()">
-                                                        <span ng-click="jumpTo(ds_hit)" style="cursor:hand; cursor:pointer;">{{ds_hit}}</span>
-                                                    </li>
-                                                </ul>
-                                            </any>
+                                    <div style="font-size:120%;">
+                                        <hr style="color:black; background-color:black; height:1px; margin-right:20px;">
+                                        A list of possible words/expressions which may help you to answer this question is given below.<br>
+                                        You could search for these terms using the search functionality and read in the immediate surrounding of the match to get more information for your decision.
+                                        <hr style="color:black; background-color:black; height:1px; margin-right:20px;">
+                                        <h3>Dataset</h3><br>
+                                        <any ng-if="@dataset_hint.split('#').length>0">
+                                            <ul style="padding-left:20px;">
+                                                <li ng-repeat="ds_hit in @Html(dataset_hint.split('#').mkString("[\"", "\",\"", "\"]")).toString()">
+                                                    <span ng-click="jumpTo(ds_hit)" style="cursor:hand; cursor:pointer;">
+                                                        {{ds_hit}}</span>
+                                                </li>
+                                            </ul>
+                                        </any>
 
-                                            <hr style="color:black; background-color: black;height: 1px; margin-right: 20px;">
-                                            <h3>General</h3><br>
+                                        <hr style="color:black; background-color:black; height:1px; margin-right:20px;">
+                                        <h3>General</h3><br>
 
-                                            <any ng-if="@hints.split('#').length>0">
-                                                <ul style="padding-left:20px;">
-                                                    <li ng-repeat="hit in @Html(hints.split('#').mkString("[\"","\",\"","\"]")).toString()">
-                                                        <span ng-click="jumpTo(hit)" style="cursor:hand; cursor:pointer;">{{hit}}</span>
-                                                    </li>
-                                                </ul>
-                                            </any>
+                                        <any ng-if="@hints.split('#').length>0">
+                                            <ul style="padding-left:20px;">
+                                                <li ng-repeat="hit in @Html(hints.split('#').mkString("[\"", "\",\"", "\"]")).toString()">
+                                                    <span ng-click="jumpTo(hit)" style="cursor:hand; cursor:pointer;">
+                                                        {{hit}}</span>
+                                                </li>
+                                            </ul>
+                                        </any>
 
-                                        </div>
-                                    }
+                                    </div>
+                                }
 
 
-                                </form>
+                            </form>
+                        </div>
+                        <br>
+                    </td>
+
+                    <td>
+                        <div id="header-paper" style="background-color:#FFFFFF;" ng-init="turker_id='@turker.turker_id';countdown('@assignmentId');"> <!--(question.expiration_time_sec.getOrElse(600).toString)-->
+                            <div align="center">
+                                <h3><span ng-if="@showReward=true">
+                                    Payment for answer: @(question.reward_cts.toDouble / 100) $ -</span><span><b><u>
+                                    Remaining time to answer the question: <span style="color:red;">
+                                    {{ counter_sec*1000 | date:'mm:ss' }}</span></u></b></span></h3>
                             </div>
-                            <br>
-                        </td>
+                        </div>
 
-                        <td>
-                            <div id="header-paper" style="backgroud-color: #FFFFFF;" ng-init="turker_id='@turker.turker_id';countdown('@assignmentId');"> <!--(question.expiration_time_sec.getOrElse(600).toString)-->
-                                <div align="center">
-                                    <h3><span ng-if="@showReward=true">Payment for answer: @(question.reward_cts.toDouble/100) $ -</span><span><b><u>Remaining time to answer the question: <span style="color:red;">{{ counter_sec*1000 | date:'mm:ss' }}</span></u></b></span></h3>
+                        <div id="outerContainer" style="padding-top:35px; padding-bottom:20px; padding-right; - 20px; border:1px solid black; background-color:#404040;" class="loadingInProgress">
+
+                            <div id="sidebarContainer">
+                                <div id="toolbarSidebar">
+                                    <div class="splitToolbarButton toggled">
+                                        <button id="viewThumbnail" class="toolbarButton group toggled" title="Show Thumbnails" tabindex="2" data-l10n-id="thumbs">
+                                            <span data-l10n-id="thumbs_label">Thumbnails</span>
+                                        </button>
+                                        <button id="viewOutline" class="toolbarButton group" title="Show Document Outline" tabindex="3" data-l10n-id="outline">
+                                            <span data-l10n-id="outline_label">Document Outline</span>
+                                        </button>
+                                        <button id="viewAttachments" class="toolbarButton group" title="Show Attachments" tabindex="4" data-l10n-id="attachments">
+                                            <span data-l10n-id="attachments_label">Attachments</span>
+                                        </button>
+                                    </div>
                                 </div>
-                            </div>
-
-                            <div id="outerContainer" style="padding-top: 35px; padding-bottom: 20px; padding-right; -20px; border: 1px solid black; background-color: #404040;" class="loadingInProgress">
-
-                                <div id="sidebarContainer">
-                                    <div id="toolbarSidebar">
-                                        <div class="splitToolbarButton toggled">
-                                            <button id="viewThumbnail" class="toolbarButton group toggled" title="Show Thumbnails" tabindex="2" data-l10n-id="thumbs">
-                                                <span data-l10n-id="thumbs_label">Thumbnails</span>
-                                            </button>
-                                            <button id="viewOutline" class="toolbarButton group" title="Show Document Outline" tabindex="3" data-l10n-id="outline">
-                                                <span data-l10n-id="outline_label">Document Outline</span>
-                                            </button>
-                                            <button id="viewAttachments" class="toolbarButton group" title="Show Attachments" tabindex="4" data-l10n-id="attachments">
-                                                <span data-l10n-id="attachments_label">Attachments</span>
-                                            </button>
-                                        </div>
+                                <div id="sidebarContent">
+                                    <div id="thumbnailView">
                                     </div>
-                                    <div id="sidebarContent">
-                                        <div id="thumbnailView">
-                                        </div>
-                                        <div id="outlineView" class="hidden">
-                                        </div>
-                                        <div id="attachmentsView" class="hidden">
-                                        </div>
+                                    <div id="outlineView" class="hidden">
                                     </div>
-                                </div>  <!-- sidebarContainer -->
+                                    <div id="attachmentsView" class="hidden">
+                                    </div>
+                                </div>
+                            </div>  <!-- sidebarContainer -->
 
-                                <div id="mainContainer">
-                                    <div class="findbar hidden doorHanger hiddenSmallView" id="findbar">
-                                        <label for="findInput" class="toolbarLabel" data-l10n-id="find_label">Find:</label>
-                                        <input id="findInput" class="toolbarField" tabindex="91">
-                                        <div class="splitToolbarButton">
-                                            <button class="toolbarButton findPrevious" title="" id="findPrevious" tabindex="92" data-l10n-id="find_previous">
-                                                <span data-l10n-id="find_previous_label">Previous</span>
-                                            </button>
-                                            <div class="splitToolbarButtonSeparator"></div>
-                                            <button class="toolbarButton findNext" title="" id="findNext" tabindex="93" data-l10n-id="find_next">
-                                                <span data-l10n-id="find_next_label">Next</span>
-                                            </button>
-                                        </div>
-                                        <input type="checkbox" id="findHighlightAll" class="toolbarField">
-                                        <label for="findHighlightAll" class="toolbarLabel" tabindex="94" data-l10n-id="find_highlight">Highlight all</label>
-                                        <input type="checkbox" id="findMatchCase" class="toolbarField">
-                                        <label for="findMatchCase" class="toolbarLabel" tabindex="95" data-l10n-id="find_match_case_label">Match case</label>
-                                        <span id="findMsg" class="toolbarLabel"></span>
-                                    </div>  <!-- findbar -->
+                            <div id="mainContainer">
+                                <div class="findbar hidden doorHanger hiddenSmallView" id="findbar">
+                                    <label for="findInput" class="toolbarLabel" data-l10n-id="find_label">Find:</label>
+                                    <input id="findInput" class="toolbarField" tabindex="91">
+                                    <div class="splitToolbarButton">
+                                        <button class="toolbarButton findPrevious" title="" id="findPrevious" tabindex="92" data-l10n-id="find_previous">
+                                            <span data-l10n-id="find_previous_label">Previous</span>
+                                        </button>
+                                        <div class="splitToolbarButtonSeparator"></div>
+                                        <button class="toolbarButton findNext" title="" id="findNext" tabindex="93" data-l10n-id="find_next">
+                                            <span data-l10n-id="find_next_label">Next</span>
+                                        </button>
+                                    </div>
+                                    <input type="checkbox" id="findHighlightAll" class="toolbarField">
+                                    <label for="findHighlightAll" class="toolbarLabel" tabindex="94" data-l10n-id="find_highlight">
+                                        Highlight all</label>
+                                    <input type="checkbox" id="findMatchCase" class="toolbarField">
+                                    <label for="findMatchCase" class="toolbarLabel" tabindex="95" data-l10n-id="find_match_case_label">
+                                        Match case</label>
+                                    <span id="findMsg" class="toolbarLabel"></span>
+                                </div>  <!-- findbar -->
 
-                                    <div id="secondaryToolbar" class="secondaryToolbar hidden doorHangerRight">
-                                        <div id="secondaryToolbarButtonContainer">
-                                            <button id="secondaryPresentationMode" class="secondaryToolbarButton presentationMode visibleLargeView" title="Switch to Presentation Mode" tabindex="51" data-l10n-id="presentation_mode">
-                                                <span data-l10n-id="presentation_mode_label">Presentation Mode</span>
-                                            </button>
+                                <div id="secondaryToolbar" class="secondaryToolbar hidden doorHangerRight">
+                                    <div id="secondaryToolbarButtonContainer">
+                                        <button id="secondaryPresentationMode" class="secondaryToolbarButton presentationMode visibleLargeView" title="Switch to Presentation Mode" tabindex="51" data-l10n-id="presentation_mode">
+                                            <span data-l10n-id="presentation_mode_label">Presentation Mode</span>
+                                        </button>
 
-                                            <button id="secondaryOpenFile" class="secondaryToolbarButton openFile visibleLargeView" title="Open File" tabindex="52" data-l10n-id="open_file">
-                                                <span data-l10n-id="open_file_label">Open</span>
-                                            </button>
+                                        <button id="secondaryOpenFile" class="secondaryToolbarButton openFile visibleLargeView" title="Open File" tabindex="52" data-l10n-id="open_file">
+                                            <span data-l10n-id="open_file_label">Open</span>
+                                        </button>
 
-                                            <button id="secondaryPrint" class="secondaryToolbarButton print visibleMediumView" title="Print" tabindex="53" data-l10n-id="print">
-                                                <span data-l10n-id="print_label">Print</span>
-                                            </button>
+                                        <button id="secondaryPrint" class="secondaryToolbarButton print visibleMediumView" title="Print" tabindex="53" data-l10n-id="print">
+                                            <span data-l10n-id="print_label">Print</span>
+                                        </button>
 
-                                            <button id="secondaryDownload" class="secondaryToolbarButton download visibleMediumView" title="Download" tabindex="54" data-l10n-id="download">
-                                                <span data-l10n-id="download_label">Download</span>
-                                            </button>
+                                        <button id="secondaryDownload" class="secondaryToolbarButton download visibleMediumView" title="Download" tabindex="54" data-l10n-id="download">
+                                            <span data-l10n-id="download_label">Download</span>
+                                        </button>
 
-                                            <a href="#" id="secondaryViewBookmark" class="secondaryToolbarButton bookmark visibleSmallView" title="Current view (copy or open in new window)" tabindex="55" data-l10n-id="bookmark">
-                                                <span data-l10n-id="bookmark_label">Current View</span>
-                                            </a>
+                                        <a href="#" id="secondaryViewBookmark" class="secondaryToolbarButton bookmark visibleSmallView" title="Current view (copy or open in new window)" tabindex="55" data-l10n-id="bookmark">
+                                            <span data-l10n-id="bookmark_label">Current View</span>
+                                        </a>
 
-                                            <div class="horizontalToolbarSeparator visibleLargeView"></div>
+                                        <div class="horizontalToolbarSeparator visibleLargeView"></div>
 
-                                            <button id="firstPage" class="secondaryToolbarButton firstPage" title="Go to First Page" tabindex="56" data-l10n-id="first_page">
-                                                <span data-l10n-id="first_page_label">Go to First Page</span>
-                                            </button>
-                                            <button id="lastPage" class="secondaryToolbarButton lastPage" title="Go to Last Page" tabindex="57" data-l10n-id="last_page">
-                                                <span data-l10n-id="last_page_label">Go to Last Page</span>
-                                            </button>
+                                        <button id="firstPage" class="secondaryToolbarButton firstPage" title="Go to First Page" tabindex="56" data-l10n-id="first_page">
+                                            <span data-l10n-id="first_page_label">Go to First Page</span>
+                                        </button>
+                                        <button id="lastPage" class="secondaryToolbarButton lastPage" title="Go to Last Page" tabindex="57" data-l10n-id="last_page">
+                                            <span data-l10n-id="last_page_label">Go to Last Page</span>
+                                        </button>
 
-                                            <div class="horizontalToolbarSeparator"></div>
+                                        <div class="horizontalToolbarSeparator"></div>
 
-                                            <button id="pageRotateCw" class="secondaryToolbarButton rotateCw" title="Rotate Clockwise" tabindex="58" data-l10n-id="page_rotate_cw">
-                                                <span data-l10n-id="page_rotate_cw_label">Rotate Clockwise</span>
-                                            </button>
-                                            <button id="pageRotateCcw" class="secondaryToolbarButton rotateCcw" title="Rotate Counterclockwise" tabindex="59" data-l10n-id="page_rotate_ccw">
-                                                <span data-l10n-id="page_rotate_ccw_label">Rotate Counterclockwise</span>
-                                            </button>
+                                        <button id="pageRotateCw" class="secondaryToolbarButton rotateCw" title="Rotate Clockwise" tabindex="58" data-l10n-id="page_rotate_cw">
+                                            <span data-l10n-id="page_rotate_cw_label">Rotate Clockwise</span>
+                                        </button>
+                                        <button id="pageRotateCcw" class="secondaryToolbarButton rotateCcw" title="Rotate Counterclockwise" tabindex="59" data-l10n-id="page_rotate_ccw">
+                                            <span data-l10n-id="page_rotate_ccw_label">Rotate Counterclockwise</span>
+                                        </button>
 
-                                            <div class="horizontalToolbarSeparator"></div>
+                                        <div class="horizontalToolbarSeparator"></div>
 
-                                            <button id="toggleHandTool" class="secondaryToolbarButton handTool" title="Enable hand tool" tabindex="60" data-l10n-id="hand_tool_enable">
-                                                <span data-l10n-id="hand_tool_enable_label">Enable hand tool</span>
-                                            </button>
+                                        <button id="toggleHandTool" class="secondaryToolbarButton handTool" title="Enable hand tool" tabindex="60" data-l10n-id="hand_tool_enable">
+                                            <span data-l10n-id="hand_tool_enable_label">Enable hand tool</span>
+                                        </button>
 
-                                            <div class="horizontalToolbarSeparator"></div>
+                                        <div class="horizontalToolbarSeparator"></div>
 
-                                            <button id="documentProperties" class="secondaryToolbarButton documentProperties" title="Document Properties…" tabindex="61" data-l10n-id="document_properties">
-                                                <span data-l10n-id="document_properties_label">Document Properties…</span>
-                                            </button>
-                                        </div>
-                                    </div>  <!-- secondaryToolbar -->
+                                        <button id="documentProperties" class="secondaryToolbarButton documentProperties" title="Document Properties…" tabindex="61" data-l10n-id="document_properties">
+                                            <span data-l10n-id="document_properties_label">Document Properties…</span>
+                                        </button>
+                                    </div>
+                                </div>  <!-- secondaryToolbar -->
 
-                                    <div class="toolbar">
-                                        <div id="toolbarContainer">
-                                            <div id="toolbarViewer">
-                                                <div id="toolbarViewerLeft">
-                                                    <button id="sidebarToggle" class="toolbarButton" title="Toggle Sidebar" tabindex="11" data-l10n-id="toggle_sidebar">
-                                                        <span data-l10n-id="toggle_sidebar_label">Toggle Sidebar</span>
+                                <div class="toolbar">
+                                    <div id="toolbarContainer">
+                                        <div id="toolbarViewer">
+                                            <div id="toolbarViewerLeft">
+                                                <button id="sidebarToggle" class="toolbarButton" title="Toggle Sidebar" tabindex="11" data-l10n-id="toggle_sidebar">
+                                                    <span data-l10n-id="toggle_sidebar_label">Toggle Sidebar</span>
+                                                </button>
+                                                <div class="toolbarButtonSpacer"></div>
+                                                <button id="viewFind" class="toolbarButton group hiddenSmallView" title="Find in Document" tabindex="12" data-l10n-id="findbar">
+                                                    <span data-l10n-id="findbar_label">Find</span>
+                                                </button>
+                                                <div class="splitToolbarButton">
+                                                    <button class="toolbarButton pageUp" title="Previous Page" id="previous" tabindex="13" data-l10n-id="previous">
+                                                        <span data-l10n-id="previous_label">Previous</span>
                                                     </button>
-                                                    <div class="toolbarButtonSpacer"></div>
-                                                    <button id="viewFind" class="toolbarButton group hiddenSmallView" title="Find in Document" tabindex="12" data-l10n-id="findbar">
-                                                        <span data-l10n-id="findbar_label">Find</span>
+                                                    <div class="splitToolbarButtonSeparator"></div>
+                                                    <button class="toolbarButton pageDown" title="Next Page" id="next" tabindex="14" data-l10n-id="next">
+                                                        <span data-l10n-id="next_label">Next</span>
                                                     </button>
+                                                </div>
+                                                <label id="pageNumberLabel" class="toolbarLabel" for="pageNumber" data-l10n-id="page_label">
+                                                    Page: </label>
+                                                <input type="number" id="pageNumber" class="toolbarField pageNumber" value="1" size="4" min="1" tabindex="15">
+                                                <span id="numPages" class="toolbarLabel"></span>
+                                            </div>
+                                            <div id="toolbarViewerRight" style="display:none;">
+                                                <button id="presentationMode" class="toolbarButton presentationMode hiddenLargeView" title="Switch to Presentation Mode" tabindex="31" data-l10n-id="presentation_mode">
+                                                        <!--<span data-l10n-id="presentation_mode_label">Presentation Mode</span>-->
+                                                </button>
+
+                                                <button id="openFile" class="toolbarButton openFile hiddenLargeView" title="Open File" tabindex="32" data-l10n-id="open_file">
+                                                        <!--<span data-l10n-id="open_file_label">Open</span>-->
+                                                </button>
+
+                                                <button id="print" class="toolbarButton print hiddenMediumView" title="Print" tabindex="33" data-l10n-id="print">
+                                                        <!--<span data-l10n-id="print_label">Print</span>-->
+                                                </button>
+
+                                                <button id="download" class="toolbarButton download hiddenMediumView" title="Download" tabindex="34" data-l10n-id="download">
+                                                        <!--<span data-l10n-id="download_label">Download</span>-->
+                                                </button>
+                                                    <!-- <div class="toolbarButtonSpacer"></div> -->
+                                                <a href="#" id="viewBookmark" class="toolbarButton bookmark hiddenSmallView" title="Current view (copy or open in new window)" tabindex="35" data-l10n-id="bookmark">
+                                                        <!--<span data-l10n-id="bookmark_label">Current View</span>-->
+                                                </a>
+
+                                                <div class="verticalToolbarSeparator hiddenSmallView"></div>
+
+                                                <button id="secondaryToolbarToggle" class="toolbarButton" title="Tools" tabindex="36" data-l10n-id="tools">
+                                                        <!--<span data-l10n-id="tools_label">Tools</span>-->
+                                                </button>
+                                            </div>
+                                            <div class="outerCenter">
+                                                <div class="innerCenter" id="toolbarViewerMiddle">
                                                     <div class="splitToolbarButton">
-                                                        <button class="toolbarButton pageUp" title="Previous Page" id="previous" tabindex="13" data-l10n-id="previous">
-                                                            <span data-l10n-id="previous_label">Previous</span>
+                                                        <button id="zoomOut" class="toolbarButton zoomOut" title="Zoom Out" tabindex="21" data-l10n-id="zoom_out">
+                                                            <span data-l10n-id="zoom_out_label">Zoom Out</span>
                                                         </button>
                                                         <div class="splitToolbarButtonSeparator"></div>
-                                                        <button class="toolbarButton pageDown" title="Next Page" id="next" tabindex="14" data-l10n-id="next">
-                                                            <span data-l10n-id="next_label">Next</span>
+                                                        <button id="zoomIn" class="toolbarButton zoomIn" title="Zoom In" tabindex="22" data-l10n-id="zoom_in">
+                                                            <span data-l10n-id="zoom_in_label">Zoom In</span>
                                                         </button>
-                                                    </div>
-                                                    <label id="pageNumberLabel" class="toolbarLabel" for="pageNumber" data-l10n-id="page_label">Page: </label>
-                                                    <input type="number" id="pageNumber" class="toolbarField pageNumber" value="1" size="4" min="1" tabindex="15">
-                                                    <span id="numPages" class="toolbarLabel"></span>
-                                                </div>
-                                                <div id="toolbarViewerRight" style="display: none;">
-                                                    <button id="presentationMode" class="toolbarButton presentationMode hiddenLargeView" title="Switch to Presentation Mode" tabindex="31" data-l10n-id="presentation_mode">
-                                                        <!--<span data-l10n-id="presentation_mode_label">Presentation Mode</span>-->
-                                                    </button>
-
-                                                    <button id="openFile" class="toolbarButton openFile hiddenLargeView" title="Open File" tabindex="32" data-l10n-id="open_file">
-                                                        <!--<span data-l10n-id="open_file_label">Open</span>-->
-                                                    </button>
-
-                                                    <button id="print" class="toolbarButton print hiddenMediumView" title="Print" tabindex="33" data-l10n-id="print">
-                                                        <!--<span data-l10n-id="print_label">Print</span>-->
-                                                    </button>
-
-                                                    <button id="download" class="toolbarButton download hiddenMediumView" title="Download" tabindex="34" data-l10n-id="download">
-                                                        <!--<span data-l10n-id="download_label">Download</span>-->
-                                                    </button>
-                                                        <!-- <div class="toolbarButtonSpacer"></div> -->
-                                                    <a href="#" id="viewBookmark" class="toolbarButton bookmark hiddenSmallView" title="Current view (copy or open in new window)" tabindex="35" data-l10n-id="bookmark">
-                                                        <!--<span data-l10n-id="bookmark_label">Current View</span>-->
-                                                    </a>
-
-                                                    <div class="verticalToolbarSeparator hiddenSmallView"></div>
-
-                                                    <button id="secondaryToolbarToggle" class="toolbarButton" title="Tools" tabindex="36" data-l10n-id="tools">
-                                                        <!--<span data-l10n-id="tools_label">Tools</span>-->
-                                                    </button>
-                                                </div>
-                                                <div class="outerCenter">
-                                                    <div class="innerCenter" id="toolbarViewerMiddle">
-                                                        <div class="splitToolbarButton">
-                                                            <button id="zoomOut" class="toolbarButton zoomOut" title="Zoom Out" tabindex="21" data-l10n-id="zoom_out">
-                                                                <span data-l10n-id="zoom_out_label">Zoom Out</span>
-                                                            </button>
-                                                            <div class="splitToolbarButtonSeparator"></div>
-                                                            <button id="zoomIn" class="toolbarButton zoomIn" title="Zoom In" tabindex="22" data-l10n-id="zoom_in">
-                                                                <span data-l10n-id="zoom_in_label">Zoom In</span>
-                                                            </button>
-                                                            <span id="scaleSelectContainer" class="dropdownToolbarButton">
-                                                                <select id="scaleSelect" title="Zoom" tabindex="23" data-l10n-id="zoom">
-                                                                    <option id="pageAutoOption" title="" value="auto" selected="selected" data-l10n-id="page_scale_auto">Automatic Zoom</option>
-                                                                    <option id="pageActualOption" title="" value="page-actual" data-l10n-id="page_scale_actual">Actual Size</option>
-                                                                    <option id="pageFitOption" title="" value="page-fit" data-l10n-id="page_scale_fit">Fit Page</option>
-                                                                    <option id="pageWidthOption" title="" value="page-width" data-l10n-id="page_scale_width">Full Width</option>
-                                                                    <option id="customScaleOption" title="" value="custom"></option>
-                                                                    <option title="" value="0.5">50%</option>
-                                                                    <option title="" value="0.75">75%</option>
-                                                                    <option title="" value="1">100%</option>
-                                                                    <option title="" value="1.25">125%</option>
-                                                                    <option title="" value="1.5">150%</option>
-                                                                    <option title="" value="2">200%</option>
-                                                                    <option title="" value="3">300%</option>
-                                                                    <option title="" value="4">400%</option>
-                                                                </select>
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div id="loadingBar">
-                                                <div class="progress">
-                                                    <div class="glimmer">
+                                                        <span id="scaleSelectContainer" class="dropdownToolbarButton">
+                                                            <select id="scaleSelect" title="Zoom" tabindex="23" data-l10n-id="zoom">
+                                                                <option id="pageAutoOption" title="" value="auto" selected="selected" data-l10n-id="page_scale_auto">
+                                                                    Automatic Zoom</option>
+                                                                <option id="pageActualOption" title="" value="page-actual" data-l10n-id="page_scale_actual">
+                                                                    Actual Size</option>
+                                                                <option id="pageFitOption" title="" value="page-fit" data-l10n-id="page_scale_fit">
+                                                                    Fit Page</option>
+                                                                <option id="pageWidthOption" title="" value="page-width" data-l10n-id="page_scale_width">
+                                                                    Full Width</option>
+                                                                <option id="customScaleOption" title="" value="custom"></option>
+                                                                <option title="" value="0.5">50%</option>
+                                                                <option title="" value="0.75">75%</option>
+                                                                <option title="" value="1">100%</option>
+                                                                <option title="" value="1.25">125%</option>
+                                                                <option title="" value="1.5">150%</option>
+                                                                <option title="" value="2">200%</option>
+                                                                <option title="" value="3">300%</option>
+                                                                <option title="" value="4">400%</option>
+                                                            </select>
+                                                        </span>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-
-                                    <menu type="context" id="viewerContextMenu">
-                                        <menuitem id="contextFirstPage" label="First Page"
-                                        data-l10n-id="first_page"></menuitem>
-                                        <menuitem id="contextLastPage" label="Last Page"
-                                        data-l10n-id="last_page"></menuitem>
-                                        <menuitem id="contextPageRotateCw" label="Rotate Clockwise"
-                                        data-l10n-id="page_rotate_cw"></menuitem>
-                                        <menuitem id="contextPageRotateCcw" label="Rotate Counter-Clockwise"
-                                        data-l10n-id="page_rotate_ccw"></menuitem>
-                                    </menu>
-
-                                    <div id="viewerContainer" tabindex="0">
-                                        <div id="viewer" class="pdfViewer"></div>
-                                    </div>
-
-                                    <div id="errorWrapper" hidden='true'>
-                                        <div id="errorMessageLeft">
-                                            <span id="errorMessage"></span>
-                                            <button id="errorShowMore" data-l10n-id="error_more_info">
-                                                More Information
-                                            </button>
-                                            <button id="errorShowLess" data-l10n-id="error_less_info" hidden='true'>
-                                                Less Information
-                                            </button>
-                                        </div>
-                                        <div id="errorMessageRight">
-                                            <button id="errorClose" data-l10n-id="error_close">
-                                                Close
-                                            </button>
-                                        </div>
-                                        <div class="clearBoth"></div>
-                                        <textarea id="errorMoreInfo" hidden='true' readonly="readonly"></textarea>
-                                    </div>
-                                </div> <!-- mainContainer -->
-
-                                <div id="overlayContainer" class="hidden">
-                                    <div id="passwordOverlay" class="container hidden">
-                                        <div class="dialog">
-                                            <div class="row">
-                                                <p id="passwordText" data-l10n-id="password_label">Enter the password to open this PDF file:</p>
-                                            </div>
-                                            <div class="row">
-                                                <input type="password" id="password" class="toolbarField" />
-                                            </div>
-                                            <div class="buttonRow">
-                                                <button id="passwordCancel" class="overlayButton"><span data-l10n-id="password_cancel">Cancel</span></button>
-                                                <button id="passwordSubmit" class="overlayButton"><span data-l10n-id="password_ok">OK</span></button>
+                                        <div id="loadingBar">
+                                            <div class="progress">
+                                                <div class="glimmer">
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div id="documentPropertiesOverlay" class="container hidden">
-                                        <div class="dialog">
-                                            <div class="row">
-                                                <span data-l10n-id="document_properties_file_name">File name:</span> <p id="fileNameField">-</p>
-                                            </div>
-                                            <div class="row">
-                                                <span data-l10n-id="document_properties_file_size">File size:</span> <p id="fileSizeField">-</p>
-                                            </div>
-                                            <div class="separator"></div>
-                                            <div class="row">
-                                                <span data-l10n-id="document_properties_title">Title:</span> <p id="titleField">-</p>
-                                            </div>
-                                            <div class="row">
-                                                <span data-l10n-id="document_properties_author">Author:</span> <p id="authorField">-</p>
-                                            </div>
-                                            <div class="row">
-                                                <span data-l10n-id="document_properties_subject">Subject:</span> <p id="subjectField">-</p>
-                                            </div>
-                                            <div class="row">
-                                                <span data-l10n-id="document_properties_keywords">Keywords:</span> <p id="keywordsField">-</p>
-                                            </div>
-                                            <div class="row">
-                                                <span data-l10n-id="document_properties_creation_date">Creation Date:</span> <p id="creationDateField">-</p>
-                                            </div>
-                                            <div class="row">
-                                                <span data-l10n-id="document_properties_modification_date">Modification Date:</span> <p id="modificationDateField">-</p>
-                                            </div>
-                                            <div class="row">
-                                                <span data-l10n-id="document_properties_creator">Creator:</span> <p id="creatorField">-</p>
-                                            </div>
-                                            <div class="separator"></div>
-                                            <div class="row">
-                                                <span data-l10n-id="document_properties_producer">PDF Producer:</span> <p id="producerField">-</p>
-                                            </div>
-                                            <div class="row">
-                                                <span data-l10n-id="document_properties_version">PDF Version:</span> <p id="versionField">-</p>
-                                            </div>
-                                            <div class="row">
-                                                <span data-l10n-id="document_properties_page_count">Page Count:</span> <p id="pageCountField">-</p>
-                                            </div>
-                                            <div class="buttonRow">
-                                                <button id="documentPropertiesClose" class="overlayButton"><span data-l10n-id="document_properties_close">Close</span></button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>  <!-- overlayContainer -->
-
-                            </div> <!-- outerContainer -->
-                            <div id="printContainer"></div>
-                            <div id="mozPrintCallback-shim" hidden>
-                                <style scoped>
-                                #mozPrintCallback-shim {
-                                position: fixed;
-                                top: 0;
-                                left: 0;
-                                height: 100%;
-                                width: 100%;
-                                z-index: 9999999;
-
-                                display: block;
-                                text-align: center;
-                                background-color: rgba(0, 0, 0, 0.5);
-                                }
-                                #mozPrintCallback-shim[hidden] {
-                                display: none;
-                                }
-
-
-                                #mozPrintCallback-shim .mozPrintCallback-dialog-box {
-                                display: inline-block;
-                                margin: -50px auto 0;
-                                position: relative;
-                                top: 45%;
-                                left: 0;
-                                min-width: 220px;
-                                max-width: 400px;
-
-                                padding: 9px;
-
-                                border: 1px solid hsla(0, 0%, 0%, .5);
-                                border-radius: 2px;
-                                box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
-
-                                background-color: #474747;
-
-                                color: hsl(0, 0%, 85%);
-                                font-size: 16px;
-                                line-height: 20px;
-                                }
-                                #mozPrintCallback-shim .progress-row {
-                                clear: both;
-                                padding: 1em 0;
-                                }
-                                #mozPrintCallback-shim progress {
-                                width: 100%;
-                                }
-                                #mozPrintCallback-shim .relative-progress {
-                                clear: both;
-                                float: right;
-                                }
-                                #mozPrintCallback-shim .progress-actions {
-                                clear: both;
-                                }
-                                </style>
-                                <div class="mozPrintCallback-dialog-box">
-                                        <!-- TODO: Localise the following strings -->
-                                        Preparing document for printing...
-                                    <div class="progress-row">
-                                        <progress value="0" max="100"></progress>
-                                        <span class="relative-progress">0%</span>
-                                    </div>
-                                    <div class="progress-actions">
-                                        <input type="button" value="Cancel" class="mozPrintCallback-cancel">
                                     </div>
                                 </div>
-                            </div>
-                        </td>
-                    </tr>
-                </table>
-            </div>
 
-            <script>
+                                <menu type="context" id="viewerContextMenu">
+                                    <menuitem id="contextFirstPage" label="First Page"
+                                    data-l10n-id="first_page"></menuitem>
+                                    <menuitem id="contextLastPage" label="Last Page"
+                                    data-l10n-id="last_page"></menuitem>
+                                    <menuitem id="contextPageRotateCw" label="Rotate Clockwise"
+                                    data-l10n-id="page_rotate_cw"></menuitem>
+                                    <menuitem id="contextPageRotateCcw" label="Rotate Counter-Clockwise"
+                                    data-l10n-id="page_rotate_ccw"></menuitem>
+                                </menu>
+
+                                <div id="viewerContainer" tabindex="0">
+                                    <div id="viewer" class="pdfViewer"></div>
+                                </div>
+
+                                <div id="errorWrapper" hidden='true'>
+                                    <div id="errorMessageLeft">
+                                        <span id="errorMessage"></span>
+                                        <button id="errorShowMore" data-l10n-id="error_more_info">
+                                            More Information
+                                        </button>
+                                        <button id="errorShowLess" data-l10n-id="error_less_info" hidden='true'>
+                                            Less Information
+                                        </button>
+                                    </div>
+                                    <div id="errorMessageRight">
+                                        <button id="errorClose" data-l10n-id="error_close">
+                                            Close
+                                        </button>
+                                    </div>
+                                    <div class="clearBoth"></div>
+                                    <textarea id="errorMoreInfo" hidden='true' readonly="readonly"></textarea>
+                                </div>
+                            </div> <!-- mainContainer -->
+
+                            <div id="overlayContainer" class="hidden">
+                                <div id="passwordOverlay" class="container hidden">
+                                    <div class="dialog">
+                                        <div class="row">
+                                            <p id="passwordText" data-l10n-id="password_label">
+                                                Enter the password to open this PDF file:</p>
+                                        </div>
+                                        <div class="row">
+                                            <input type="password" id="password" class="toolbarField" />
+                                        </div>
+                                        <div class="buttonRow">
+                                            <button id="passwordCancel" class="overlayButton"><span data-l10n-id="password_cancel">
+                                                Cancel</span></button>
+                                            <button id="passwordSubmit" class="overlayButton"><span data-l10n-id="password_ok">
+                                                OK</span></button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="documentPropertiesOverlay" class="container hidden">
+                                    <div class="dialog">
+                                        <div class="row">
+                                            <span data-l10n-id="document_properties_file_name">
+                                                File name:</span> <p id="fileNameField">-</p>
+                                        </div>
+                                        <div class="row">
+                                            <span data-l10n-id="document_properties_file_size">
+                                                File size:</span> <p id="fileSizeField">-</p>
+                                        </div>
+                                        <div class="separator"></div>
+                                        <div class="row">
+                                            <span data-l10n-id="document_properties_title">
+                                                Title:</span> <p id="titleField">-</p>
+                                        </div>
+                                        <div class="row">
+                                            <span data-l10n-id="document_properties_author">
+                                                Author:</span> <p id="authorField">-</p>
+                                        </div>
+                                        <div class="row">
+                                            <span data-l10n-id="document_properties_subject">
+                                                Subject:</span> <p id="subjectField">-</p>
+                                        </div>
+                                        <div class="row">
+                                            <span data-l10n-id="document_properties_keywords">
+                                                Keywords:</span> <p id="keywordsField">-</p>
+                                        </div>
+                                        <div class="row">
+                                            <span data-l10n-id="document_properties_creation_date">
+                                                Creation Date:</span> <p id="creationDateField">-</p>
+                                        </div>
+                                        <div class="row">
+                                            <span data-l10n-id="document_properties_modification_date">
+                                                Modification Date:</span> <p id="modificationDateField">-</p>
+                                        </div>
+                                        <div class="row">
+                                            <span data-l10n-id="document_properties_creator">
+                                                Creator:</span> <p id="creatorField">-</p>
+                                        </div>
+                                        <div class="separator"></div>
+                                        <div class="row">
+                                            <span data-l10n-id="document_properties_producer">
+                                                PDF Producer:</span> <p id="producerField">-</p>
+                                        </div>
+                                        <div class="row">
+                                            <span data-l10n-id="document_properties_version">
+                                                PDF Version:</span> <p id="versionField">-</p>
+                                        </div>
+                                        <div class="row">
+                                            <span data-l10n-id="document_properties_page_count">
+                                                Page Count:</span> <p id="pageCountField">-</p>
+                                        </div>
+                                        <div class="buttonRow">
+                                            <button id="documentPropertiesClose" class="overlayButton"><span data-l10n-id="document_properties_close">
+                                                Close</span></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>  <!-- overlayContainer -->
+
+                        </div> <!-- outerContainer -->
+                        <div id="printContainer"></div>
+                        <div id="mozPrintCallback-shim" hidden>
+                            <style scoped>
+                            #mozPrintCallback-shim {
+                            position:fixed;
+                            top:0;
+                            left:0;
+                            height:100%;
+                            width:100%;
+                            z-index:9999999;
+
+                            display:block;
+                            text-align:center;
+                            background-color:rgba ( 0, 0, 0, 0.5 );
+                            }
+                            #mozPrintCallback-shim[ hidden ] {
+                            display:none;
+                            }
+
+
+                            #mozPrintCallback-shim.mozPrintCallback-dialog-box {
+                            display:inline-block;
+                            margin:- 50px auto 0;
+                            position:relative;
+                            top:45%;
+                            left:0;
+                            min-width:220px;
+                            max-width:400px;
+
+                            padding:9px;
+
+                            border:1px solid hsla ( 0, 0%, 0%,.5 );
+                            border-radius:2px;
+                            box-shadow:0 1px 4px rgba ( 0, 0, 0, 0.3 );
+
+                            background-color:#474747;
+
+                            color:hsl ( 0, 0%, 85% );
+                            font-size:16px;
+                            line-height:20px;
+                            }
+                            #mozPrintCallback-shim.progress-row {
+                            clear:both;
+                            padding:1 em 0;
+                            }
+                            #mozPrintCallback-shim progress {
+                            width:100%;
+                            }
+                            #mozPrintCallback-shim.relative-progress {
+                            clear:both;
+                            float:right;
+                            }
+                            #mozPrintCallback-shim.progress-actions {
+                            clear:both;
+                            }
+                            </style>
+                            <div class="mozPrintCallback-dialog-box">
+                                    <!-- TODO: Localise the following strings -->
+                                    Preparing document for printing...
+                                <div class="progress-row">
+                                    <progress value="0" max="100"></progress>
+                                    <span class="relative-progress">0%</span>
+                                </div>
+                                <div class="progress-actions">
+                                    <input type="button" value="Cancel" class="mozPrintCallback-cancel">
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <script>
 
             QUESTION_TYPE = @Html(Json.toJson(question.question_type).toString);
             HIGHLIGHT = @Html(Json.toJson(stringToMatch).toString);
@@ -819,5 +874,5 @@
 
             </script>
 
-        </body>
-    </html>
+    </body>
+</html>
