@@ -350,7 +350,7 @@
                                             removeSelectedDS();emptyDomChildren();"
                                     ng-click="setMethodNotUsed();window.onbeforeunload = null;
                                             emptyDomChildren();removeAllElementDS();" type="submit">
-                                        No extra method found</button>
+                                        No method found</button>
                                 }
                                     <!-- ADDITIONAL CONTROLLERS - DISCOVERY -->
                                 @if(question.question_type.equalsIgnoreCase("Discovery")) {
@@ -367,10 +367,12 @@
                                     <button class="btn btn-success" id="submitAnswer" onclick="window.onbeforeunload = null;" type="submit">
                                         Submit Answer</button>
                                 }
+
+                                    <!-- ALL QUESTION TYPES HAVE A CANCEL BUTTON-->
                                 <button class="btn btn-danger" id="cancelAnswer" type="button" ng-click="cancel_assignment(@assignmentId)">
                                     Cancel</button>
 
-                                    <!-- MISSING - all Methods identified in the paper -->
+                                    <!-- MISSING - all Methods identified in the paper enumerated with JSON -->
                                 @if(question.question_type.equalsIgnoreCase("Missing")) {
                                     <hr style="color:black; background-color:black; height:1px; margin-right:20px;">
 
@@ -428,24 +430,24 @@
                                         <hr style="color:black; background-color:black; height:1px; margin-right:20px;">
                                         <h3>Dataset</h3><br>
                                         <any ng-if="@dataset_hint.split('#').length>0">
-                                            <ul style="padding-left:20px;">
-                                                <li ng-repeat="ds_hit in @Html(dataset_hint.split('#').mkString("[\"", "\",\"", "\"]")).toString()">
-                                                    <span ng-click="jumpTo(ds_hit)" style="cursor:hand; cursor:pointer;">
-                                                        {{ds_hit}}</span>
-                                                </li>
-                                            </ul>
+                                            <table style="padding-left:20px;width:100%;">
+                                                <tr ng-repeat="ds_hit in @Html(dataset_hint.split('#').mkString("[\"", "\",\"", "\"]")).toString()">
+                                                    <td style="width:80%;">{{ds_hit}}</td>
+                                                    <td style="width:20%;"><u style="color:blue; text-align: right; cursor:hand; cursor:pointer;" ng-click="jumpTo(ds_hit)">Jump</u></td>
+                                                </tr>
+                                            </table>
                                         </any>
 
                                         <hr style="color:black; background-color:black; height:1px; margin-right:20px;">
                                         <h3>General</h3><br>
 
                                         <any ng-if="@hints.split('#').length>0">
-                                            <ul style="padding-left:20px;">
-                                                <li ng-repeat="hit in @Html(hints.split('#').mkString("[\"", "\",\"", "\"]")).toString()">
-                                                    <span ng-click="jumpTo(hit)" style="cursor:hand; cursor:pointer;">
-                                                        {{hit}}</span>
-                                                </li>
-                                            </ul>
+                                            <table style="padding-left:20px;width:100%;">
+                                                <tr ng-repeat="hit in @Html(hints.split('#').mkString("[\"", "\",\"", "\"]")).toString()">
+                                                    <td style="width:80%;">{{hit}}</td>
+                                                    <td style="width:20%;"><u style="color:blue; text-align: right; cursor:hand; cursor:pointer;" ng-click="jumpTo(hit)">Jump</u></td>
+                                                </tr>
+                                            </table>
                                         </any>
 
                                     </div>
