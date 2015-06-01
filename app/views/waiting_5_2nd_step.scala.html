@@ -27,7 +27,7 @@
                     <div ng-if="assigned">
 
                         <b><span style="cursor:pointer; cursor:hand; color:red;" ng-click="getAssigned('@turker.turker_id');">
-                            You have an assigned question to answer. (Time left: {{expiration_time*1000 | date:'mm:ss'}}). Click <strong>here</strong> to return to the answering page</span>
+                            You have an assigned question to answer. (Time left: {{expiration_time*1000 | date:'mm:ss'}}). <u>Click <strong>here</strong> to return to the answering page</u></span>
                         </b>
 
                     </div>
@@ -37,7 +37,7 @@
                             <div>
                                 <h3><b>@paper.pdf_title</b></h3>
                                     <br><br>
-                                You can now choose a question type from the list below.<br>
+                                You can now choose a question from the list below.<br>
                                 We recommend to <b>read the abstract</b> of the paper before choosing to answer the questions below by clicking the blue button "Preview Paper".<br>
                                 <!-- You can change paper anytime you want by clicking on the yellow button "Change Paper". -->
                                 <br>
