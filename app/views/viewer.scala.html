@@ -429,9 +429,10 @@
                                         You could search for these terms using the search functionality and read in the immediate surrounding of the match to get more information for your decision.
                                         <hr style="color:black; background-color:black; height:1px; margin-right:20px;">
                                         <h3>Dataset</h3><br>
+
                                         <any ng-if="@dataset_hint.split('#').length>0">
-                                            <table style="padding-left:20px;width:100%;">
-                                                <tr ng-repeat="ds_hit in @Html(dataset_hint.split('#').mkString("[\"", "\",\"", "\"]")).toString()">
+                                            <table style="padding-left:20px;width:100%;" ng-init="ds_hits = @Html(dataset_hint.split('#').mkString("[\"", "\",\"", "\"]")).toString()">
+                                                <tr ng-repeat="ds_hit in ds_hits">
                                                     <td style="width:80%;">{{ds_hit}}</td>
                                                     <td style="width:20%;"><u style="color:blue; text-align: right; cursor:hand; cursor:pointer;" ng-click="jumpTo(ds_hit)">Jump</u></td>
                                                 </tr>
