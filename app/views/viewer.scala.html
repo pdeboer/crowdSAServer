@@ -378,17 +378,16 @@
 
                                     <any ng-if="@hints.split('#').length>0">
                                         <h3>Methods:</h3> <br>
-                                        <ul style="padding-left:20px;" ng-init="hints=@Html(hints).toString();">
-                                            <!-- Html(hints.split('#').mkString("[\"", "\",\"", "\"]")).toString()">
-                                            <span ng-click="jumpTo(hit)" style="cursor:hand; cursor:pointer;"> -->
-                                            {{hits}}
-                                            <li ng-repeat="hint in hints">
-                                                {{hint.method}}
-                                                <span ng-repeat="match in hint.matches" ng-click="jumpTo(match)" style="cursor: pointer; cursor: hand;color:blue;">
-                                                    <u>{{$index}}</u>
-                                                </span>
-                                            </li>
-                                        </ul>
+                                        <table style="width:100%; padding-left:20px;" ng-init="hints=@Html(hints).toString();">
+                                            <tr ng-repeat="hint in hints">
+                                                <td>{hint.method}}</td>
+                                                <td>
+                                                    <span ng-repeat="match in hint.matches" ng-click="jumpTo(match)" style="cursor: pointer; cursor: hand;color:blue;">
+                                                        <u>{{$index}}</u>
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        </table>
                                     </any>
                                 }
                                     <!-- DISCOVERY - DATASET ALREADY EXTRACTED -->
