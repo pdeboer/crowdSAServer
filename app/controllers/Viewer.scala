@@ -68,7 +68,12 @@ object Viewer extends Controller{
 
               if(question.question_type.equalsIgnoreCase("Missing")){
 
-                Logger.debug(Json.parse(highlights.head).toString())
+                Logger.debug("Parting JSON")
+                try{
+                  Json.parse(highlights.head)
+                }catch{
+                  case e:Exception => e.printStackTrace()
+                }
 
                 val allMethods = (Json.parse(highlights.head) \\ "matches").toList
                 Logger.debug(allMethods.toString)

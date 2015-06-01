@@ -191,8 +191,8 @@
                                     <div>
                                         <div style="font-size:120%; display:inline-block;" id="showhidetarget2">
                                             <b>
-                                                Please identify the relevant lines of the paper that describe the data onto which the statistical method mentioned above is applied by clicking on them.<br>
-                                                <u>Don't worry if you don't know what the above method exactly does, and remember you have 10 minutes to solve this task.</u>
+                                                Please identify the relevant lines of the paper that describe the data used by the highlighted statistical method.<br>
+                                                <u>Don't worry if you don't know what the above method does, and remember that you have only 10 minutes to solve this task.</u>
                                                 <br>
                                                 If there is nothing highlighted in the paper on the right, scroll up/down and look for the highlighted sentences on other pages.<br>
                                                 <span ng-if="datasets.length > 0">
@@ -204,16 +204,16 @@
                                             The paper shown on the right hand side uses the statistical method shown above.
                                             Every statistical method is applied to a certain kind of data to draw conclusions from it.
                                             Please identify the lines in the paper that describe the data on which the above method was applied by reading the immediate surroundings of the method
-                                            (you’ll see it marked yellow in the PDF if you scroll down).
-                                            If you can’t find information about the data in the immediate surroundings,
+                                            (you’ll see it marked yellow in the PDF).
+                                            If you can’t find any information about the data in the immediate surroundings,
                                             try the first part of the paper (Abstract / Introduction).<br>
-                                            Try also to check in the available datasets if some of them corresponds to what you are looking for.<br>
+                                            Try also to check in the available datasets if some of them correspond to what you are looking for.<br>
                                             <br>
                                             An example of this task is provided on <a href="https://youtu.be/NVhHViEtP58" target="_blank">
                                             YouTube</a><br>
                                             <br>
-                                            In order to tell us about the data for this method,
-                                            please click on all lines in the paper that talk about it, or select an existing dataset in the list below.
+                                            In order to tell us about the data used for this method,
+                                            please click on all lines in the paper discussing the relevant data. If dataset were found you will see them listed below the question.
                                             It’s ok if there is other information on a line as well, as long as it is part of a sentence that describes the data.
                                             <br>
                                             If you happen to select a sentence by mistake,
@@ -396,12 +396,12 @@
                                     <div ng-if="datasets.length > 0 && dom_children.length == 0">
                                         <b><hr style="border-color:black;">
                                             As you know, statistical methods are applied to data. It could be that the method you are currently working on uses data that has already been identified. The table below contains all identified data sets so far, please check if one of them is
-                                            the one used by your statistical method. If so, select it as your answer; if not, please mark the relevant regions of the paper (as described above).
+                                            the one used by the statistical method mentioned on the top of this page. If so, select it as your answer; if not, please mark the relevant regions of the paper (as described above).
                                             <br>
                                             <div ng-repeat="dataset in datasets" id="existingDatasets">
                                                 <input type="radio" name="dom_children[]" value="{{dataset.dom_children}}" ng-value="dataset.dom_children" onclick="eventExistingDS();" ng-click="eventExistingDS();">
-                                                Method: <u>{{dataset.statistical_method}}</u> <br> Dataset: <u>
-                                                {{ dataset.dom_children}}</u>
+                                                Dataset: <u>
+                                                {{ dataset.dom_children}}</u> <br> Method: <u>{{dataset.statistical_method}}</u>
                                             </div>
                                         </b>
                                         <br>
