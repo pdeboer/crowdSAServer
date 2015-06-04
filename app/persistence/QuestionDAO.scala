@@ -201,17 +201,34 @@ object QuestionDAO {
     }
   }
 
+  /**
+   * Return list of questions containing only the questions which the following properties:
+   * - Turker is allowed to answer this question (not present in the qualifications table)
+   * - [(Total number assigned question) - (number assignment cancelled)] >= number answers needed
+   * - Turker has not yet answered the question
+   * @param turker_id
+   * @param paper_id
+   * @return
+   */
   def getQuestionsByPaperId(turker_id: String, paper_id: Long): List[Question] = {
     val teamId = Turkers2TeamsDAO.findSingleTeamByTurkerId(turker_id).id.get.toString
     Logger.debug("Get all question for paper: " + paper_id)
     DB.withConnection { implicit c =>
-      SQL("SELECT * FROM questions AS q WHERE papers_id = {paper_id} " +
-        "AND disabled=false AND NOT EXISTS (SELECT * FROM assignments AS a WHERE" +
+      SQL(
+        // Only take ENABLED questions
+        "SELECT * FROM questions AS q WHERE papers_id = {paper_id} " +
+        "AND disabled=false AND " +
+        //Turker has not yet answered
+        "NOT EXISTS (SELECT * FROM assignments AS a WHERE" +
         " a.teams_id = {teamId} AND" +
         " a.is_cancelled = false AND (SELECT COUNT(*) FROM answers WHERE assignments_id = a.id) >= 0 AND" +
-        " questions_id = q.id) AND IF(maximal_assignments IS NULL, TRUE, " +
-        "(SELECT COUNT(*) FROM assignments WHERE questions_id = q.id) < q.maximal_assignments)"+
+        " questions_id = q.id) " +
+        // Only take questions which didn't reach the maximal possible assignments (without the cancelled one)
+        "AND IF(maximal_assignments IS NULL, TRUE, " +
+        "(SELECT COUNT(*) FROM assignments WHERE questions_id = q.id && is_cancelled = false) < q.maximal_assignments)"+
+        // Turker is allowed to answer this question
         "AND NOT EXISTS (SELECT * FROM qualifications WHERE teams_id={teamId} AND questions_id=q.id)")
+
         .on('paper_id -> paper_id, 'teamId -> teamId)
         .as(questionParser*)
     }
