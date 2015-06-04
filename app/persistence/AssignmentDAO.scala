@@ -47,49 +47,73 @@ object AssignmentDAO {
   }
 
   def isAnAssignmentAlreadyOpen(turker_id: String): Boolean = {
-    DB.withConnection { implicit c =>
-      val teams_id = Turkers2TeamsDAO.findSingleTeamByTurkerId(turker_id).id.get
+    try {
+      DB.withConnection { implicit c =>
+        val teams_id = Turkers2TeamsDAO.findSingleTeamByTurkerId(turker_id).id.get
 
-      SQL("SELECT * FROM questions AS q WHERE " +
-        "q.disabled=false AND EXISTS (SELECT * FROM assignments AS a WHERE " +
-        "(a.expiration_time < UNIX_TIMESTAMP() OR a.teams_id = {teams_id}) AND " +
-        "a.is_cancelled = false AND (SELECT COUNT(*) FROM answers WHERE assignments_id = a.id) = 0 AND " +
-        "a.questions_id = q.id)").on(
-          'teams_id -> teams_id
-        ).as(QuestionDAO.questionParser*).length > 0
+        SQL("SELECT * FROM questions AS q WHERE " +
+          "q.disabled=false AND EXISTS (SELECT * FROM assignments AS a WHERE " +
+          "(a.expiration_time < UNIX_TIMESTAMP() OR a.teams_id = {teams_id}) AND " +
+          "a.is_cancelled = false AND (SELECT COUNT(*) FROM answers WHERE assignments_id = a.id) = 0 AND " +
+          "a.questions_id = q.id)").on(
+            'teams_id -> teams_id
+          ).as(QuestionDAO.questionParser *).length > 0
+      }
+    }catch{
+      case e: Exception => {
+        e.printStackTrace()
+        true
+      }
     }
   }
 
   def getOpenAssignment(turker_id: String): Assignment = {
-    DB.withConnection { implicit c =>
-      val teams_id = Turkers2TeamsDAO.findSingleTeamByTurkerId(turker_id).id.get
+    try {
+      DB.withConnection { implicit c =>
+        val teams_id = Turkers2TeamsDAO.findSingleTeamByTurkerId(turker_id).id.get
 
-      val question = SQL("SELECT * FROM questions AS q WHERE " +
-        "q.disabled=false AND EXISTS (SELECT * FROM assignments AS a WHERE " +
-        "(a.expiration_time < UNIX_TIMESTAMP() OR a.teams_id = {teams_id}) AND " +
-        "a.is_cancelled = false AND (SELECT COUNT(*) FROM answers WHERE assignments_id = a.id) = 0 AND " +
-        "a.questions_id = q.id)").on(
-          'teams_id -> teams_id
-        ).as(QuestionDAO.questionParser.singleOpt)
-      if(question.isDefined) {
-        val assignments = findByQuestionId(question.get.id.get)
-        Logger.debug("Found " + assignments.length + " assignments")
-        var result: Assignment = null
-        if(assignments.length == 1) {
-          result = assignments.head
-        }
-        assignments.foreach(a => {
-          Logger.debug("Assignment: " + a)
-          if(a.is_cancelled==false && a.teams_id==teams_id
-            && !AnswerDAO.getByAssignmentId(a.id.get).isDefined){
-            //&& a.expiration_time < (new Date().getTime()/1000)
-            Logger.debug("Found open assignment")
-            result = a
+        val question = SQL("SELECT * FROM questions AS q WHERE " +
+          "q.disabled=false AND EXISTS (SELECT * FROM assignments AS a WHERE " +
+          "(a.expiration_time < UNIX_TIMESTAMP() OR a.teams_id = {teams_id}) AND " +
+          "a.is_cancelled = false AND (SELECT COUNT(*) FROM answers WHERE assignments_id = a.id) = 0 AND " +
+          "a.questions_id = q.id)").on(
+            'teams_id -> teams_id
+          ).as(QuestionDAO.questionParser*)
+        if (question.size == 1) {
+          val assignments = findByQuestionId(question.head.id.get)
+          Logger.debug("Found " + assignments.length + " assignments")
+          var result: Assignment = null
+          if (assignments.length == 1) {
+            result = assignments.head
           }
-        })
-        result
-      } else {
-        Logger.debug("Cannot find assignments for this question")
+          assignments.foreach(a => {
+            Logger.debug("Assignment: " + a)
+            if (a.is_cancelled == false && a.teams_id == teams_id
+              && !AnswerDAO.getByAssignmentId(a.id.get).isDefined) {
+              //&& a.expiration_time < (new Date().getTime()/1000)
+              Logger.debug("Found open assignment")
+              result = a
+            }
+          })
+          result
+        } else if(question.size > 1) {
+          Logger.debug("Too many assignments open for this user! Cancelling all the assignments")
+          question.foreach(e => {
+            val ass = findByQuestionId(e.id.get)
+            ass.filter(_.teams_id==teams_id).foreach(a => {
+              Logger.debug("Cancelling assignment: " + a.id.get)
+              cancel(a.id.get)
+            })
+          })
+          null
+        } else {
+          Logger.debug("No Assignment open for this question")
+          null
+        }
+      }
+    }catch {
+      case e: Exception => {
+        e.printStackTrace()
         null
       }
     }
