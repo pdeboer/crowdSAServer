@@ -25,7 +25,7 @@ object Viewer extends Controller{
     request.session.get("turkerId").map {
       turkerId =>
         try {
-          if (AnswerDAO.getByAssignmentId(assignmentId) != None) {
+          if (AnswerDAO.getByAssignmentId(assignmentId).isDefined) {
             Redirect(routes.Waiting.waiting()).flashing(
               "error" -> "You already answered the question."
             )
@@ -33,7 +33,7 @@ object Viewer extends Controller{
             val paperId = QuestionDAO.findById(questionId).get.papers_id
             val paper = PaperDAO.findById(paperId).get
             val pdfPath = paper.pdf_path
-            val question = QuestionDAO.findById(questionId).getOrElse(null)
+            val question = QuestionDAO.findById(questionId).orNull
 
             val config = ConfigFactory.load("application.conf")
             val showReward = config.getBoolean("showReward")
