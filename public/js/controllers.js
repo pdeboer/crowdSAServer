@@ -206,8 +206,13 @@ myApp.controller('ViewerCtrl', function($scope, $http, $interval){
 
     $scope.possible_answers = [];
     $scope.set_possible_answers = function(possibilities){
-        var possibilities = possibilities.split("$$");
-        $scope.possible_answers = possibilities;
+        console.log("Set possible answers");
+        console.log(possibilities);
+        JSON.parse(possibilities).forEach(
+            function(p) {
+                $scope.possible_answers.push(JSON.parse(JSON.stringify(p)));
+            }
+        );
     };
 
     $scope.datasets = [];
@@ -232,8 +237,8 @@ myApp.controller('ViewerCtrl', function($scope, $http, $interval){
 
     $scope.dom_children = [];
     $scope.getDsToRefine = function(possibilities){
-        var dss = possibilities.split("#");
-        if(dss==""){
+        var dss = JSON.parse(JSON.stringify(possibilities));
+        if(dss.length==0){
             $scope.dom_children = [];
         } else {
             dss.forEach(function(a) {

@@ -59,7 +59,7 @@ object HighlightPdf {
     val parser: PDFParser = new PDFParser(new FileInputStream(file))
     parser.parse()
     val pdDoc: PDDocument = new PDDocument(parser.getDocument)
-    var byteArrayOutputStream = new ByteArrayOutputStream()
+    val byteArrayOutputStream = new ByteArrayOutputStream()
     try {
       if (pdDoc != null) {
         pdDoc.save(byteArrayOutputStream)

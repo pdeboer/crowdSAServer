@@ -284,10 +284,10 @@
                                                             </span>
                                                             <br><br>
                                                             <b style="font-size:120%;">
-                                                                <div ng-init="set_possible_answers('@(question.possible_answers.get)');">
+                                                                <div ng-init="set_possible_answers('@Html(question.possible_answers.get).toString()');">
                                                                     <div ng-repeat="ds in possible_answers">
                                                                         <any ng-if="ds != ''">
-                                                                            <input type="radio" value="{{ds}}" ng-model="answer" name="answer" ng-value="{{ds}}">
+                                                                            <input type="radio" ng-model="answer" name="answer" ng-value="{{ds}}">
                                                                             <any ng-if="ds == 'false' || ds =='true'">
                                                                                 <any ng-if="ds!= 'false' && ds == 'true'">Yes</any>
                                                                                 <any ng-if="ds!= 'true' && ds == 'false'">No</any>
@@ -389,6 +389,8 @@
                                                             Method was not used</button>
                                                         <span ng-if="dom_children.length == 0"><br><br></span>
                                                     }
+
+                                                    <!-- ALL QUESTIONS HAVE A SUBMIT BUTTON -->
                                                     @if(!question.question_type.equalsIgnoreCase("Discovery") && !question.question_type.equalsIgnoreCase("Missing")) {
                                                         <button class="btn btn-success" id="submitAnswer" onclick="window.onbeforeunload = null;" type="submit">
                                                             Submit Answer</button>
@@ -456,8 +458,8 @@
                                                             <hr style="color:black; background-color:black; height:1px; margin-right:20px;">
                                                             <h3>Dataset used:</h3><br>
 
-                                                            <any ng-if="@dataset_hint.split('#').length>0">
-                                                                <table style="padding-left:20px;width:100%;" ng-init="ds_hits = @Html(dataset_hint.split('#').mkString("[\"", "\",\"", "\"]")).toString()">
+                                                            <any ng-if="@Json.parse(dataset_hint).as[Seq[String]].length>0">
+                                                                <table style="padding-left:20px;width:100%;" ng-init="ds_hits = @Json.parse(dataset_hint).toString()">
                                                                     <tr ng-repeat="ds_hit in ds_hits">
                                                                         <td style="width:80%;">{{ds_hit}}</td>
                                                                         <td style="width:20%;"><u style="color:blue; text-align: right; cursor:hand; cursor:pointer;" ng-click="jumpTo(ds_hit)">Jump</u></td>
@@ -468,9 +470,9 @@
                                                             <hr style="color:black; background-color:black; height:1px; margin-right:20px;">
                                                             <h3>General terms: (Not all may be present in the PDF)</h3><br>
 
-                                                            <any ng-if="@hints.split('#').length>0">
+                                                            <any ng-if="@Json.parse(hints).as[Seq[String]].length>0">
                                                                 <table style="padding-left:20px;width:100%;">
-                                                                    <tr ng-repeat="hit in @Html(hints.split('#').mkString("[\"", "\",\"", "\"]")).toString()">
+                                                                    <tr ng-repeat="hit in @Json.parse(hints).toString()">
                                                                         <td style="width:80%;">{{hit}}</td>
                                                                         <td style="width:20%;"><u style="color:blue; text-align: right; cursor:hand; cursor:pointer;" ng-click="jumpTo(hit)">Jump</u></td>
                                                                     </tr>
