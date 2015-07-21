@@ -8,7 +8,7 @@ import play.api.libs.json._
  */
 
 case class Answer(id: Pk[Long], answer: String, motivation: Option[String], observation: Option[String], createdAt: Long, isMethodUsed: Boolean,
-                  accepted: Option[Boolean], bonusCts: Option[Int], rejected: Option[Boolean], assignmentsId: Long)
+                  accepted: Option[Boolean], bonusCts: Option[Int], rejected: Option[Boolean], assignmentsId: Long, accuracy: String)
 
 object Answer {
   implicit val answerWrites = new Writes[Answer] {
@@ -22,7 +22,8 @@ object Answer {
         "accepted" -> a.accepted,
         "bonus_cts" -> a.bonusCts,
         "rejected" -> a.rejected,
-        "assignments_id" -> a.assignmentsId
+        "assignments_id" -> a.assignmentsId,
+        "accuracy" -> a.accuracy
       )
     }
   }

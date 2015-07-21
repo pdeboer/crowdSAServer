@@ -66,9 +66,10 @@ object Answer extends Controller {
       )
     }
     else {
+      val accuracy: String = request.body.asFormUrlEncoded.get("accuracy").getOrElse(Seq[String]("0")).head.toString
       var answer = "["
       var motivation = "["
-      val observation = request.body.asFormUrlEncoded.get("observation").get.head
+      val observation = request.body.asFormUrlEncoded.get("observation").getOrElse(Seq[String]("[]")).head.toString
 
       //Extract answer from boolean question
       if (question_type.equalsIgnoreCase("Boolean")) {
@@ -199,7 +200,7 @@ object Answer extends Controller {
       Logger.debug("Storing answer:\n" + answer)
 
       val answerId = AnswerDAO.add(new Answer(NotAssigned, answer, Some(motivation), Some(observation),
-        new Date().getTime / 1000, is_method_used, null, null, null, assignments_id))
+        new Date().getTime / 1000, is_method_used, null, null, null, assignments_id, accuracy))
       Logger.debug("Answer stored with id: " + answerId)
 
       if (answerId != -1) {

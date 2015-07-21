@@ -83,6 +83,7 @@ CREATE TABLE answers (
   bonus_cts      INT                NULL,
   rejected       BIT                NULL,
   assignments_id BIGINT             NOT NULL,
+  accuracy       VARCHAR(255)       NULL,
   FOREIGN KEY (assignments_id) REFERENCES assignments (id)
 ) ENGINE = InnoDB CHARSET = utf8;
 

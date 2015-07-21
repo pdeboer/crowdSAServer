@@ -174,7 +174,7 @@
 
                                                             </span>
                                                             <h2>
-                                                                <input type="radio" name="answer" value="yes">
+                                                                <input type="radio" name="answer" value="yes" required>
                                                                 Yes
                                                                 <br>
                                                                 <input type="radio" name="answer" value="no">
@@ -287,7 +287,7 @@
                                                                 <div ng-init="set_possible_answers('@(question.possible_answers.get)');">
                                                                     <div ng-repeat="ds in possible_answers">
                                                                         <any ng-if="ds != ''">
-                                                                            <input type="radio" ng-model="answer" name="answer" value="{{ds}}" >
+                                                                            <input type="radio" ng-model="answer" name="answer" value="{{ds}}" required>
                                                                             <any ng-if="ds == 'false' || ds == 'true'">
                                                                                 <any ng-if="ds != 'false' && ds == 'true'">Yes</any>
                                                                                 <any ng-if="ds != 'true' && ds == 'false'">No</any>
@@ -378,6 +378,19 @@
                                                                 emptyDomChildren();removeAllElementDS();" type="submit">
                                                             No method found</button>
                                                     }
+
+                                                    <div id="accuracy">
+                                                        <span><b>Please select the accuracy of your answer:</b></span>
+                                                        <br>
+                                                        <input type="radio" value="1" name="accuracy" required>1
+                                                        <input type="radio" value="2" name="accuracy">2
+                                                        <input type="radio" value="3" name="accuracy">3
+                                                        <input type="radio" value="4" name="accuracy">4
+                                                        <input type="radio" value="5" name="accuracy">5
+                                                        <input type="radio" value="6" name="accuracy">6
+                                                        <input type="radio" value="7" name="accuracy">7
+                                                    </div>
+                                                    <br>
                                                         <!-- ADDITIONAL CONTROLLERS - DISCOVERY -->
                                                     @if(question.question_type.equalsIgnoreCase("Discovery")) {
                                                         <button class="btn btn-success" ng-if="dom_children.length > 0" id="submitAnswer" onclick="window.onbeforeunload = null;" type="submit">
@@ -390,7 +403,7 @@
                                                         <span ng-if="dom_children.length == 0"><br><br></span>
                                                     }
 
-                                                    <!-- ALL QUESTIONS HAVE A SUBMIT BUTTON -->
+                                                    <!-- ALL QUESTIONS HAVE A SUBMIT BUTTON-->
                                                     @if(!question.question_type.equalsIgnoreCase("Discovery") && !question.question_type.equalsIgnoreCase("Missing")) {
                                                         <button class="btn btn-success" id="submitAnswer" onclick="window.onbeforeunload = null;" type="submit">
                                                             Submit Answer</button>

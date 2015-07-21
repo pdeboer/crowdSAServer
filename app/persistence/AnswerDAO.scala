@@ -1,12 +1,10 @@
 package persistence
 
-import java.util.Date
-import anorm._
 import anorm.SqlParser._
-import models.{Assignment, Answer, Paper}
-import play.Logger
-import play.api.db.DB
+import anorm._
+import models.{Answer, Assignment}
 import play.api.Play.current
+import play.api.db.DB
 
 import scala.collection.mutable
 
@@ -25,9 +23,10 @@ object AnswerDAO {
       get[Option[Boolean]]("accepted") ~
       get[Option[Int]]("bonus_cts") ~
       get[Option[Boolean]]("rejected") ~
-      get[Long]("assignments_id") map {
-      case id ~answer ~motivation ~observation ~completed_at ~is_method_used ~accepted ~bonus_cts ~rejected ~assignments_id =>
-        Answer(id, answer, motivation, observation, completed_at, is_method_used, accepted, bonus_cts, rejected, assignments_id)
+      get[Long]("assignments_id") ~
+      get[String]("accuracy") map {
+      case id ~answer ~motivation ~observation ~completed_at ~is_method_used ~accepted ~bonus_cts ~rejected ~assignments_id ~accuracy =>
+        Answer(id, answer, motivation, observation, completed_at, is_method_used, accepted, bonus_cts, rejected, assignments_id, accuracy)
     }
 
   def findById(id: Long): Option[Answer] =
@@ -58,14 +57,15 @@ object AnswerDAO {
       val id: Option[Long] =
         DB.withConnection { implicit c =>
           SQL("INSERT INTO answers(answer, motivation, observation, created_at, is_method_used, accepted, bonus_cts, rejected," +
-            " assignments_id) VALUES ({answer}, {motivation}, {observation}, {created_at}, {is_method_used}, NULL, NULL, NULL, " +
-            "{assignments_id})").on(
+            " assignments_id, accuracy) VALUES ({answer}, {motivation}, {observation}, {created_at}, {is_method_used}, NULL, NULL, NULL, " +
+            "{assignments_id}, {accuracy})").on(
             'answer -> a.answer,
             'motivation -> a.motivation,
             'observation -> a.observation,
             'created_at -> a.createdAt,
             'is_method_used -> a.isMethodUsed,
-            'assignments_id -> a.assignmentsId
+            'assignments_id -> a.assignmentsId,
+            'accuracy -> a.accuracy
           ).executeInsert()
         }
       id.get
