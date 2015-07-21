@@ -109,7 +109,8 @@ object Answer extends Controller {
         Logger.debug("Found question type voting")
         try {
           val answerParsed = request.body.asFormUrlEncoded.get("answer").get.head
-
+          Logger.debug("Answer VOTING question: ")
+          Logger.debug(answerParsed)
           try {
             val keys = request.body.asFormUrlEncoded.keySet
 
@@ -129,8 +130,8 @@ object Answer extends Controller {
           if(answerParsed.equalsIgnoreCase("There exist no dataset for this method")){
             answer += "]"
           } else {
-            answerParsed.substring(2,answerParsed.length-2)
-            answer += "\""+answerParsed+"\""
+
+            answer += "\""+answerParsed.substring(2,answerParsed.length-2)+"\""
             answer += "]"
           }
           Logger.debug("Stored answer: " + answer)
