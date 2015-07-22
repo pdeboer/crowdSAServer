@@ -263,11 +263,11 @@ myApp.controller('ViewerCtrl', function($scope, $http, $interval){
     $scope.countdown = function(assignment_id) {
         $http.get('/isAssignmentOpen/'+$scope.turker_id)
             .success(function(data) {
-                var d = JSON.parse(JSON.stringify(data));
-                var diff = d.time - Math.floor(((new Date().getTime()/1000) + (new Date().getTimezoneOffset())+120));
-                $scope.counter_sec = diff;
-                console.log("Remaining seconds: " + diff);
-                if($scope.counter_sec > 0 && d.assigned){
+                var assignmentBoundaries = JSON.parse(JSON.stringify(data));
+                var remainingSeconds = assignmentBoundaries.time - (assignmentBoundaries.current_time/1000);
+                $scope.counter_sec = remainingSeconds;
+                console.log("Remaining seconds: " + remainingSeconds);
+                if($scope.counter_sec > 0 && assignmentBoundaries.assigned){
                     $scope.start_countdown(assignment_id);
                 } else {
                     $scope.cancel_assignment(assignment_id);

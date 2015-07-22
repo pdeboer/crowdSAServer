@@ -1,7 +1,7 @@
 package controllers
 
+import org.joda.time.DateTime
 import persistence.AssignmentDAO
-import play.Logger
 import play.api.libs.json.Json
 import play.api.mvc.{Action, Controller}
 
@@ -54,7 +54,7 @@ object Assignment extends Controller {
       if(assignment!=null){
           val time = assignment.expiration_time
 
-          Ok("{\"assigned\" : \"true\", \"time\": \""+time+"\"}")
+          Ok("{\"assigned\" : \"true\", \"time\": \""+time+"\", \"current_time\":\""+new DateTime().getMillis+"\"}")
       }else {
         Ok("")
       }
