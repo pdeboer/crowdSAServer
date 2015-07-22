@@ -48,7 +48,7 @@ object Paper extends Controller {
         }
 
         //Move pdf to public/pdfs folder
-        source.ref.moveTo(new File(s"./public/pdfs/$filename"))
+        source.ref.moveTo(new File(s"./public/pdfs/$filename"), true)
         val paper: Paper = new Paper(NotAssigned, "/pdfs/" + filename, title, new Date().getTime/1000, highlight)
         val id = PaperDAO.add(paper)
 
