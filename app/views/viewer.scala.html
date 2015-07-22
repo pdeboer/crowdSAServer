@@ -168,20 +168,35 @@
                                                     @if(question.question_type.equalsIgnoreCase("Boolean")) {
                                                         <div>
                                                             <span style="font-size:120%; display:inline-block;">
-                                                                We highlighted the terms which <u>might</u> help you to answer the above question. These terms <u>might help you</u> to find the relevant paragraphs to answer the question above, however <u>those are just hints</u>, and <u>you might need to read other parts of the paper</u> to be able to answer correctly.<br>
+                                                                We highlighted the terms which <u>might</u> help you to answer the above question.
+                                                                    These terms <u>might help you</u> to find the relevant paragraphs to answer the question above, however <u>those are just hints</u>,
+                                                                    and <u>you might need to read other parts of the paper</u> to be able to answer correctly.<br>
                                                                 Be aware that the highlighted methods may be present on different pages of the paper.<br>
-                                                                Once you are done, select <span style="font-size:130%; display:inline-block;">
-                                                                YES</span> or <span style="font-size:130%; display:inline-block;">
-                                                                NO</span> and "submit answer" to answer the question.
+                                                                Once you are done, select:<br>
+                                                                    <ul style="padding-left:20px;">
+                                                                        <li>
+                                                                            <span style="font-size:130%; display:inline-block;">
+                                                                                YES
+                                                                            </span> or
+                                                                            <span style="font-size:130%; display:inline-block;">
+                                                                                NO
+                                                                            </span>
+                                                                        </li>
+                                                                        <li>
+                                                                            The accuracy of you answer.
+                                                                        </li>
+                                                                        <li>
+                                                                            Submit your answer by clicking on the "submit answer" button.
+                                                                        </li>
+                                                                    </ul>
                                                                     <br>
                                                                     Before submitting the answer please click on all the sentences which motivated you to take a decision.<br>
-                                                                    You can also write some feedback about the question in the textbox at the end of the instructions.<br><br>
+                                                                    You can also write some feedback about the question in the textbox at the end of the instructions.<br>
+                                                                        <!--<br>
                                                                 An example of this task is provided on <a href="https://www.youtube.com/watch?v=pFz0Ua195tg" target="_blank">
-                                                                YouTube</a>
-
-
+                                                                YouTube</a>-->
                                                             </span>
-                                                            <h2>
+                                                            <h2 style="padding-left:20px;">
                                                                 <input type="radio" name="answer" value="yes" required>
                                                                 Yes
                                                                 <br>
@@ -209,7 +224,7 @@
 
                                                         <div id="observations">
                                                             <b>Please write in the box below the problems/difficulties you faced with this question:</b>
-                                                            <textarea autofocus class="form-control" name="observation" style="width:95%; margin-right:20px;" maxlength="1000" rows="4" placeholder="Insert text here..."></textarea>
+                                                            <textarea autofocus class="form-control" name="observation" style="width:95%; margin-right:20px;" maxlength="999" rows="4" placeholder="Insert text here..."></textarea>
                                                         </div>
                                                         <br>
                                                     }
@@ -218,10 +233,9 @@
                                                         <div>
                                                             <div style="font-size:120%; display:inline-block;" id="showhidetarget2">
                                                                 <b>
-                                                                    Please identify the relevant lines of the paper that describe the data used by the highlighted statistical method.<br>
-                                                                    <u>Don't worry if you don't know what the above method does, and remember that you only have 10 minutes to solve this task.</u>
+                                                                    Please identify the relevant lines of the paper which describe the data used by the highlighted statistical method.<br>
+                                                                    <u>Remember that you only have 10 minutes to solve this task. After this time, the question will be available to others and your answer won't be sent.</u>
                                                                     <br>
-                                                                    <!--If there is nothing highlighted in the paper on the right, scroll up/down and look for the highlighted sentences on other pages.<br>-->
                                                                     <span ng-if="datasets.length > 0">
                                                                         Below you will find a list containing all the datasets already identified by other crowd workers.
                                                                         It <u>might be possible</u> that an already identified dataset in this list also applies to the method you are currently investigating.</span><br>
@@ -231,26 +245,30 @@
                                                             <div style="font-size:120%; display:inline-block;" id="showhidetarget1"><b>
                                                                 The paper shown on the right hand side uses the statistical method shown above.
                                                                 Every statistical method is applied to a certain kind of data to draw conclusions from it.
-                                                                <u>Please identify the lines in the paper which describe the data used by the above statistical method</u> by reading the immediate surroundings of the method
-                                                                (you’ll see it marked yellow in the PDF).
-                                                                If you can’t find any information about the data in the immediate surroundings,
-                                                                try to look in the first part of the paper (Abstract / Introduction).<br>
+                                                                <u>Please identify the lines in the paper which describe the data used by the above statistical method</u>
+                                                                    by reading the immediate surroundings of the method
+                                                                (you’ll see it marked in yellow on the PDF).
+                                                                <!--If you can’t find any information about the data in the immediate surroundings,
+                                                                try to look in the first part of the paper (Abstract / Introduction).--><br>
                                                                 <any ng-if="datasets.length > 0">
                                                                     Try also to check in the available datasets if one of them correspond to what you are looking for.<br>
                                                                 </any>
                                                                 <br>
-                                                                An example of this task is provided on <a href="https://youtu.be/NVhHViEtP58" target="_blank">
-                                                                YouTube</a><br>
+                                                                <!--An example of this task is provided on <a href="https://youtu.be/NVhHViEtP58" target="_blank">
+                                                                YouTube</a><br>-->
                                                                 <br>
                                                                 In order to tell us about the data used for this method,
-                                                                <u>please click on all the lines in the paper discussing the relevant data</u>.
-                                                                It’s ok if there is other information on a line as well, as long as it is part of a sentence that describes the data.
+                                                                <u>please click on all the lines in the paper discussing or listing the relevant data</u>.
+                                                                <u>It’s ok if there is other information on a line as well, as long as it is part of a sentence that describes the data.</u>
                                                                 <br>
                                                                 If you happen to select a sentence by mistake,
                                                                 you can click on the "delete" icon next to it’s text just below this introduction.
                                                                 <br>
                                                                 Once you’re done, please click "submit answer" or "no dataset found" depending on your findings.<br>
-                                                                <u ng-if="datasets.length > 0">If there is a correspondence in the list of existing dataset, please select it and click the button "Submit existing dataset".</u><br>
+                                                                <u ng-if="datasets.length > 0">
+                                                                    If there is a correspondence in the list of existing dataset, please select it and click the button"Submit existing dataset".
+                                                                </u>
+                                                                    <br>
                                                                 Your selection will be compared with the one of other crowd workers.
                                                             </b></div>
                                                             <a class="btn btn-info" id="showhidetrigger" href="#">How to solve this task?</a>
@@ -282,13 +300,16 @@
                                                         <div>
 
                                                             <span style="font-size:120%; display:inline-block;">
-                                                                Below, all the alternatives are listed. <u>Your task is choose the alternative you think is the most correct and complete to the question above</u>.
-                                                                Highilighted on the paper you will find all the options. This may help you to choose the best answer.<br>
-                                                                Please read the question carefully and once you know what you are looking for, search for this information in the paper (<u>feel free to use the search function on the PDF Viewer if you need</u>).<br><br>
-                                                                An example of this task is provided on <a href="https://youtu.be/iAcPNcd4JQw" target="_blank">
-                                                                YouTube</a><br>
-                                                                Please also click on all the sentences which helped you to take a decision.
-                                                                    You can also write some feedback about the question in the textbox at the end of the instructions.
+                                                                Below, all the alternatives are listed.
+                                                                    <u>Your task is choose the alternative you think is the most correct and complete to the question above</u>.
+                                                                All the options are highlighted on the paper. This <u>may</u> help you choose the best answer.<br>
+                                                                Please <u>read the question carefully</u> and once you know what you are looking for, search for this information in the paper
+                                                                    (<u>feel free to use the search function on the PDF Viewer if you need</u>).
+                                                                    <br><br>
+                                                                <!--An example of this task is provided on <a href="https://youtu.be/iAcPNcd4JQw" target="_blank">
+                                                                YouTube</a><br>-->
+                                                                Please also click on all the sentences which helped you to make a decision.
+                                                                    You can also write some feedbacks about the question in the textbox at the end of these instructions.
                                                             </span>
                                                             <br><br>
                                                             <b style="font-size:120%;">
@@ -343,8 +364,8 @@
                                                     @if(question.question_type.equalsIgnoreCase("Missing")) {
                                                         <div>
                                                             <span style="font-size:120%; display:inline-block;">
-                                                                We have highlighted all the <u>statistical methods</u> that were automatically identified in the paper.<br>
-                                                                You are kindly requested to search for methods which were not automatically found (if there are any). Once you find one,
+                                                                We highlighted all the <u>statistical methods</u> that were automatically identified in the paper.<br>
+                                                                You are kindly requested to <u>search for methods which were not automatically found (if there are any)</u>. Once you find one,
                                                                 please click on the sentence containing the method to extract it.<br>
                                                                 Once you are done, click the green button "submit answer" to answer the question.
                                                                 You can also write some feedback about the question in the textbox at the end of the instructions.
@@ -354,7 +375,7 @@
                                                         <input type="hidden" id="notUsed" name="is_method_used" value="true">
 
                                                         <div id="datasetChildren">
-                                                            <b>Please click on all the sentences which contain a relevant, non-highlighted, statistical method:</b><br>
+                                                            <b>Please click on all the sentences which contain a relevant, <span style="font-size:120%;">non-highlighted</span>, statistical method:</b><br>
                                                             <ul class="list-group" style="padding:20px" ng-init="getDsToRefine('');">
                                                                 <div ng-if="dom_children.length == 0" style="color:red;"><b>
                                                                     Method not yet extracted</b></div>
@@ -388,7 +409,8 @@
                                                     }
 
                                                     <div id="accuracy">
-                                                        <span><b>Please select the accuracy of your answer:</b></span><br><br>
+                                                        <span style="font-size:120%;"><b>Please select the accuracy of your answer:</b></span>
+                                                        <br><br>
                                                         <div class="row" style="margin-right:0px; margin-left:0px;padding-right:30px;">
                                                             <div class="col-md-3"><b>Not Certain at all</b></div>
                                                             <div class="col-md-7">
@@ -489,9 +511,9 @@
                                                             <hr style="color:black; background-color:black; height:1px; margin-right:20px;">
                                                             A list of <u>possible words/expressions which may help you to answer</u> this question is given below.<br>
                                                             You can jump to the <u>first occurrence</u> of this words by clicking on the relative "Jump" link.
-                                                            Reading the immediate surrounding of the match will give you good chance to get more information to take a decision.
+                                                            Reading the immediate surrounding of the match <u>may</u> give you good chance to get more information to take a final decision.
                                                             <hr style="color:black; background-color:black; height:1px; margin-right:20px;">
-                                                            <h3>Dataset used:</h3><br>
+                                                            <h3>Dataset used for this method:</h3><br>
 
                                                             <any ng-if="@Json.parse(dataset_hint).as[Seq[String]].length>0">
                                                                 <table style="padding-left:20px;width:100%;" ng-init="ds_hits = @Json.parse(dataset_hint).toString()">
