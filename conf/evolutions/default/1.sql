@@ -26,7 +26,7 @@ CREATE TABLE datasets2papers (
 
 CREATE TABLE questions (
   id                  BIGINT PRIMARY KEY NOT NULL auto_increment,
-  question            VARCHAR(2000)      NOT NULL,
+  question            TEXT               NOT NULL,
   question_type       VARCHAR(100)       NOT NULL,
   reward_cts          INT                NOT NULL,
   created_at          BIGINT             NOT NULL,
@@ -34,15 +34,15 @@ CREATE TABLE questions (
   expiration_time_sec BIGINT             NULL,
   maximal_assignments INT                NULL,
   papers_id           BIGINT             NOT NULL,
-  possible_answers    VARCHAR(2000)      NULL,
+  possible_answers    TEXT               NULL,
   FOREIGN KEY (papers_id) REFERENCES papers (id)
 ) ENGINE = InnoDB CHARSET = utf8;
 
 CREATE TABLE highlights (
   id           BIGINT PRIMARY KEY NOT NULL auto_increment,
   assumption   VARCHAR(255)       NOT NULL,
-  terms        VARCHAR(1000)      NOT NULL,
-  dataset      VARCHAR(1000)      NOT NULL,
+  terms        TEXT               NOT NULL,
+  dataset      TEXT               NOT NULL,
   questions_id BIGINT             NOT NULL,
   FOREIGN KEY (questions_id) REFERENCES questions (id)
 ) ENGINE = InnoDB CHARSET = utf8;
