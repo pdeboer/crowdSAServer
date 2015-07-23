@@ -124,30 +124,17 @@
                                 }
 
                                 $radioButtons.change(function(){
-                                    var anyRadioButtonHasValue = false;
-
-                                    // iterate through all radio buttons
-                                    $radioButtons.each(function(){
-                                        if(this.checked){
-                                            // indicate we found a radio button which has a value
-                                            anyRadioButtonHasValue = true;
-
-                                            // break out of each loop
-                                            return false;
-                                        }
-                                    });
-
-                                    // check if we found any radio button which has a value
-                                    if(anyRadioButtonHasValue){
-                                        // enable submit button.
-                                        $("#submitAnswer").removeAttr("disabled");
-                                    }
-                                    else{
-                                        // else is kind of redundant unless you somehow can clear the radio button value
-                                        $("#submitAnswer").attr("disabled", "");
-                                    }
+                                   enableSubmit(angular.element($('#datasetChildren')).scope().shouldEnableSubmit());
                                 });
                             });
+
+                            function enableSubmit(bool) {
+                                if(bool) {
+                                    $("#submitAnswer").removeAttr("disabled");
+                                } else {
+                                    $("#submitAnswer").attr("disabled", "");
+                                }
+                            };
 
                     </script>
 
@@ -209,7 +196,7 @@
 
                                                         <div id="datasetChildren">
                                                             <b>Relevant sentences which helped the choice:</b><br>
-                                                            <ul class="list-group" style="padding:20px" ng-init="getDsToRefine('');">
+                                                            <ul class="list-group" id="motivationSentences" style="padding:20px" ng-init="getDsToRefine('');">
                                                                 <div ng-if="dom_children.length == 0" style="color:red;"><b>
                                                                     Motivation sentences not yet selected</b></div>
                                                                 <li class="list-group-item" ng-repeat="ds in dom_children | orderBy:['page','div']" >

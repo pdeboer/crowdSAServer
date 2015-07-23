@@ -247,8 +247,24 @@ myApp.controller('ViewerCtrl', function($scope, $http, $interval){
         }
     };
 
+    $scope.shouldEnableSubmit = function() {
+        var $radioButtons = $("input:radio");
+        var anyRadioButtonHasValue = false;
+        $radioButtons.each(function(){
+            if(this.checked){
+                // indicate we found a radio button which has a value
+                anyRadioButtonHasValue = true;
+                // break out of each loop
+                return false;
+            }
+        });
+        return anyRadioButtonHasValue && $scope.dom_children.length > 0
+    };
+
     $scope.push_dom_children = function(txt, elem, pageNr, divNr){
         $scope.dom_children.push({text: txt, elem: elem, page: pageNr, div: divNr});
+
+        enableSubmit($scope.shouldEnableSubmit());
     };
 
     $scope.jumpTo = function(word) {
@@ -258,6 +274,8 @@ myApp.controller('ViewerCtrl', function($scope, $http, $interval){
     $scope.removeElementDS = function(ds) {
         $scope.dom_children.splice($scope.dom_children.indexOf(ds), 1);
         disableBorders(ds.elem);
+
+        enableSubmit($scope.shouldEnableSubmit());
     };
 
     $scope.countdown = function(assignment_id) {
