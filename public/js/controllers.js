@@ -258,7 +258,11 @@ myApp.controller('ViewerCtrl', function($scope, $http, $interval){
                 return false;
             }
         });
-        return anyRadioButtonHasValue && $scope.dom_children.length > 0
+        if($radioButtons.length > 0) {
+            return anyRadioButtonHasValue && $scope.dom_children.length > 0
+        } else {
+            return $scope.dom_children.length > 0
+        }
     };
 
     $scope.push_dom_children = function(txt, elem, pageNr, divNr){

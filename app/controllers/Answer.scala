@@ -68,30 +68,14 @@ object Answer extends Controller {
     else {
       val accuracy: String = request.body.asFormUrlEncoded.get("accuracy").getOrElse(Seq[String]("0")).head.toString
       var answer = "["
-      var motivation = "["
-      val observation = request.body.asFormUrlEncoded.get("observation").getOrElse(Seq[String]("[]")).head.toString
+      val motivation = "[\""+request.body.asFormUrlEncoded.get("motivation[]").getOrElse(Seq[String]("")).mkString("\",\"")+"\"]"
+      val observation = "[\""+request.body.asFormUrlEncoded.get("observation").getOrElse(Seq[String]("")).mkString("\",\"")+"\"]"
 
       //Extract answer from boolean question
       if (question_type.equalsIgnoreCase("Boolean")) {
         Logger.debug("Found question type boolean")
         try {
           val answerElem = request.body.asFormUrlEncoded.get("answer").get.head
-
-          try {
-            val keys = request.body.asFormUrlEncoded.keySet
-
-            for (k <- keys) {
-              if (k.startsWith("motivation")) {
-                motivation += "\""+request.body.asFormUrlEncoded.get(k).get.mkString("\"")
-              }
-            }
-            motivation += "]"
-          } catch {
-            case e: Exception => {
-              Logger.error("Cannot get the motivation from answer")
-              motivation += "]"
-            }
-          }
 
           if (answerElem.equalsIgnoreCase("YES")) {
             answer += "\"true\"]"
@@ -102,6 +86,7 @@ object Answer extends Controller {
           case e: Exception => {
             Logger.error("No answer is given for the Boolean question")
             answer += "]"
+            e.printStackTrace()
           }
         }
       }
@@ -112,34 +97,18 @@ object Answer extends Controller {
           val answerParsed = request.body.asFormUrlEncoded.get("answer").get.head
           Logger.debug("Answer VOTING question: ")
           Logger.debug(answerParsed)
-          try {
-            val keys = request.body.asFormUrlEncoded.keySet
-
-            for (k <- keys) {
-              if (k.startsWith("motivation")) {
-                motivation += "\""+request.body.asFormUrlEncoded.get(k).get + "\""
-              }
-            }
-            motivation += "]"
-          } catch {
-            case e: Exception => {
-              Logger.error("Cannot get the motivation from answer")
-              motivation = "]"
-            }
-          }
 
           if(answerParsed.equalsIgnoreCase("There exist no dataset for this method")){
             answer += "]"
           } else {
-
-            answer += "\""+answerParsed.substring(2,answerParsed.length-2)+"\""
-            answer += "]"
+            answer += "\""+answerParsed.substring(2,answerParsed.length-2)+"\"]"
           }
           Logger.debug("Stored answer: " + answer)
         } catch {
           case e: Exception => {
             Logger.error("Cannot get the answer from the checkboxes")
             answer += "]"
+            e.printStackTrace()
           }
         }
       }
@@ -147,24 +116,13 @@ object Answer extends Controller {
       else if (question_type.equalsIgnoreCase("Discovery")) {
         Logger.debug("Found question type discovery")
         try {
-          val keys = request.body.asFormUrlEncoded.keySet //get("dom_children").get.head
-          for (k <- keys) {
-            if (k.startsWith("dom_children")) {
-              val l = request.body.asFormUrlEncoded.get(k).get.asInstanceOf[List[String]]
-              l.foreach(el => {
-                answer += "\""+el + "\""
-                if(!l.last.equals(el)){
-                  answer += ","
-                }
-              })
-            }
-          }
-          answer += "]"
-          motivation += "]"
+          val l = request.body.asFormUrlEncoded.get("dom_children[]").get.mkString("\",\"")
+          answer += "\""+ l + "\"]"
         } catch {
           case e: Exception => {
             Logger.error("Cannot get the answer from dom_children")
             answer += "]"
+            e.printStackTrace()
           }
         }
       }
@@ -172,24 +130,13 @@ object Answer extends Controller {
       else if (question_type.equalsIgnoreCase("Missing")) {
         Logger.debug("Found question type missing")
         try {
-          val keys = request.body.asFormUrlEncoded.keySet //get("dom_children").get.head
-          for (k <- keys) {
-            if (k.startsWith("missing")) {
-              val l = request.body.asFormUrlEncoded.get(k).get.asInstanceOf[List[String]]
-              l.foreach(el => {
-                answer += "\""+el + "\""
-                if(!l.last.equals(el)){
-                  answer += ","
-                }
-              })
-            }
-          }
-          answer += "]"
-          motivation += "]"
+          val l = request.body.asFormUrlEncoded.get("missing[]").get.mkString("\",\"")
+          answer += "\""+ l + "\"]"
         } catch {
           case e: Exception => {
             Logger.error("Cannot get the answer from missing array")
             answer += "]"
+            e.printStackTrace()
           }
         }
       }
