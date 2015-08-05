@@ -97,6 +97,7 @@ myApp.controller('QuestionCtrl', ['$scope', '$interval', '$timeout', '$http',
         };
 
     $scope.showViewer = function(question_id){
+        $('#questions').hide();
         window.location.href = '/waiting/getDefinedQuestion/'+ question_id;
     }
 }]);

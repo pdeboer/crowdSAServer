@@ -64,7 +64,7 @@
                                 <th></th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="questions">
                             <tr ng-repeat="question in questions | filter:input" ng-click="showViewer(question.id)" style="cursor:pointer; cursor:hand;">
                                 <th>
                                     {{ question.id }}
